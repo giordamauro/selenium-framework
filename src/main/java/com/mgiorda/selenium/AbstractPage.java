@@ -1,8 +1,11 @@
 package com.mgiorda.selenium;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
@@ -17,6 +20,8 @@ import com.mgiorda.testng.PerThreadSuiteConfig;
 import com.mgiorda.testng.SuiteConfiguration;
 
 public abstract class AbstractPage {
+
+	private static final Log logger = LogFactory.getLog(AbstractPage.class);
 
 	// DO NOT change visibility to public - Is protected to prevent use of
 	// WebElements directly in tests
@@ -117,20 +122,31 @@ public abstract class AbstractPage {
 	protected void goToUrl(String relativeUrl) {
 
 		driver.navigate().to(suiteConfig.getHost() + relativeUrl);
-		waitForPageToLoad();
+		long loadTime = waitForPageToLoad();
+
+		logger.info(String.format("Navigated to url '%s' - Waited %s milliseconds", suiteConfig.getHost() + relativeUrl, loadTime));
 	}
 
 	protected PageElement getElement(By elementLocator) {
+
+		long start = new Date().getTime();
 
 		long waitTimeOut = suiteConfig.getWaitTimeOut() * 1000;
 		WebElement element = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(elementLocator));
 
 		PageElement pageElement = new PageElement(element);
 
+		long end = new Date().getTime();
+		long waitTime = end - start;
+
+		logger.info(String.format("Found '%s' page element '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), elementLocator, waitTime));
+
 		return pageElement;
 	}
 
 	protected List<PageElement> getElements(By elementLocator) {
+
+		long start = new Date().getTime();
 
 		long waitTimeOut = suiteConfig.getWaitTimeOut() * 1000;
 		List<WebElement> elements = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfAllElementsLocatedBy(elementLocator));
@@ -142,6 +158,11 @@ public abstract class AbstractPage {
 
 			pageElements.add(pageElement);
 		}
+
+		long end = new Date().getTime();
+		long waitTime = end - start;
+
+		logger.info(String.format("Found '%s' page elements '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), elementLocator, waitTime));
 
 		return pageElements;
 	}
@@ -164,7 +185,9 @@ public abstract class AbstractPage {
 		return relativeUrl;
 	}
 
-	private void waitForPageToLoad() {
+	private long waitForPageToLoad() {
+
+		long start = new Date().getTime();
 
 		long waitTimeOut = suiteConfig.getWaitTimeOut() * 1000;
 		new WebDriverWait(driver, waitTimeOut).until(new Predicate<WebDriver>() {
@@ -183,6 +206,11 @@ public abstract class AbstractPage {
 				return false;
 			}
 		});
+
+		long end = new Date().getTime();
+		long waitTime = end - start;
+
+		return waitTime;
 	}
 
 }

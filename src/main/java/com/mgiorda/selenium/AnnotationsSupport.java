@@ -2,12 +2,16 @@ package com.mgiorda.selenium;
 
 import java.lang.reflect.Field;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
 
 import com.mgiorda.selenium.AbstractPage.PageElement;
 
 class AnnotationsSupport {
+
+	private static final Log logger = LogFactory.getLog(AnnotationsSupport.class);
 
 	private AnnotationsSupport() {
 
@@ -75,7 +79,10 @@ class AnnotationsSupport {
 
 		field.setAccessible(true);
 		try {
+
+			logger.info(String.format("Setting '%s' page field '%s' with element '%s'", page.getClass().getSimpleName(), field.getName(), elementLocator));
 			field.set(page, element);
+
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 
 			throw new IllegalStateException(e);
