@@ -139,7 +139,7 @@ public abstract class AbstractPage {
 		driver.navigate().to(url);
 		long loadTime = waitForPageToLoad();
 
-		logger.info(String.format("Navigated to url '%s' - Waited %s milliseconds", url, loadTime));
+		logger.info(String.format("Navigated form page '%s' to url '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), url, loadTime));
 	}
 
 	protected PageElement getElement(By elementLocator) {

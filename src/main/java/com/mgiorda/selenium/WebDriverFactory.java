@@ -18,7 +18,7 @@ public class WebDriverFactory {
 
 	public WebDriver newDriver() {
 
-		logger.info(String.format("-- Openning %s driver --", browser));
+		logger.info(String.format("Openning %s driver", browser));
 
 		System.setProperty("webdriver.chrome.driver", "./chromedriver.exe");
 
