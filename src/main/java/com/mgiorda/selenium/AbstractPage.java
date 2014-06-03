@@ -110,7 +110,6 @@ public abstract class AbstractPage {
 	protected AbstractPage(AbstractPage parentPage, String url) {
 
 		this.parentPage = parentPage;
-		// TODO: update to the other constructor, como manejar SubPages..
 
 		// means not opening a new browser
 		this.driver = parentPage.driver;

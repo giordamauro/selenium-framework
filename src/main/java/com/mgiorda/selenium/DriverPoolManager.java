@@ -6,9 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.WebDriver;
 
 public class DriverPoolManager {
+
+	private final static Log logger = LogFactory.getLog(DriverPoolManager.class);
 
 	private final WebDriverFactory driverFactory;
 
@@ -28,9 +32,10 @@ public class DriverPoolManager {
 			if (!available.isEmpty()) {
 				driver = available.remove(0);
 			} else {
-				// TODO: think about driverFactory
 				driver = driverFactory.newDriver();
 				inUse.put(page, driver);
+
+				logger.info(String.format("Assigned driver %s to page %s", driver.toString(), page.getClass().getSimpleName()));
 			}
 		}
 
@@ -45,6 +50,8 @@ public class DriverPoolManager {
 		}
 		available.add(driver);
 		inUse.remove(page);
+
+		logger.info(String.format("Releaseed driver %s", driver.toString()));
 	}
 
 	synchronized <T extends AbstractPage> void quitDriver(T page) {
@@ -56,19 +63,29 @@ public class DriverPoolManager {
 		;
 		inUse.remove(page);
 		driver.quit();
+
+		logger.info(String.format("Quit driver %s", driver.toString()));
 	}
 
 	void quitAllDrivers() {
 
 		for (WebDriver driver : available) {
+
+			logger.info(String.format("Quitting available driver %s", driver.toString()));
+
 			available.remove(driver);
 			driver.quit();
 		}
 
 		for (Entry<AbstractPage, WebDriver> driverEntry : inUse.entrySet()) {
-			// TODO: log this particular case
-			inUse.remove(driverEntry.getKey());
-			driverEntry.getKey().quit();
+
+			AbstractPage page = driverEntry.getKey();
+			WebDriver driver = driverEntry.getValue();
+
+			logger.warn(String.format("Quitting driver %s assigned to page %s", driver.toString(), page.getClass().getSimpleName()));
+
+			inUse.remove(page);
+			driver.quit();
 		}
 	}
 }
