@@ -37,7 +37,7 @@
 	</bean>
 
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod"  value="com.mgiorda.testng.PerThreadTestConfig.setConfiguration" />
+		<property name="staticMethod"  value="com.mgiorda.testng.PerThreadTestConfig.setDefaultConfiguration" />
 		<property name="arguments" ref="defaultTestconfig" />
 	</bean>
 

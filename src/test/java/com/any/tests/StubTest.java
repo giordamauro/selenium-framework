@@ -11,7 +11,7 @@ public class StubTest extends AbstractTest {
 	@Value("test.host")
 	private String host;
 
-	@Test
+	@Test(threadPoolSize = 4, invocationCount = 5)
 	public void test() {
 
 		SampleGooglePage page = new SampleGooglePage();
