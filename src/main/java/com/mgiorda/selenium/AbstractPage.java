@@ -86,37 +86,54 @@ public abstract class AbstractPage {
 		}
 	}
 
-	private static final WebDriverFactory driverFactory = new WebDriverFactory();
-
 	private final WebDriver driver;
+	private final AbstractPage parentPage;
+	private final DriverPoolManager driverPoolManager;
 	private final SuiteConfiguration suiteConfig;
 	private final String relativeUrl;
 
 	protected AbstractPage(String relativeUrl) {
 
+		this.parentPage = null;
+
 		// Values coming from configuration
 		this.suiteConfig = PerThreadSuiteConfig.getConfiguration();
-		Browser browser = suiteConfig.getBrowser();
 
-		this.driver = driverFactory.newDriver(browser);
+		this.driverPoolManager = PerThreadSuiteConfig.getDriverPoolManager();
+
+		this.driver = driverPoolManager.getDriver(this);
 		this.relativeUrl = relativeUrl;
 
 		goToUrl(relativeUrl);
 		AnnotationsSupport.initFindBy(this);
 	}
 
-	protected AbstractPage(AbstractPage page, String relativeUrl) {
+	protected AbstractPage(AbstractPage parentPage, String relativeUrl) {
 
-		// TODO: update to the other constructor
+		this.parentPage = parentPage;
+		// TODO: update to the other constructor, como manejar SubPages..
 
 		// means not opening a new browser
-		this.driver = page.driver;
-		this.suiteConfig = page.suiteConfig;
+		this.driver = parentPage.driver;
+		this.driverPoolManager = null;
+		this.suiteConfig = parentPage.suiteConfig;
 		this.relativeUrl = relativeUrl;
 	}
 
+	protected void releaseBrowser() {
+		if (parentPage != null) {
+			parentPage.releaseBrowser();
+		} else {
+			driverPoolManager.releaseDriver(this);
+		}
+	}
+
 	public void quit() {
-		driver.quit();
+		if (parentPage != null) {
+			parentPage.quit();
+		} else {
+			driverPoolManager.quitDriver(this);
+		}
 	}
 
 	protected void goToUrl(String relativeUrl) {

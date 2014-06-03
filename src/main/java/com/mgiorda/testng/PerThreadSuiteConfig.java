@@ -1,8 +1,12 @@
 package com.mgiorda.testng;
 
+import com.mgiorda.selenium.DriverPoolManager;
+
 public final class PerThreadSuiteConfig {
 
 	private static final ThreadLocal<SuiteConfiguration> suiteConfigHolder = new ThreadLocal<SuiteConfiguration>();
+
+	private static final ThreadLocal<DriverPoolManager> driverPoolManagerHolder = new ThreadLocal<DriverPoolManager>();
 
 	private PerThreadSuiteConfig() {
 
@@ -26,5 +30,16 @@ public final class PerThreadSuiteConfig {
 		SuiteConfiguration value = suiteConfigHolder.get();
 
 		return value != null;
+	}
+
+	public static DriverPoolManager getDriverPoolManager() {
+
+		DriverPoolManager driverPoolManager = driverPoolManagerHolder.get();
+
+		if (driverPoolManager == null) {
+			throw new IllegalStateException("DriverPoolManager has not been set");
+		}
+
+		return driverPoolManager;
 	}
 }
