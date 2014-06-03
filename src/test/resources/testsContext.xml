@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-3.2.xsd
+						http://www.springframework.org/schema/util 
+						http://www.springframework.org/schema/util/spring-util-3.2.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx.xsd
+						http://www.springframework.org/schema/jee 
+						http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+						http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+
+	<context:annotation-config />
+
+	<context:property-placeholder location="classpath:/tests.properties" />
+
+	<bean id="defaultWebDriverFactory" class="com.mgiorda.selenium.WebDriverFactory">
+		<constructor-arg type="com.mgiorda.selenium.Browser"
+			value="${default.browser}" />
+	</bean>
+
+	<bean id="defaultDriverPoolManager" class="com.mgiorda.selenium.DriverPoolManager">
+		<constructor-arg type="com.mgiorda.selenium.WebDriverFactory"
+			ref="defaultWebDriverFactory" />
+	</bean>
+
+	<bean id="defaultTestconfig" class="com.mgiorda.testng.TestConfiguration">
+		<constructor-arg type="int" value="${default.waitTime}" />
+		<constructor-arg type="com.mgiorda.selenium.DriverPoolManager"
+			ref="defaultDriverPoolManager" />
+	</bean>
+
+	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"  value="com.mgiorda.testng.PerThreadTestConfig.setConfiguration" />
+		<property name="arguments" ref="defaultTestconfig" />
+	</bean>
+
+</beans>

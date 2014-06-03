@@ -7,11 +7,11 @@ import com.any.tests.StubTest;
 
 public class TestSuiteRunner implements Runnable {
 
-	private final SuiteConfiguration suiteConfig;
+	private final TestConfiguration testConfig;
 
-	public TestSuiteRunner(SuiteConfiguration suiteConfig) {
+	public TestSuiteRunner(TestConfiguration testConfig) {
 
-		this.suiteConfig = suiteConfig;
+		this.testConfig = testConfig;
 
 		Thread thread = new Thread(this);
 		thread.start();
@@ -20,7 +20,7 @@ public class TestSuiteRunner implements Runnable {
 	@Override
 	public void run() {
 
-		PerThreadSuiteConfig.setConfiguration(suiteConfig);
+		PerThreadTestConfig.setConfiguration(testConfig);
 
 		TestNG testng = new TestNG();
 

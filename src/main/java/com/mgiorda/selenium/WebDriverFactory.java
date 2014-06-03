@@ -10,8 +10,13 @@ public class WebDriverFactory {
 	private static final Log logger = LogFactory.getLog(WebDriverFactory.class);
 
 	// TODO configurable por Spring
+	private final Browser browser;
 
-	public WebDriver newDriver(Browser browser) {
+	public WebDriverFactory(Browser browser) {
+		this.browser = browser;
+	}
+
+	public WebDriver newDriver() {
 
 		logger.info(String.format("-- Openning %s driver --", browser));
 

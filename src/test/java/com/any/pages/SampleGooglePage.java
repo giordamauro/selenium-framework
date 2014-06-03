@@ -6,13 +6,11 @@ import com.mgiorda.selenium.AbstractPage;
 
 public class SampleGooglePage extends AbstractPage {
 
-	private static final String RELATIVE_URL = "/";
-
 	@FindBy(name = "q")
 	private PageElement searchBox;
 
 	public SampleGooglePage() {
-		super(RELATIVE_URL);
+		super("http://www.google.com");
 	}
 
 	public void search(String text) {

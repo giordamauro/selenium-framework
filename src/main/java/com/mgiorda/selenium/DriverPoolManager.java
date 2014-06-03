@@ -29,7 +29,7 @@ public class DriverPoolManager {
 				driver = available.remove(0);
 			} else {
 				// TODO: think about driverFactory
-				driver = driverFactory.newDriver(Browser.CHROME);
+				driver = driverFactory.newDriver();
 				inUse.put(page, driver);
 			}
 		}

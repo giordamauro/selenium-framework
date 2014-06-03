@@ -16,8 +16,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Predicate;
-import com.mgiorda.testng.PerThreadSuiteConfig;
-import com.mgiorda.testng.SuiteConfiguration;
+import com.mgiorda.testng.PerThreadTestConfig;
+import com.mgiorda.testng.TestConfiguration;
 
 public abstract class AbstractPage {
 
@@ -89,26 +89,25 @@ public abstract class AbstractPage {
 	private final WebDriver driver;
 	private final AbstractPage parentPage;
 	private final DriverPoolManager driverPoolManager;
-	private final SuiteConfiguration suiteConfig;
-	private final String relativeUrl;
+	private final long waitTimeOut;
 
-	protected AbstractPage(String relativeUrl) {
+	protected AbstractPage(String url) {
 
 		this.parentPage = null;
 
 		// Values coming from configuration
-		this.suiteConfig = PerThreadSuiteConfig.getConfiguration();
+		TestConfiguration testConfig = PerThreadTestConfig.getConfiguration();
 
-		this.driverPoolManager = PerThreadSuiteConfig.getDriverPoolManager();
+		this.waitTimeOut = testConfig.getWaitTimeOut() * 1000;
+		this.driverPoolManager = testConfig.getDriverPoolManager();
 
 		this.driver = driverPoolManager.getDriver(this);
-		this.relativeUrl = relativeUrl;
 
-		goToUrl(relativeUrl);
+		goToUrl(url);
 		AnnotationsSupport.initFindBy(this);
 	}
 
-	protected AbstractPage(AbstractPage parentPage, String relativeUrl) {
+	protected AbstractPage(AbstractPage parentPage, String url) {
 
 		this.parentPage = parentPage;
 		// TODO: update to the other constructor, como manejar SubPages..
@@ -116,8 +115,8 @@ public abstract class AbstractPage {
 		// means not opening a new browser
 		this.driver = parentPage.driver;
 		this.driverPoolManager = null;
-		this.suiteConfig = parentPage.suiteConfig;
-		this.relativeUrl = relativeUrl;
+		this.waitTimeOut = parentPage.waitTimeOut;
+
 	}
 
 	protected void releaseBrowser() {
@@ -136,19 +135,18 @@ public abstract class AbstractPage {
 		}
 	}
 
-	protected void goToUrl(String relativeUrl) {
+	private void goToUrl(String url) {
 
-		driver.navigate().to(suiteConfig.getHost() + relativeUrl);
+		driver.navigate().to(url);
 		long loadTime = waitForPageToLoad();
 
-		logger.info(String.format("Navigated to url '%s' - Waited %s milliseconds", suiteConfig.getHost() + relativeUrl, loadTime));
+		logger.info(String.format("Navigated to url '%s' - Waited %s milliseconds", url, loadTime));
 	}
 
 	protected PageElement getElement(By elementLocator) {
 
 		long start = new Date().getTime();
 
-		long waitTimeOut = suiteConfig.getWaitTimeOut() * 1000;
 		WebElement element = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(elementLocator));
 
 		PageElement pageElement = new PageElement(element);
@@ -165,7 +163,6 @@ public abstract class AbstractPage {
 
 		long start = new Date().getTime();
 
-		long waitTimeOut = suiteConfig.getWaitTimeOut() * 1000;
 		List<WebElement> elements = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfAllElementsLocatedBy(elementLocator));
 
 		List<PageElement> pageElements = new ArrayList<>();
@@ -194,19 +191,10 @@ public abstract class AbstractPage {
 		return null;
 	}
 
-	protected String getHost() {
-		return suiteConfig.getHost();
-	}
-
-	protected String getRelativeUrl() {
-		return relativeUrl;
-	}
-
 	private long waitForPageToLoad() {
 
 		long start = new Date().getTime();
 
-		long waitTimeOut = suiteConfig.getWaitTimeOut() * 1000;
 		new WebDriverWait(driver, waitTimeOut).until(new Predicate<WebDriver>() {
 
 			@Override
