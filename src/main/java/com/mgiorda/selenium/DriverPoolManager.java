@@ -62,9 +62,9 @@ public class DriverPoolManager {
 		}
 		;
 		inUse.remove(page);
-		driver.quit();
+		logger.info(String.format("Quitting driver %s", driver.toString()));
 
-		logger.info(String.format("Quit driver %s", driver.toString()));
+		driver.quit();
 	}
 
 	void quitAllDrivers() {

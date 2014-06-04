@@ -19,19 +19,19 @@ public class TestLogger implements ITestListener {
 	@Override
 	public void onTestSuccess(ITestResult result) {
 
-		logger.info(String.format("Finished test method '%s.%s(..)' - PASSED", result.getTestClass().getName(), result.getMethod().getMethodName()));
+		logger.info(String.format("Finished test method '%s.%s(..)' - PASSED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(), getTotalTime(result)));
 	}
 
 	@Override
 	public void onTestFailure(ITestResult result) {
 
-		logger.warn(String.format("Finished test method '%s.%s(..)' - FAILED", result.getTestClass().getName(), result.getMethod().getMethodName()));
+		logger.warn(String.format("Finished test method '%s.%s(..)' - FAILED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(), getTotalTime(result)));
 	}
 
 	@Override
 	public void onTestSkipped(ITestResult result) {
 
-		logger.warn(String.format("Skipped test method '%s.%s(..)' - SKIPPED", result.getTestClass().getName(), result.getMethod().getMethodName()));
+		logger.warn(String.format("Skipped test method '%s.%s(..)' - SKIPPED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(), getTotalTime(result)));
 	}
 
 	@Override
@@ -51,5 +51,10 @@ public class TestLogger implements ITestListener {
 	public void onFinish(ITestContext context) {
 
 		logger.info(String.format("Finished test named: '%s'", context.getName()));
+	}
+
+	private long getTotalTime(ITestResult result) {
+		long time = result.getEndMillis() - result.getStartMillis();
+		return time;
 	}
 }
