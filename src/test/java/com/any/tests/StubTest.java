@@ -8,10 +8,10 @@ import com.mgiorda.testng.AbstractTest;
 
 public class StubTest extends AbstractTest {
 
-	@Value("test.host")
+	@Value("${test.host}")
 	private String host;
 
-	@Test(invocationCount = 3, threadPoolSize = 2)
+	@Test
 	public void test() {
 
 		SampleGooglePage page = new SampleGooglePage();
