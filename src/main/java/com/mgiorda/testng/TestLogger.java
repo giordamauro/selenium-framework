@@ -12,44 +12,44 @@ public class TestLogger implements ITestListener {
 
 	@Override
 	public void onTestStart(ITestResult result) {
-		long threadId = Thread.currentThread().getId();
-		logger.info(String.format("[thread: %s] - Starting test method '%s.%s(..)'", threadId, result.getTestClass().getName(), result.getMethod().getMethodName()));
+
+		logger.info(String.format("Starting test method '%s.%s(..)'", result.getTestClass().getName(), result.getMethod().getMethodName()));
 	}
 
 	@Override
 	public void onTestSuccess(ITestResult result) {
-		long threadId = Thread.currentThread().getId();
-		logger.info(String.format("[thread: %s] - Finished test method '%s.%s(..)' - PASSED", threadId, result.getTestClass().getName(), result.getMethod().getMethodName()));
+
+		logger.info(String.format("Finished test method '%s.%s(..)' - PASSED", result.getTestClass().getName(), result.getMethod().getMethodName()));
 	}
 
 	@Override
 	public void onTestFailure(ITestResult result) {
-		long threadId = Thread.currentThread().getId();
-		logger.warn(String.format("[thread: %s] - Finished test method '%s.%s(..)' - FAILED", threadId, result.getTestClass().getName(), result.getMethod().getMethodName()));
+
+		logger.warn(String.format("Finished test method '%s.%s(..)' - FAILED", result.getTestClass().getName(), result.getMethod().getMethodName()));
 	}
 
 	@Override
 	public void onTestSkipped(ITestResult result) {
-		long threadId = Thread.currentThread().getId();
-		logger.warn(String.format("[thread: %s] - Skipped test method '%s.%s(..)' - SKIPPED", threadId, result.getTestClass().getName(), result.getMethod().getMethodName()));
+
+		logger.warn(String.format("Skipped test method '%s.%s(..)' - SKIPPED", result.getTestClass().getName(), result.getMethod().getMethodName()));
 	}
 
 	@Override
 	public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-		long threadId = Thread.currentThread().getId();
-		logger.warn(String.format("[thread: %s] - Finished test method '%s.%s(..)' - FAILED", threadId, result.getTestClass().getName(), result.getMethod().getMethodName()));
+
+		logger.warn(String.format("Finished test method '%s.%s(..)' - FAILED", result.getTestClass().getName(), result.getMethod().getMethodName()));
 	}
 
 	@Override
 	public void onStart(ITestContext context) {
-		long threadId = Thread.currentThread().getId();
-		logger.info(String.format("[thread: %s] - Initiating test named: '%s'", threadId, context.getName()));
+
+		logger.info(String.format("Initiating test named: '%s'", context.getName()));
 
 	}
 
 	@Override
 	public void onFinish(ITestContext context) {
-		long threadId = Thread.currentThread().getId();
-		logger.info(String.format("[thread: %s] - Finished test named: '%s'", threadId, context.getName()));
+
+		logger.info(String.format("Finished test named: '%s'", context.getName()));
 	}
 }

@@ -11,11 +11,17 @@ public class SuiteLogger implements ISuiteListener {
 
 	@Override
 	public void onStart(ISuite suite) {
+		logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		logger.info(String.format("Starting test suite '%s'", suite.getName()));
 	}
 
 	@Override
 	public void onFinish(ISuite suite) {
+
 		logger.info(String.format("Finished test suite '%s'", suite.getName()));
+
+		String outputDirectory = suite.getOutputDirectory();
+		logger.info(String.format("Logging suite '%s' test results to directory '%s'", suite.getName(), outputDirectory));
+		logger.info(String.format("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"));
 	}
 }
