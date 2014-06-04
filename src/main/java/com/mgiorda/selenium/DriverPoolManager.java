@@ -21,6 +21,11 @@ public class DriverPoolManager {
 	private final List<WebDriver> available = new ArrayList<>();
 
 	public DriverPoolManager(WebDriverFactory driverFactory) {
+
+		if (driverFactory == null) {
+			throw new IllegalArgumentException("WebDriverFactory constructor parameter cannot be null");
+		}
+
 		this.driverFactory = driverFactory;
 	}
 

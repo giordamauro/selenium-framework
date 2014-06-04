@@ -12,13 +12,11 @@ public abstract class AbstractTest extends AbstractTestNGSpringContextTests {
 
 	@BeforeClass
 	public void logBeforeClass() {
-
 		logger.info(String.format("Initiating test Class '%s'", this.getClass().getSimpleName()));
 	}
 
 	@AfterClass
 	public void logAfterClass() {
-
 		logger.info(String.format("Finishing test Class '%s'", this.getClass().getSimpleName()));
 	}
 }

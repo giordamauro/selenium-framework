@@ -93,6 +93,10 @@ public abstract class AbstractPage {
 
 	protected AbstractPage(String url) {
 
+		if (url == null) {
+			throw new IllegalArgumentException("Url constructor parameter cannot be null");
+		}
+
 		this.parentPage = null;
 
 		// Values coming from configuration
@@ -108,6 +112,10 @@ public abstract class AbstractPage {
 	}
 
 	protected AbstractPage(AbstractPage parentPage, String url) {
+
+		if (parentPage == null || url == null) {
+			throw new IllegalArgumentException("ParentPage and url constructor parameters cannot be null");
+		}
 
 		this.parentPage = parentPage;
 

@@ -13,6 +13,10 @@ public class WebDriverFactory {
 	private final Browser browser;
 
 	public WebDriverFactory(Browser browser) {
+		if (browser == null) {
+			throw new IllegalArgumentException("Browser constructor parameter cannot be null");
+		}
+
 		this.browser = browser;
 	}
 

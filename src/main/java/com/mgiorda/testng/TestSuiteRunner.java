@@ -11,6 +11,10 @@ public class TestSuiteRunner implements Runnable {
 
 	public TestSuiteRunner(TestConfiguration testConfig) {
 
+		if (testConfig == null) {
+			throw new IllegalArgumentException("TestConfig constructor parameter cannot be null");
+		}
+
 		this.testConfig = testConfig;
 
 		Thread thread = new Thread(this);
