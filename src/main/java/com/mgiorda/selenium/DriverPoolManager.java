@@ -14,19 +14,22 @@ public class DriverPoolManager {
 
 	private final static Log logger = LogFactory.getLog(DriverPoolManager.class);
 
-	private final WebDriverFactory driverFactory;
+	private final WebDriverHandler driverFactory;
 
 	private final Map<AbstractPage, WebDriver> inUse = new HashMap<>();
 
 	private final List<WebDriver> available = new ArrayList<>();
 
-	public DriverPoolManager(WebDriverFactory driverFactory) {
+	private Browser browser;
 
-		if (driverFactory == null) {
-			throw new IllegalArgumentException("WebDriverFactory constructor parameter cannot be null");
+	public DriverPoolManager(WebDriverHandler driverFactory, Browser browser) {
+
+		if (driverFactory == null || browser == null) {
+			throw new IllegalArgumentException("WebDriverFactory and browser constructor parameters cannot be null");
 		}
 
 		this.driverFactory = driverFactory;
+		this.browser = browser;
 	}
 
 	synchronized <T extends AbstractPage> WebDriver getDriver(T page) {
@@ -37,7 +40,7 @@ public class DriverPoolManager {
 			if (!available.isEmpty()) {
 				driver = available.remove(0);
 			} else {
-				driver = driverFactory.newDriver();
+				driver = driverFactory.getNewDriver(browser);
 				inUse.put(page, driver);
 
 				logger.info(String.format("Assigned driver %s to page %s", driver.toString(), page.getClass().getSimpleName()));
@@ -70,6 +73,14 @@ public class DriverPoolManager {
 		logger.info(String.format("Quitting driver %s", driver.toString()));
 
 		driver.quit();
+	}
+
+	public void setBrowser(Browser browser) {
+
+		if (browser == null) {
+			throw new IllegalArgumentException("Browser constructor parameter cannot be null");
+		}
+		this.browser = browser;
 	}
 
 	void quitAllDrivers() {

@@ -20,25 +20,55 @@
 
 	<context:property-placeholder location="classpath:/tests.properties" />
 
-	<bean id="defaultWebDriverFactory" class="com.mgiorda.selenium.WebDriverFactory">
-		<constructor-arg type="com.mgiorda.selenium.Browser"
-			value="${default.browser}" />
+	<bean id="chromeFactory" class="com.mgiorda.selenium.browser.ChromeFactory">
+		<constructor-arg type="java.util.Map">
+			<util:map>
+				<entry key="WINDOWS" value="classpath:/${chrome.driver.windows}"/>
+				<entry key="UNIX" value="classpath:/${chrome.driver.unix}"/>
+			</util:map>
+		</constructor-arg>
+	</bean>
+
+	<bean id="firefoxFactory" class="com.mgiorda.selenium.browser.FirefoxFactory"/>
+	
+	<bean id="iexplorerFactory" class="com.mgiorda.selenium.browser.InternetExplorerFactory">
+		<constructor-arg type="java.lang.String" value="classpath:/${iexplorer.driver}"/>
+	</bean>
+	
+	<bean id="remoteFactory" class="com.mgiorda.selenium.browser.RemoteDriverFactory">
+		<constructor-arg type="java.lang.String" value="http://${remote.address}:${remote.port}/wd/hub"/>
+		<constructor-arg type="org.openqa.selenium.Capabilities">
+			<bean id="defaultDesiredCapabilities" class="org.openqa.selenium.remote.DesiredCapabilities"/>
+		</constructor-arg>
+	</bean>
+
+	<bean id="webDriverHandler" class="com.mgiorda.selenium.WebDriverHandler">
+		<constructor-arg type="java.util.Map">
+			<util:map>
+				<entry key="CHROME" value-ref="chromeFactory"/>
+				<entry key="FIREFOX" value-ref="firefoxFactory"/>
+				<entry key="INTERNET_EXPLORER" value-ref="iexplorerFactory"/>
+				<entry key="REMOTE" value-ref="remoteFactory"/>
+			</util:map>
+		</constructor-arg>
+		<constructor-arg type="int" value="${default.waitTime}" />
 	</bean>
 
 	<bean id="defaultDriverPoolManager" class="com.mgiorda.selenium.DriverPoolManager">
-		<constructor-arg type="com.mgiorda.selenium.WebDriverFactory"
-			ref="defaultWebDriverFactory" />
+		<constructor-arg type="com.mgiorda.selenium.WebDriverHandler"
+			ref="webDriverHandler" />
+		<constructor-arg type="com.mgiorda.selenium.Browser"
+			value="${default.browser}" />
 	</bean>
-
-	<bean id="defaultTestconfig" class="com.mgiorda.testng.TestConfiguration">
+	
+	<bean id="defaultTestConfiguration" class="com.mgiorda.testng.TestConfiguration">
+		<constructor-arg type="com.mgiorda.selenium.DriverPoolManager" ref="defaultDriverPoolManager"/>
 		<constructor-arg type="int" value="${default.waitTime}" />
-		<constructor-arg type="com.mgiorda.selenium.DriverPoolManager"
-			ref="defaultDriverPoolManager" />
 	</bean>
 
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="staticMethod"  value="com.mgiorda.testng.PerThreadTestConfig.setDefaultConfiguration" />
-		<property name="arguments" ref="defaultTestconfig" />
+		<property name="arguments" ref="defaultTestConfiguration" />
 	</bean>
 
 </beans>
