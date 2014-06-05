@@ -83,7 +83,7 @@ public class DriverPoolManager {
 		this.browser = browser;
 	}
 
-	void quitAllDrivers() {
+	public void quitAllDrivers() {
 
 		for (WebDriver driver : available) {
 

@@ -64,6 +64,7 @@
 	<bean id="defaultTestConfiguration" class="com.mgiorda.testng.TestConfiguration">
 		<constructor-arg type="com.mgiorda.selenium.DriverPoolManager" ref="defaultDriverPoolManager"/>
 		<constructor-arg type="int" value="${default.waitTime}" />
+		<constructor-arg type="com.mgiorda.selenium.DriverPolicy" value="ONE_PER_SUITE"/>
 	</bean>
 
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

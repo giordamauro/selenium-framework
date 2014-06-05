@@ -1,5 +1,6 @@
 package com.mgiorda.testng;
 
+import com.mgiorda.selenium.DriverPolicy;
 import com.mgiorda.selenium.DriverPoolManager;
 
 public class TestConfiguration {
@@ -8,14 +9,17 @@ public class TestConfiguration {
 
 	private final DriverPoolManager driverPoolManager;
 
-	public TestConfiguration(int waitTimeOut, DriverPoolManager driverPoolManager) {
+	private final DriverPolicy driverPolicy;
 
-		if (driverPoolManager == null) {
-			throw new IllegalArgumentException("DriverPoolManager constructor parameter cannot be null");
+	public TestConfiguration(int waitTimeOut, DriverPoolManager driverPoolManager, DriverPolicy driverPolicy) {
+
+		if (driverPoolManager == null || driverPolicy == null) {
+			throw new IllegalArgumentException("DriverPoolManager and driverPolicy constructor parameters cannot be null");
 		}
 
 		this.waitTimeOut = waitTimeOut;
 		this.driverPoolManager = driverPoolManager;
+		this.driverPolicy = driverPolicy;
 	}
 
 	public int getWaitTimeOut() {
@@ -24,5 +28,9 @@ public class TestConfiguration {
 
 	public DriverPoolManager getDriverPoolManager() {
 		return driverPoolManager;
+	}
+
+	public DriverPolicy getDriverPolicy() {
+		return driverPolicy;
 	}
 }

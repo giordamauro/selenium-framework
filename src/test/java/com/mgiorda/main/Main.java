@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.mgiorda.selenium.Browser;
 import com.mgiorda.selenium.BrowserFactory;
+import com.mgiorda.selenium.DriverPolicy;
 import com.mgiorda.selenium.DriverPoolManager;
 import com.mgiorda.selenium.WebDriverHandler;
 import com.mgiorda.testng.TestConfiguration;
@@ -18,7 +19,7 @@ public class Main {
 		Map<Browser, BrowserFactory> browserFactories = new HashMap<>();
 		WebDriverHandler driverFactory = new WebDriverHandler(browserFactories, waitTimeOut);
 		DriverPoolManager driverPoolManager = new DriverPoolManager(driverFactory, Browser.CHROME);
-		TestConfiguration testConfig = new TestConfiguration(waitTimeOut, driverPoolManager);
+		TestConfiguration testConfig = new TestConfiguration(waitTimeOut, driverPoolManager, DriverPolicy.ONE_PER_SUITE);
 
 		new TestSuiteRunner(testConfig);
 	}
