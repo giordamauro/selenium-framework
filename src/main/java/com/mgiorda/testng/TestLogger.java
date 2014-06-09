@@ -7,8 +7,6 @@ import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
-import com.mgiorda.selenium.DriverPolicyManager;
-
 public class TestLogger implements ITestListener {
 
 	private static final Log logger = LogFactory.getLog(TestLogger.class);
@@ -20,7 +18,7 @@ public class TestLogger implements ITestListener {
 
 		ISuite suite = result.getTestContext().getSuite();
 		SuiteConfigManager.registerTestThread(suite);
-		DriverPolicyManager.registerTestThread(result);
+		TestPoolManager.registerTestThread(result);
 	}
 
 	@Override
@@ -28,7 +26,7 @@ public class TestLogger implements ITestListener {
 
 		logger.info(String.format("Finished test method '%s.%s(..)' - PASSED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(), getTotalTime(result)));
 
-		DriverPolicyManager.quitTestDrivers(result);
+		// DriverPolicyManager.quitTestDrivers(result);
 	}
 
 	@Override
@@ -36,7 +34,7 @@ public class TestLogger implements ITestListener {
 
 		logger.warn(String.format("Finished test method '%s.%s(..)' - FAILED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(), getTotalTime(result)));
 
-		DriverPolicyManager.quitTestDrivers(result);
+		// DriverPolicyManager.quitTestDrivers(result);
 	}
 
 	@Override
@@ -44,7 +42,7 @@ public class TestLogger implements ITestListener {
 
 		logger.warn(String.format("Skipped test method '%s.%s(..)' - SKIPPED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(), getTotalTime(result)));
 
-		DriverPolicyManager.quitTestDrivers(result);
+		// DriverPolicyManager.quitTestDrivers(result);
 	}
 
 	@Override
@@ -52,7 +50,7 @@ public class TestLogger implements ITestListener {
 
 		logger.warn(String.format("Finished test method '%s.%s(..)' - FAILED", result.getTestClass().getName(), result.getMethod().getMethodName()));
 
-		DriverPolicyManager.quitTestDrivers(result);
+		// DriverPolicyManager.quitTestDrivers(result);
 	}
 
 	@Override

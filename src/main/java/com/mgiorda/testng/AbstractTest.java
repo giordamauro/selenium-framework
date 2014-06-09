@@ -6,8 +6,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 
-import com.mgiorda.selenium.DriverPolicyManager;
-
 @Listeners({ SuiteLogger.class, TestLogger.class })
 @ContextConfiguration(locations = { "classpath:/testsContext.xml" })
 public abstract class AbstractTest extends AbstractTestNGSpringContextTests {
@@ -20,7 +18,7 @@ public abstract class AbstractTest extends AbstractTestNGSpringContextTests {
 	@AfterClass
 	public void logAfterClass() {
 
-		DriverPolicyManager.quitClassDrivers(this.getClass());
+		// TODO: release class pages
 
 		logger.info(String.format("Finishing test Class '%s'", this.getClass().getSimpleName()));
 	}

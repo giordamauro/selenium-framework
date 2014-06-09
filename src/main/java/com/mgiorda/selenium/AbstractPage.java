@@ -103,7 +103,7 @@ public abstract class AbstractPage {
 		TestConfiguration testConfig = SuiteConfigManager.getTestConfiguration();
 
 		this.waitTimeOut = testConfig.getWaitTimeOut() * 1000;
-		this.driverPoolManager = DriverPolicyManager.getDriverPoolManager(testConfig);
+		this.driverPoolManager = DriverPoolManager.getDriverManager();
 
 		this.driver = driverPoolManager.getDriver(this);
 
