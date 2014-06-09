@@ -22,12 +22,13 @@ public final class DriverPolicyManager {
 
 	}
 
-	public static void registerTestThread(ITestResult test) {
+	public synchronized static void registerTestThread(ITestResult test) {
+
 		Thread thread = Thread.currentThread();
 		threadTests.put(thread, test);
 	}
 
-	static DriverPoolManager getDriverPoolManager(TestConfiguration testConfig) {
+	synchronized static DriverPoolManager getDriverPoolManager(TestConfiguration testConfig) {
 
 		DriverPoolManager driverManager = null;
 
