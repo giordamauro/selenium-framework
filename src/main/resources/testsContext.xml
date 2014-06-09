@@ -54,21 +54,15 @@
 		<constructor-arg type="int" value="${default.waitTime}" />
 	</bean>
 
-	<bean id="defaultDriverPoolManager" class="com.mgiorda.selenium.DriverPoolManager">
-		<constructor-arg type="com.mgiorda.selenium.WebDriverHandler"
-			ref="webDriverHandler" />
-		<constructor-arg type="com.mgiorda.selenium.Browser"
-			value="${default.browser}" />
-	</bean>
-	
 	<bean id="defaultTestConfiguration" class="com.mgiorda.testng.TestConfiguration">
-		<constructor-arg type="com.mgiorda.selenium.DriverPoolManager" ref="defaultDriverPoolManager"/>
-		<constructor-arg type="int" value="${default.waitTime}" />
-		<constructor-arg type="com.mgiorda.selenium.DriverPolicy" value="ONE_PER_SUITE"/>
+		<constructor-arg type="com.mgiorda.selenium.WebDriverHandler" ref="webDriverHandler"/>
+		<property name="waitTimeOut" value="${default.waitTime}" />
+		<property name="driverPolicy" value="${default.driverPolicy}"/>
+		<property name="browser" value="${default.browser}"/>
 	</bean>
 
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod"  value="com.mgiorda.testng.PerThreadTestConfig.setDefaultConfiguration" />
+		<property name="staticMethod"  value="com.mgiorda.testng.SuiteConfigManager.setDefaultConfiguration" />
 		<property name="arguments" ref="defaultTestConfiguration" />
 	</bean>
 

@@ -1,36 +1,54 @@
 package com.mgiorda.testng;
 
+import com.mgiorda.selenium.Browser;
 import com.mgiorda.selenium.DriverPolicy;
-import com.mgiorda.selenium.DriverPoolManager;
+import com.mgiorda.selenium.WebDriverHandler;
 
 public class TestConfiguration {
 
-	private final int waitTimeOut;
+	private final WebDriverHandler driverHandler;
 
-	private final DriverPoolManager driverPoolManager;
+	private int waitTimeOut;
 
-	private final DriverPolicy driverPolicy;
+	private Browser browser;
 
-	public TestConfiguration(int waitTimeOut, DriverPoolManager driverPoolManager, DriverPolicy driverPolicy) {
+	private DriverPolicy driverPolicy;
 
-		if (driverPoolManager == null || driverPolicy == null) {
-			throw new IllegalArgumentException("DriverPoolManager and driverPolicy constructor parameters cannot be null");
+	public TestConfiguration(WebDriverHandler driverHandler) {
+
+		if (driverHandler == null) {
+			throw new IllegalArgumentException("DriverHandler constructor parameter cannot be null");
 		}
 
-		this.waitTimeOut = waitTimeOut;
-		this.driverPoolManager = driverPoolManager;
-		this.driverPolicy = driverPolicy;
+		this.driverHandler = driverHandler;
 	}
 
 	public int getWaitTimeOut() {
 		return waitTimeOut;
 	}
 
-	public DriverPoolManager getDriverPoolManager() {
-		return driverPoolManager;
-	}
-
 	public DriverPolicy getDriverPolicy() {
 		return driverPolicy;
 	}
+
+	public Browser getBrowser() {
+		return browser;
+	}
+
+	public void setBrowser(Browser browser) {
+		this.browser = browser;
+	}
+
+	public WebDriverHandler getDriverHandler() {
+		return driverHandler;
+	}
+
+	public void setWaitTimeOut(int waitTimeOut) {
+		this.waitTimeOut = waitTimeOut;
+	}
+
+	public void setDriverPolicy(DriverPolicy driverPolicy) {
+		this.driverPolicy = driverPolicy;
+	}
+
 }

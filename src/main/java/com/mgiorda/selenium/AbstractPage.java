@@ -16,7 +16,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Predicate;
-import com.mgiorda.testng.PerThreadTestConfig;
+import com.mgiorda.testng.SuiteConfigManager;
 import com.mgiorda.testng.TestConfiguration;
 
 public abstract class AbstractPage {
@@ -99,11 +99,11 @@ public abstract class AbstractPage {
 
 		this.parentPage = null;
 
-		// Values coming from configuration
-		TestConfiguration testConfig = PerThreadTestConfig.getConfiguration();
+		// Values coming from suite configuration
+		TestConfiguration testConfig = SuiteConfigManager.getTestConfiguration();
 
 		this.waitTimeOut = testConfig.getWaitTimeOut() * 1000;
-		this.driverPoolManager = testConfig.getDriverPoolManager();
+		this.driverPoolManager = DriverPolicyManager.getDriverPoolManager(testConfig);
 
 		this.driver = driverPoolManager.getDriver(this);
 

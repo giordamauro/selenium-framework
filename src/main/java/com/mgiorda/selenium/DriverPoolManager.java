@@ -47,6 +47,9 @@ public class DriverPoolManager {
 			}
 		}
 
+		driver.manage().deleteAllCookies();
+		driver.manage().window().maximize();
+
 		return driver;
 	}
 
@@ -83,15 +86,15 @@ public class DriverPoolManager {
 		this.browser = browser;
 	}
 
-	public void quitAllDrivers() {
+	public synchronized void quitAllDrivers() {
 
 		for (WebDriver driver : available) {
 
 			logger.info(String.format("Quitting available driver %s", driver.toString()));
 
-			available.remove(driver);
 			driver.quit();
 		}
+		available.clear();
 
 		for (Entry<AbstractPage, WebDriver> driverEntry : inUse.entrySet()) {
 
@@ -100,8 +103,8 @@ public class DriverPoolManager {
 
 			logger.warn(String.format("Quitting driver %s assigned to page %s", driver.toString(), page.getClass().getSimpleName()));
 
-			inUse.remove(page);
 			driver.quit();
 		}
+		inUse.clear();
 	}
 }

@@ -24,7 +24,7 @@ public class TestSuiteRunner implements Runnable {
 	@Override
 	public void run() {
 
-		PerThreadTestConfig.setConfiguration(testConfig);
+		SuiteConfigManager.setDefaultConfiguration(testConfig);
 
 		TestNG testng = new TestNG();
 

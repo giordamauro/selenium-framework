@@ -34,8 +34,6 @@ public class WebDriverHandler {
 		logger.info(String.format("Openning %s driver", browser));
 		WebDriver driver = factory.newDriver();
 
-		driver.manage().deleteAllCookies();
-		driver.manage().window().maximize();
 		driver.manage().timeouts().pageLoadTimeout(timeOutSeconds, TimeUnit.SECONDS);
 		driver.manage().timeouts().setScriptTimeout(timeOutSeconds, TimeUnit.SECONDS);
 

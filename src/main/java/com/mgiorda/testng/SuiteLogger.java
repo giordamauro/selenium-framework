@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 
-import com.mgiorda.selenium.DriverPoolManager;
+import com.mgiorda.selenium.DriverPolicyManager;
 
 public class SuiteLogger implements ISuiteListener {
 
@@ -22,9 +22,7 @@ public class SuiteLogger implements ISuiteListener {
 
 		logger.info(String.format("Finished test suite '%s'", suite.getName()));
 
-		TestConfiguration configuration = PerThreadTestConfig.getConfiguration();
-		DriverPoolManager driverPoolManager = configuration.getDriverPoolManager();
-		driverPoolManager.quitAllDrivers();
+		DriverPolicyManager.quitSuiteDrivers(suite);
 
 		String outputDirectory = suite.getOutputDirectory();
 		logger.info(String.format("Logging '%s' suite test results to directory '%s'", suite.getName(), outputDirectory));
