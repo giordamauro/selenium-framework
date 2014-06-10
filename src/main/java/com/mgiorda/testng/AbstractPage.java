@@ -10,13 +10,17 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.google.common.base.Predicate;
+import com.mgiorda.selenium.Browser;
+import com.mgiorda.selenium.WebDriverFactory;
 
 public abstract class AbstractPage {
 
@@ -86,12 +90,16 @@ public abstract class AbstractPage {
 	}
 
 	@Autowired
-	private TestConfiguration testConfig;
+	private WebDriverFactory driverHandler;
+
+	@Value("${test.waitTimeOut}")
+	private int waitTimeOut;
+
+	@Value("${test.browser}")
+	private Browser browser;
 
 	private final WebDriver driver;
 	private final AbstractPage parentPage;
-
-	private final long waitTimeOut;
 
 	protected AbstractPage(String url) {
 
@@ -103,9 +111,7 @@ public abstract class AbstractPage {
 		AbstractTest test = TestPoolManager.getCurrentTest();
 		test.initPageContext(this);
 
-		this.waitTimeOut = testConfig.getWaitTimeOut() * 1000;
-
-		this.driver = testConfig.getDriverHandler().getNewDriver(testConfig.getBrowser());
+		this.driver = driverHandler.getNewDriver(browser);
 
 		goToUrl(url);
 		AnnotationsSupport.initFindBy(this);
@@ -125,6 +131,11 @@ public abstract class AbstractPage {
 
 	}
 
+	void onTestFinish() {
+
+		this.quit();
+	}
+
 	public void quit() {
 		if (parentPage != null) {
 			parentPage.quit();
@@ -135,11 +146,34 @@ public abstract class AbstractPage {
 		}
 	}
 
+	protected boolean existsElement(By elementLocator) {
+
+		boolean exists = true;
+
+		try {
+
+			long start = new Date().getTime();
+
+			new WebDriverWait(driver, waitTimeOutMillis()).until(ExpectedConditions.presenceOfElementLocated(elementLocator));
+
+			long end = new Date().getTime();
+			long waitTime = end - start;
+
+			logger.info(String.format("Found '%s' existent page element '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), elementLocator, waitTime));
+
+		} catch (TimeoutException e) {
+			exists = false;
+		}
+
+		return exists;
+
+	}
+
 	protected PageElement getElement(By elementLocator) {
 
 		long start = new Date().getTime();
 
-		WebElement element = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(elementLocator));
+		WebElement element = new WebDriverWait(driver, waitTimeOutMillis()).until(ExpectedConditions.presenceOfElementLocated(elementLocator));
 
 		PageElement pageElement = new PageElement(element);
 
@@ -155,7 +189,7 @@ public abstract class AbstractPage {
 
 		long start = new Date().getTime();
 
-		List<WebElement> elements = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfAllElementsLocatedBy(elementLocator));
+		List<WebElement> elements = new WebDriverWait(driver, waitTimeOutMillis()).until(ExpectedConditions.presenceOfAllElementsLocatedBy(elementLocator));
 
 		List<PageElement> pageElements = new ArrayList<>();
 
@@ -183,11 +217,6 @@ public abstract class AbstractPage {
 		return null;
 	}
 
-	void onTestFinish() {
-
-		this.quit();
-	}
-
 	private void goToUrl(String url) {
 
 		driver.navigate().to(url);
@@ -200,7 +229,7 @@ public abstract class AbstractPage {
 
 		long start = new Date().getTime();
 
-		new WebDriverWait(driver, waitTimeOut).until(new Predicate<WebDriver>() {
+		new WebDriverWait(driver, waitTimeOutMillis()).until(new Predicate<WebDriver>() {
 
 			@Override
 			public boolean apply(WebDriver driver) {
@@ -221,6 +250,10 @@ public abstract class AbstractPage {
 		long waitTime = end - start;
 
 		return waitTime;
+	}
+
+	private long waitTimeOutMillis() {
+		return waitTimeOut * 1000;
 	}
 
 }

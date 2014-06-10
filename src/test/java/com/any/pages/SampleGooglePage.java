@@ -20,5 +20,4 @@ public class SampleGooglePage extends AbstractPage {
 	public SubPageStub goToSubPage() {
 		return new SubPageStub(this);
 	}
-
 }

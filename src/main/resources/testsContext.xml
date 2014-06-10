@@ -51,13 +51,7 @@
 				<entry key="REMOTE" value-ref="remoteFactory"/>
 			</util:map>
 		</constructor-arg>
-		<constructor-arg type="int" value="${default.waitTime}" />
-	</bean>
-
-	<bean id="defaultTestConfiguration" class="com.mgiorda.testng.TestConfiguration">
-		<constructor-arg type="com.mgiorda.selenium.WebDriverFactory" ref="webDriverFactory"/>
-		<property name="waitTimeOut" value="${default.waitTime}" />
-		<property name="browser" value="${default.browser}"/>
+		<constructor-arg type="int" value="${test.waitTimeOut}" />
 	</bean>
 
 </beans>

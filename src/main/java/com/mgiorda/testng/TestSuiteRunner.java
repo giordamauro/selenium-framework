@@ -7,15 +7,7 @@ import com.any.tests.StubTest;
 
 public class TestSuiteRunner implements Runnable {
 
-	private final TestConfiguration testConfig;
-
-	public TestSuiteRunner(TestConfiguration testConfig) {
-
-		if (testConfig == null) {
-			throw new IllegalArgumentException("TestConfig constructor parameter cannot be null");
-		}
-
-		this.testConfig = testConfig;
+	public TestSuiteRunner() {
 
 		Thread thread = new Thread(this);
 		thread.start();
