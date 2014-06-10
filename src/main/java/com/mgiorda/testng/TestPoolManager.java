@@ -1,6 +1,8 @@
 package com.mgiorda.testng;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.testng.ISuite;
@@ -9,12 +11,13 @@ import org.testng.ITestResult;
 final class TestPoolManager {
 
 	private static final Map<Thread, ITestResult> threadTests = new HashMap<>();
+	private static final Map<ITestResult, List<AbstractPage>> testPages = new HashMap<>();
 
 	private TestPoolManager() {
 
 	}
 
-	public static void registerTest(ITestResult test) {
+	public synchronized static void registerTest(ITestResult test) {
 
 		Object testInstance = test.getInstance();
 		if (!AbstractTest.class.isAssignableFrom(testInstance.getClass())) {
@@ -24,6 +27,29 @@ final class TestPoolManager {
 
 		Thread thread = Thread.currentThread();
 		threadTests.put(thread, test);
+	}
+
+	public synchronized static void registerPage(AbstractPage page) {
+
+		ITestResult test = getCurrentTestResult();
+
+		List<AbstractPage> pages = testPages.get(test);
+		if (pages == null) {
+			pages = new ArrayList<>();
+			testPages.put(test, pages);
+		}
+
+		pages.add(page);
+	}
+
+	public static void finishPages(ITestResult test) {
+
+		List<AbstractPage> pages = testPages.get(test);
+		if (pages != null) {
+			for (AbstractPage page : pages) {
+				page.onTestFinish();
+			}
+		}
 	}
 
 	public static AbstractTest getCurrentTest() {

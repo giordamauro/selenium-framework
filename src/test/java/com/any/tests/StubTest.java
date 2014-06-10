@@ -17,6 +17,8 @@ public class StubTest extends AbstractTest {
 		SampleGooglePage page = new SampleGooglePage();
 
 		page.search(host);
+
+		// page.quit();
 	}
 
 }

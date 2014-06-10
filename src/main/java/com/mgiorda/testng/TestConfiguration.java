@@ -1,17 +1,17 @@
 package com.mgiorda.testng;
 
 import com.mgiorda.selenium.Browser;
-import com.mgiorda.selenium.WebDriverHandler;
+import com.mgiorda.selenium.WebDriverFactory;
 
 public class TestConfiguration {
 
-	private final WebDriverHandler driverHandler;
+	private final WebDriverFactory driverHandler;
 
 	private int waitTimeOut;
 
 	private Browser browser;
 
-	public TestConfiguration(WebDriverHandler driverHandler) {
+	public TestConfiguration(WebDriverFactory driverHandler) {
 
 		if (driverHandler == null) {
 			throw new IllegalArgumentException("DriverHandler constructor parameter cannot be null");
@@ -32,7 +32,7 @@ public class TestConfiguration {
 		this.browser = browser;
 	}
 
-	public WebDriverHandler getDriverHandler() {
+	public WebDriverFactory getDriverHandler() {
 		return driverHandler;
 	}
 

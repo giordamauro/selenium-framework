@@ -42,7 +42,7 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="webDriverHandler" class="com.mgiorda.selenium.WebDriverHandler">
+	<bean id="webDriverFactory" class="com.mgiorda.selenium.WebDriverFactory">
 		<constructor-arg type="java.util.Map">
 			<util:map>
 				<entry key="CHROME" value-ref="chromeFactory"/>
@@ -55,7 +55,7 @@
 	</bean>
 
 	<bean id="defaultTestConfiguration" class="com.mgiorda.testng.TestConfiguration">
-		<constructor-arg type="com.mgiorda.selenium.WebDriverHandler" ref="webDriverHandler"/>
+		<constructor-arg type="com.mgiorda.selenium.WebDriverFactory" ref="webDriverFactory"/>
 		<property name="waitTimeOut" value="${default.waitTime}" />
 		<property name="browser" value="${default.browser}"/>
 	</bean>
