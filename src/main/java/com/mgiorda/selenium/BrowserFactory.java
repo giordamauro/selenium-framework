@@ -1,4 +1,4 @@
-package com.mgiorda.testng;
+package com.mgiorda.selenium;
 
 import org.openqa.selenium.WebDriver;
 

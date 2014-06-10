@@ -1,4 +1,4 @@
-package com.mgiorda.testng;
+package com.mgiorda.selenium;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;

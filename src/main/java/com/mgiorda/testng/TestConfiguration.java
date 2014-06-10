@@ -1,5 +1,7 @@
 package com.mgiorda.testng;
 
+import com.mgiorda.selenium.Browser;
+import com.mgiorda.selenium.WebDriverHandler;
 
 public class TestConfiguration {
 
@@ -8,8 +10,6 @@ public class TestConfiguration {
 	private int waitTimeOut;
 
 	private Browser browser;
-
-	private DriverPolicy driverPolicy;
 
 	public TestConfiguration(WebDriverHandler driverHandler) {
 
@@ -22,10 +22,6 @@ public class TestConfiguration {
 
 	public int getWaitTimeOut() {
 		return waitTimeOut;
-	}
-
-	public DriverPolicy getDriverPolicy() {
-		return driverPolicy;
 	}
 
 	public Browser getBrowser() {
@@ -43,9 +39,4 @@ public class TestConfiguration {
 	public void setWaitTimeOut(int waitTimeOut) {
 		this.waitTimeOut = waitTimeOut;
 	}
-
-	public void setDriverPolicy(DriverPolicy driverPolicy) {
-		this.driverPolicy = driverPolicy;
-	}
-
 }

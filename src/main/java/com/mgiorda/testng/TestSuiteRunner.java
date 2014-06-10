@@ -24,8 +24,6 @@ public class TestSuiteRunner implements Runnable {
 	@Override
 	public void run() {
 
-		SuiteConfigManager.setDefaultConfiguration(testConfig);
-
 		TestNG testng = new TestNG();
 
 		// XmlSuite suite = new XmlSuite();

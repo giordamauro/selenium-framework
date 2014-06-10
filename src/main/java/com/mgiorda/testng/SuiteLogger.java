@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 
-class SuiteLogger implements ISuiteListener {
+public class SuiteLogger implements ISuiteListener {
 
 	private static final Log logger = LogFactory.getLog(SuiteLogger.class);
 
@@ -19,8 +19,6 @@ class SuiteLogger implements ISuiteListener {
 	public void onFinish(ISuite suite) {
 
 		logger.info(String.format("Finished test suite '%s'", suite.getName()));
-
-		DriverPolicyManager.quitSuiteDrivers(suite);
 
 		String outputDirectory = suite.getOutputDirectory();
 		logger.info(String.format("Logging '%s' suite test results to directory '%s'", suite.getName(), outputDirectory));

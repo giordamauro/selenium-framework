@@ -1,4 +1,4 @@
-package com.mgiorda.testng;
+package com.mgiorda.selenium;
 
 public enum Browser {
 

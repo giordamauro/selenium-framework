@@ -1,8 +1,9 @@
 package com.mgiorda.testng;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.AfterClass;
@@ -13,8 +14,7 @@ import org.testng.annotations.Listeners;
 @ContextConfiguration(locations = { "classpath:/testsContext.xml" })
 public abstract class AbstractTest extends AbstractTestNGSpringContextTests {
 
-	@Autowired
-	private TestConfiguration testConfig;
+	private final List<AbstractPage> pages = new ArrayList<AbstractPage>();
 
 	@BeforeClass
 	public void logBeforeClass() {
@@ -23,17 +23,20 @@ public abstract class AbstractTest extends AbstractTestNGSpringContextTests {
 
 	<T extends AbstractPage> void initPageContext(T page) {
 
-		@SuppressWarnings("resource")
-		AutowireCapableBeanFactory beanFactory = new GenericApplicationContext().getAutowireCapableBeanFactory();
+		AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
 		beanFactory.autowireBeanProperties(page, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
 		beanFactory.initializeBean(page, page.getClass().getName());
+
+		pages.add(page);
 	}
 
 	@AfterClass
 	public void logAfterClass() {
 
-		DriverPolicyManager.quitClassDrivers(this.getClass());
-
 		logger.info(String.format("Finishing test Class '%s'", this.getClass().getSimpleName()));
+
+		for (AbstractPage page : pages) {
+			page.onTestFinish();
+		}
 	}
 }

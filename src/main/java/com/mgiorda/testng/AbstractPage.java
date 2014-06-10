@@ -90,7 +90,7 @@ public abstract class AbstractPage {
 
 	private final WebDriver driver;
 	private final AbstractPage parentPage;
-	private final DriverPoolManager driverPoolManager;
+
 	private final long waitTimeOut;
 
 	protected AbstractPage(String url) {
@@ -101,13 +101,11 @@ public abstract class AbstractPage {
 
 		this.parentPage = null;
 		AbstractTest test = TestPoolManager.getCurrentTest();
-
-		TestConfiguration testConfig = test.getTestConfiguration();
+		test.initPageContext(this);
 
 		this.waitTimeOut = testConfig.getWaitTimeOut() * 1000;
-		this.driverPoolManager = DriverPolicyManager.getDriverPoolManager(testConfig);
 
-		this.driver = driverPoolManager.getDriver(this);
+		this.driver = testConfig.getDriverHandler().getNewDriver(testConfig.getBrowser());
 
 		goToUrl(url);
 		AnnotationsSupport.initFindBy(this);
@@ -123,7 +121,6 @@ public abstract class AbstractPage {
 
 		// means not opening a new browser
 		this.driver = parentPage.driver;
-		this.driverPoolManager = null;
 		this.waitTimeOut = parentPage.waitTimeOut;
 
 	}
@@ -132,16 +129,10 @@ public abstract class AbstractPage {
 		if (parentPage != null) {
 			parentPage.quit();
 		} else {
-			driverPoolManager.quitDriver(this);
+			if (!driver.toString().contains("(null)")) {
+				driver.quit();
+			}
 		}
-	}
-
-	private void goToUrl(String url) {
-
-		driver.navigate().to(url);
-		long loadTime = waitForPageToLoad();
-
-		logger.info(String.format("Navigated form page '%s' to url '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), url, loadTime));
 	}
 
 	protected PageElement getElement(By elementLocator) {
@@ -190,6 +181,19 @@ public abstract class AbstractPage {
 	protected List<PageElement> getSubElements(PageElement pageElement, By elementLocator) {
 		// TODO
 		return null;
+	}
+
+	void onTestFinish() {
+
+		this.quit();
+	}
+
+	private void goToUrl(String url) {
+
+		driver.navigate().to(url);
+		long loadTime = waitForPageToLoad();
+
+		logger.info(String.format("Navigated form page '%s' to url '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), url, loadTime));
 	}
 
 	private long waitForPageToLoad() {

@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
-import com.mgiorda.testng.BrowserFactory;
+import com.mgiorda.selenium.BrowserFactory;
 
 public class ChromeFactory implements BrowserFactory {
 

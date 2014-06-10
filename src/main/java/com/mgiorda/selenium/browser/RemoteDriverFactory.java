@@ -7,7 +7,7 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import com.mgiorda.testng.BrowserFactory;
+import com.mgiorda.selenium.BrowserFactory;
 
 public class RemoteDriverFactory implements BrowserFactory {
 

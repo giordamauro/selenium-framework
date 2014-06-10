@@ -17,7 +17,7 @@ final class TestPoolManager {
 	public static void registerTest(ITestResult test) {
 
 		Object testInstance = test.getInstance();
-		if (!testInstance.getClass().isAssignableFrom(AbstractTest.class)) {
+		if (!AbstractTest.class.isAssignableFrom(testInstance.getClass())) {
 
 			throw new IllegalStateException("Cannot register non AbstractTest class - " + testInstance.getClass());
 		}
