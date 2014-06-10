@@ -4,7 +4,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.mgiorda.selenium.BrowserFactory;
+import com.mgiorda.testng.BrowserFactory;
 
 public class FirefoxFactory implements BrowserFactory {
 

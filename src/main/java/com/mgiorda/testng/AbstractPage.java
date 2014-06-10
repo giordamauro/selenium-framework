@@ -1,4 +1,4 @@
-package com.mgiorda.selenium;
+package com.mgiorda.testng;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,10 +14,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Predicate;
-import com.mgiorda.testng.SuiteConfigManager;
-import com.mgiorda.testng.TestConfiguration;
 
 public abstract class AbstractPage {
 
@@ -86,6 +85,9 @@ public abstract class AbstractPage {
 		}
 	}
 
+	@Autowired
+	private TestConfiguration testConfig;
+
 	private final WebDriver driver;
 	private final AbstractPage parentPage;
 	private final DriverPoolManager driverPoolManager;
@@ -98,9 +100,9 @@ public abstract class AbstractPage {
 		}
 
 		this.parentPage = null;
+		AbstractTest test = TestPoolManager.getCurrentTest();
 
-		// Values coming from suite configuration
-		TestConfiguration testConfig = SuiteConfigManager.getTestConfiguration();
+		TestConfiguration testConfig = test.getTestConfiguration();
 
 		this.waitTimeOut = testConfig.getWaitTimeOut() * 1000;
 		this.driverPoolManager = DriverPolicyManager.getDriverPoolManager(testConfig);
@@ -124,14 +126,6 @@ public abstract class AbstractPage {
 		this.driverPoolManager = null;
 		this.waitTimeOut = parentPage.waitTimeOut;
 
-	}
-
-	protected void releaseBrowser() {
-		if (parentPage != null) {
-			parentPage.releaseBrowser();
-		} else {
-			driverPoolManager.releaseDriver(this);
-		}
 	}
 
 	public void quit() {

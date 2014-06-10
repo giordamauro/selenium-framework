@@ -1,6 +1,6 @@
 package com.any.pages;
 
-import com.mgiorda.selenium.AbstractPage;
+import com.mgiorda.testng.AbstractPage;
 
 public class SubPageStub extends AbstractPage {
 

@@ -1,12 +1,10 @@
-package com.mgiorda.selenium;
+package com.mgiorda.testng;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.testng.ISuite;
 import org.testng.ITestResult;
-
-import com.mgiorda.testng.TestConfiguration;
 
 public final class DriverPolicyManager {
 

@@ -2,7 +2,7 @@ package com.any.pages;
 
 import org.openqa.selenium.support.FindBy;
 
-import com.mgiorda.selenium.AbstractPage;
+import com.mgiorda.testng.AbstractPage;
 
 public class SampleGooglePage extends AbstractPage {
 

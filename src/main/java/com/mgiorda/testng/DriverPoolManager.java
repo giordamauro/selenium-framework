@@ -1,4 +1,4 @@
-package com.mgiorda.selenium;
+package com.mgiorda.testng;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,11 +41,12 @@ public class DriverPoolManager {
 				driver = available.remove(0);
 			} else {
 				driver = driverFactory.getNewDriver(browser);
-				inUse.put(page, driver);
-
-				logger.info(String.format("Assigned driver %s to page %s", driver.toString(), page.getClass().getSimpleName()));
 			}
 		}
+		inUse.put(page, driver);
+
+		logger.info(String.format("Assigned driver %s to page %s", driver.toString(), page.getClass().getSimpleName()));
+		TestPoolManager.registerTestPage(page);
 
 		driver.manage().deleteAllCookies();
 		driver.manage().window().maximize();

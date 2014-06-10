@@ -1,8 +1,5 @@
 package com.mgiorda.testng;
 
-import com.mgiorda.selenium.Browser;
-import com.mgiorda.selenium.DriverPolicy;
-import com.mgiorda.selenium.WebDriverHandler;
 
 public class TestConfiguration {
 

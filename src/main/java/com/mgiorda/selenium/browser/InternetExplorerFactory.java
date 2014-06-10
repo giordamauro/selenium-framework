@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
-import com.mgiorda.selenium.BrowserFactory;
+import com.mgiorda.testng.BrowserFactory;
 
 public class InternetExplorerFactory implements BrowserFactory {
 

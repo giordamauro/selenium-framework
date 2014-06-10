@@ -5,9 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 
-import com.mgiorda.selenium.DriverPolicyManager;
-
-public class SuiteLogger implements ISuiteListener {
+class SuiteLogger implements ISuiteListener {
 
 	private static final Log logger = LogFactory.getLog(SuiteLogger.class);
 

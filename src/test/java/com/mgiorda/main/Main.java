@@ -3,12 +3,12 @@ package com.mgiorda.main;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mgiorda.selenium.Browser;
-import com.mgiorda.selenium.BrowserFactory;
-import com.mgiorda.selenium.DriverPolicy;
-import com.mgiorda.selenium.WebDriverHandler;
+import com.mgiorda.testng.Browser;
+import com.mgiorda.testng.BrowserFactory;
+import com.mgiorda.testng.DriverPolicy;
 import com.mgiorda.testng.TestConfiguration;
 import com.mgiorda.testng.TestSuiteRunner;
+import com.mgiorda.testng.WebDriverHandler;
 
 public class Main {
 
