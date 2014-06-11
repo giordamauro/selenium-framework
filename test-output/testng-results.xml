@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="3" passed="3">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="20833" started-at="2014-06-11T20:54:39Z" finished-at="2014-06-11T20:55:00Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="20833" started-at="2014-06-11T20:54:39Z" finished-at="2014-06-11T20:55:00Z">
+      <class name="com.any.tests.StubTest">
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="6" started-at="2014-06-11T17:54:39Z" finished-at="2014-06-11T17:54:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestClass -->
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="691" started-at="2014-06-11T17:54:39Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2014-06-11T17:54:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextPrepareTestInstance -->
+        <test-method status="PASS" signature="logBeforeClass()[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="logBeforeClass" is-config="true" duration-ms="2" started-at="2014-06-11T17:54:39Z" finished-at="2014-06-11T17:54:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- logBeforeClass -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2014-06-11T17:54:39Z" finished-at="2014-06-11T17:54:39Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void com.any.tests.StubTest.test()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2014-06-11T17:54:39Z" finished-at="2014-06-11T17:54:39Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void com.any.tests.StubTest.test()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="test()[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="test" duration-ms="10094" started-at="2014-06-11T17:54:39Z" finished-at="2014-06-11T17:54:50Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test -->
+        <test-method status="PASS" signature="test()[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="test" duration-ms="9147" started-at="2014-06-11T17:54:39Z" finished-at="2014-06-11T17:54:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="2" started-at="2014-06-11T17:54:50Z" finished-at="2014-06-11T17:54:50Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void com.any.tests.StubTest.test()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2014-06-11T17:54:50Z" finished-at="2014-06-11T17:54:50Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void com.any.tests.StubTest.test()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="test()[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="test" duration-ms="8360" started-at="2014-06-11T17:54:50Z" finished-at="2014-06-11T17:54:58Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2014-06-11T17:54:51Z" finished-at="2014-06-11T17:54:51Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void com.any.tests.StubTest.test()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2014-06-11T17:55:00Z" finished-at="2014-06-11T17:55:00Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void com.any.tests.StubTest.test()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="logAfterClass()[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="logAfterClass" is-config="true" duration-ms="1" started-at="2014-06-11T17:55:00Z" finished-at="2014-06-11T17:55:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- logAfterClass -->
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:com.any.tests.StubTest@2c8c0e89]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2014-06-11T17:55:00Z" finished-at="2014-06-11T17:55:00Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestClass -->
+      </class> <!-- com.any.tests.StubTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
