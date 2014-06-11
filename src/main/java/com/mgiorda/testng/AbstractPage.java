@@ -24,11 +24,11 @@ import com.mgiorda.selenium.WebDriverFactory;
 
 public abstract class AbstractPage {
 
-	private static final Log logger = LogFactory.getLog(AbstractPage.class);
-
 	// DO NOT change visibility to public - Is protected to prevent use of
 	// WebElements directly in tests
 	protected static class PageElement {
+
+		private static final Log logger = LogFactory.getLog(PageElement.class);
 
 		private final WebElement element;
 
@@ -45,6 +45,13 @@ public abstract class AbstractPage {
 		}
 
 		public void sendKeys(CharSequence... keysToSend) {
+
+			String keys = "";
+			for (CharSequence seq : keysToSend) {
+				keys += seq.toString();
+			}
+			logger.info(String.format("PageElement(%s) - Sent keys '%s'", this.hashCode(), keys));
+
 			element.sendKeys(keysToSend);
 		}
 
@@ -88,6 +95,10 @@ public abstract class AbstractPage {
 			return element.getCssValue(propertyName);
 		}
 	}
+
+	private static final Log staticLogger = LogFactory.getLog(AbstractPage.class);
+
+	protected final Log logger = LogFactory.getLog(this.getClass());
 
 	@Autowired
 	private WebDriverFactory driverHandler;
@@ -159,7 +170,7 @@ public abstract class AbstractPage {
 			long end = new Date().getTime();
 			long waitTime = end - start;
 
-			logger.info(String.format("Found '%s' existent page element '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), elementLocator, waitTime));
+			staticLogger.info(String.format("Found '%s' existent page element '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), elementLocator, waitTime));
 
 		} catch (TimeoutException e) {
 			exists = false;
@@ -180,7 +191,7 @@ public abstract class AbstractPage {
 		long end = new Date().getTime();
 		long waitTime = end - start;
 
-		logger.info(String.format("Found '%s' page element '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), elementLocator, waitTime));
+		staticLogger.info(String.format("Found '%s' page element '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), elementLocator, waitTime));
 
 		return pageElement;
 	}
@@ -202,7 +213,7 @@ public abstract class AbstractPage {
 		long end = new Date().getTime();
 		long waitTime = end - start;
 
-		logger.info(String.format("Found '%s' page elements '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), elementLocator, waitTime));
+		staticLogger.info(String.format("Found '%s' page elements '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), elementLocator, waitTime));
 
 		return pageElements;
 	}
@@ -222,7 +233,7 @@ public abstract class AbstractPage {
 		driver.navigate().to(url);
 		long loadTime = waitForPageToLoad();
 
-		logger.info(String.format("Navigated form page '%s' to url '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), url, loadTime));
+		staticLogger.info(String.format("Navigated form page '%s' to url '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), url, loadTime));
 	}
 
 	private long waitForPageToLoad() {
