@@ -23,17 +23,17 @@
 	<bean id="chromeFactory" class="com.mgiorda.selenium.browser.ChromeFactory">
 		<constructor-arg type="java.util.Map">
 			<util:map>
-				<entry key="WINDOWS" value="classpath:/${chrome.driver.windows}"/>
-				<entry key="UNIX" value="classpath:/${chrome.driver.unix}"/>
+				<entry key="WINDOWS" value="${chrome.driver.windows}"/>
+				<entry key="UNIX" value="${chrome.driver.unix}"/>
 			</util:map>
 		</constructor-arg>
 	</bean>
 
 	<bean id="firefoxFactory" class="com.mgiorda.selenium.browser.FirefoxFactory"/>
 	
-	<bean id="iexplorerFactory" class="com.mgiorda.selenium.browser.InternetExplorerFactory">
-		<constructor-arg type="java.lang.String" value="classpath:/${iexplorer.driver}"/>
-	</bean>
+<!-- 	<bean id="iexplorerFactory" class="com.mgiorda.selenium.browser.InternetExplorerFactory"> -->
+<!-- 		<constructor-arg type="java.lang.String" value="classpath:/${iexplorer.driver}"/> -->
+<!-- 	</bean> -->
 	
 <!-- 	<bean id="remoteFactory" class="com.mgiorda.selenium.browser.RemoteDriverFactory"> -->
 <!-- 		<constructor-arg type="java.lang.String" value="http://${remote.address}:${remote.port}/wd/hub"/> -->
@@ -47,7 +47,7 @@
 			<util:map>
 				<entry key="CHROME" value-ref="chromeFactory"/>
 				<entry key="FIREFOX" value-ref="firefoxFactory"/>
-				<entry key="INTERNET_EXPLORER" value-ref="iexplorerFactory"/>
+<!-- 				<entry key="INTERNET_EXPLORER" value-ref="iexplorerFactory"/> -->
 <!-- 				<entry key="REMOTE" value-ref="remoteFactory"/> -->
 			</util:map>
 		</constructor-arg>

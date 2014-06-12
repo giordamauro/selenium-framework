@@ -3,8 +3,6 @@ package com.mgiorda.testng;
 import org.testng.TestListenerAdapter;
 import org.testng.TestNG;
 
-import com.any.tests.StubTest;
-
 public class TestSuiteRunner implements Runnable {
 
 	public TestSuiteRunner() {
@@ -29,7 +27,7 @@ public class TestSuiteRunner implements Runnable {
 
 		// testng.setXmlSuites(Collections.singletonList(suite));
 
-		testng.setTestClasses(new Class[] { StubTest.class });
+		// testng.setTestClasses(new Class[] { StubTest.class });
 
 		TestListenerAdapter listenerAdapter = new TestListenerAdapter();
 		testng.addListener(listenerAdapter);

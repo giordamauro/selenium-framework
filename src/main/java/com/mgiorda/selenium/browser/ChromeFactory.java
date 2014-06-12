@@ -1,7 +1,9 @@
 package com.mgiorda.selenium.browser;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.openqa.selenium.WebDriver;
@@ -28,17 +30,36 @@ public class ChromeFactory implements BrowserFactory {
 			throw new IllegalStateException(String.format("Couldn't found chromeDriverProperty for current OperativeSystem: %s", currentOS));
 		}
 
-		@SuppressWarnings("resource")
-		ApplicationContext appContext = new ClassPathXmlApplicationContext();
-		Resource resource = appContext.getResource(driverProperty);
+		File chromeFile = new File(driverProperty);
+		if (!chromeFile.exists()) {
 
-		try {
-			File resourceFile = resource.getFile();
-			System.setProperty("webdriver.chrome.driver", resourceFile.getAbsolutePath());
+			@SuppressWarnings("resource")
+			ApplicationContext appContext = new ClassPathXmlApplicationContext();
+			Resource resource = appContext.getResource("classpath:" + driverProperty);
 
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
+			try {
+
+				chromeFile.getParentFile().mkdirs();
+				chromeFile.createNewFile();
+				InputStream inputStream = resource.getInputStream();
+
+				FileOutputStream outputStream = new FileOutputStream(chromeFile);
+
+				int read = 0;
+				byte[] bytes = new byte[1024];
+
+				while ((read = inputStream.read(bytes)) != -1) {
+					outputStream.write(bytes, 0, read);
+				}
+
+				outputStream.close();
+
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
 		}
+
+		System.setProperty("webdriver.chrome.driver", chromeFile.getAbsolutePath());
 	}
 
 	@Override
