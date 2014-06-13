@@ -18,7 +18,7 @@
 
 	<context:annotation-config />
 
-	<context:property-placeholder location="classpath:/tests.properties" ignore-unresolvable="true"/>
+	<context:property-placeholder location="classpath:/context/test-context.properties" ignore-unresolvable="true"/>
 
 	<bean id="chromeFactory" class="com.mgiorda.selenium.browser.ChromeFactory">
 		<constructor-arg type="java.util.Map">

@@ -8,10 +8,8 @@ import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.core.io.Resource;
 
+import com.mgiorda.commons.ClasspathUtil;
 import com.mgiorda.selenium.BrowserFactory;
 
 public class InternetExplorerFactory implements BrowserFactory {
@@ -20,17 +18,8 @@ public class InternetExplorerFactory implements BrowserFactory {
 
 	public InternetExplorerFactory(String driverProperty) {
 
-		@SuppressWarnings("resource")
-		ApplicationContext appContext = new ClassPathXmlApplicationContext();
-		Resource resource = appContext.getResource(driverProperty);
-
-		try {
-			File resourceFile = resource.getFile();
-			System.setProperty("webdriver.ie.driver", resourceFile.getAbsolutePath());
-
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
+		File resourceFile = ClasspathUtil.getClasspathFile(driverProperty);
+		System.setProperty("webdriver.ie.driver", resourceFile.getAbsolutePath());
 	}
 
 	@Override

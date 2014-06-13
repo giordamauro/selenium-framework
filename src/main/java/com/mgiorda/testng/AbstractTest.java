@@ -16,7 +16,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 
 @Listeners({ SuiteLogger.class, TestLogger.class })
-@ContextConfiguration("classpath:/testsContext.xml")
+@ContextConfiguration("classpath:/context/test-context.xml")
 public abstract class AbstractTest extends AbstractTestNGSpringContextTests {
 
 	@BeforeClass
