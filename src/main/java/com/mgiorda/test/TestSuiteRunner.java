@@ -1,36 +1,38 @@
 package com.mgiorda.test;
 
-import org.testng.TestListenerAdapter;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.testng.TestNG;
+import org.testng.xml.Parser;
+import org.testng.xml.XmlSuite;
 
 public class TestSuiteRunner implements Runnable {
 
-	public TestSuiteRunner() {
+	private final SuiteConfiguration suiteConfiguration;
 
-		Thread thread = new Thread(this);
-		thread.start();
+	public TestSuiteRunner(SuiteConfiguration suiteConfiguration) {
+		this.suiteConfiguration = suiteConfiguration;
 	}
 
 	@Override
 	public void run() {
 
+		String suiteXml = suiteConfiguration.getSuiteXml();
+
 		TestNG testng = new TestNG();
+		Collection<XmlSuite> suite;
+		try {
+			suite = new Parser(suiteXml).parse();
+		} catch (Exception e) {
+			throw new IllegalStateException(String.format("Exception reading suite file '%s'", suiteXml));
+		}
+		testng.setXmlSuites(new ArrayList<XmlSuite>(suite));
 
-		// XmlSuite suite = new XmlSuite();
-		// suite.setName("TmpSuite");
-
-		// XmlTest test = new XmlTest(suite);
-		// test.setName("TmpTest");
-		// List<XmlClass> classes = new ArrayList<XmlClass>();
-		// classes.add(new XmlClass("test.failures.Child"));
-		// test.setXmlClasses(classes);
-
-		// testng.setXmlSuites(Collections.singletonList(suite));
-
-		// testng.setTestClasses(new Class[] { StubTest.class });
-
-		TestListenerAdapter listenerAdapter = new TestListenerAdapter();
-		testng.addListener(listenerAdapter);
+		String outputDirectory = suiteConfiguration.getOutputDirectory();
+		if (outputDirectory != null) {
+			testng.setOutputDirectory(outputDirectory);
+		}
 
 		testng.run();
 	}

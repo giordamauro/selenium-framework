@@ -61,9 +61,7 @@ public final class SpringUtil {
 		beanFactory.initializeBean(bean, bean.getClass().getName());
 	}
 
-	public static void addPropeties(ApplicationContext applicationContext, String propertySource) {
-
-		ConfigurableEnvironment env = (ConfigurableEnvironment) applicationContext.getEnvironment();
+	public static void addPropetiesFile(ApplicationContext applicationContext, String propertySource) {
 
 		Properties properties = new Properties();
 
@@ -71,12 +69,19 @@ public final class SpringUtil {
 			Resource resource = applicationContext.getResource("classpath:/" + propertySource);
 			properties.load(resource.getInputStream());
 
-			MutablePropertySources sources = env.getPropertySources();
-			sources.addLast(new PropertiesPropertySource("test-property-" + sources.size(), properties));
+			addProperties(applicationContext, properties);
 
 		} catch (IOException e) {
 			throw new IllegalStateException("Exception reading PropertySource test annotation", e);
 		}
+	}
+
+	public static void addProperties(ApplicationContext applicationContext, Properties properties) {
+
+		ConfigurableEnvironment env = (ConfigurableEnvironment) applicationContext.getEnvironment();
+		MutablePropertySources sources = env.getPropertySources();
+		sources.addLast(new PropertiesPropertySource("test-property-" + sources.size(), properties));
+
 	}
 
 }
