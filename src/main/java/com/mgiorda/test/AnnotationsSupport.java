@@ -4,9 +4,9 @@ import java.lang.reflect.Field;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
 
+import com.mgiorda.test.AbstractPage.Locator;
 import com.mgiorda.test.AbstractPage.PageElement;
 
 class AnnotationsSupport {
@@ -27,7 +27,7 @@ class AnnotationsSupport {
 			FindBy annotation = field.getAnnotation(FindBy.class);
 			if (annotation != null && field.getType().isAssignableFrom(PageElement.class)) {
 
-				By elementLocator = getByFromAnnotation(annotation);
+				Locator elementLocator = getByFromAnnotation(annotation);
 				if (elementLocator == null) {
 					throw new IllegalStateException(String.format("Couldn't find an element locator for field '%s' in page class '%s'", field.getName(), pageClass.getSimpleName()));
 				}
@@ -37,9 +37,9 @@ class AnnotationsSupport {
 		}
 	}
 
-	private static By getByFromAnnotation(FindBy annotation) {
+	private static Locator getByFromAnnotation(FindBy annotation) {
 
-		By elementLocator = null;
+		Locator elementLocator = null;
 
 		String id = annotation.id();
 		String name = annotation.name();
@@ -51,27 +51,27 @@ class AnnotationsSupport {
 		String xpath = annotation.xpath();
 
 		if (!id.equals("")) {
-			elementLocator = By.id(id);
+			elementLocator = Locator.byId(id);
 		} else if (!name.equals("")) {
-			elementLocator = By.name(name);
+			elementLocator = Locator.byName(name);
 		} else if (!css.equals("")) {
-			elementLocator = By.cssSelector(css);
+			elementLocator = Locator.byCssSelector(css);
 		} else if (!className.equals("")) {
-			elementLocator = By.className(className);
+			elementLocator = Locator.byClassName(className);
 		} else if (!tagName.equals("")) {
-			elementLocator = By.tagName(tagName);
+			elementLocator = Locator.byTagName(tagName);
 		} else if (!linkText.equals("")) {
-			elementLocator = By.linkText(linkText);
+			elementLocator = Locator.byLinkText(linkText);
 		} else if (!partialLinkText.equals("")) {
-			elementLocator = By.partialLinkText(partialLinkText);
+			elementLocator = Locator.byPartialLinkText(partialLinkText);
 		} else if (!xpath.equals("")) {
-			elementLocator = By.xpath(xpath);
+			elementLocator = Locator.byXpath(xpath);
 		}
 
 		return elementLocator;
 	}
 
-	private static <T extends AbstractPage> void setFieldBy(T page, Field field, By elementLocator) {
+	private static <T extends AbstractPage> void setFieldBy(T page, Field field, Locator elementLocator) {
 
 		PageElement element = page.getElement(elementLocator);
 

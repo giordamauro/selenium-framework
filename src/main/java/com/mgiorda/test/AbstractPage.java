@@ -96,6 +96,47 @@ public abstract class AbstractPage {
 		}
 	}
 
+	protected static final class Locator {
+
+		private final By by;
+
+		private Locator(By by) {
+			this.by = by;
+		}
+
+		public static Locator byId(String id) {
+			return new Locator(By.id(id));
+		}
+
+		public static Locator byLinkText(String linkText) {
+			return new Locator(By.linkText(linkText));
+		}
+
+		public static Locator byPartialLinkText(String partialLinkText) {
+			return new Locator(By.partialLinkText(partialLinkText));
+		}
+
+		public static Locator byName(String name) {
+			return new Locator(By.name(name));
+		}
+
+		public static Locator byTagName(String tagName) {
+			return new Locator(By.tagName(tagName));
+		}
+
+		public static Locator byXpath(String xpath) {
+			return new Locator(By.xpath(xpath));
+		}
+
+		public static Locator byClassName(String className) {
+			return new Locator(By.className(className));
+		}
+
+		public static Locator byCssSelector(String id) {
+			return new Locator(By.id(id));
+		}
+	}
+
 	private static final Log staticLogger = LogFactory.getLog(AbstractPage.class);
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
@@ -157,7 +198,7 @@ public abstract class AbstractPage {
 		}
 	}
 
-	protected boolean existsElement(By elementLocator) {
+	protected boolean existsElement(Locator elementLocator) {
 
 		boolean exists = true;
 
@@ -165,7 +206,7 @@ public abstract class AbstractPage {
 
 			long start = new Date().getTime();
 
-			new WebDriverWait(driver, waitTimeOutMillis()).until(ExpectedConditions.presenceOfElementLocated(elementLocator));
+			new WebDriverWait(driver, waitTimeOutMillis()).until(ExpectedConditions.presenceOfElementLocated(elementLocator.by));
 
 			long end = new Date().getTime();
 			long waitTime = end - start;
@@ -180,11 +221,11 @@ public abstract class AbstractPage {
 
 	}
 
-	protected PageElement getElement(By elementLocator) {
+	protected PageElement getElement(Locator elementLocator) {
 
 		long start = new Date().getTime();
 
-		WebElement element = new WebDriverWait(driver, waitTimeOutMillis()).until(ExpectedConditions.presenceOfElementLocated(elementLocator));
+		WebElement element = new WebDriverWait(driver, waitTimeOutMillis()).until(ExpectedConditions.presenceOfElementLocated(elementLocator.by));
 
 		PageElement pageElement = new PageElement(element);
 
@@ -196,11 +237,11 @@ public abstract class AbstractPage {
 		return pageElement;
 	}
 
-	protected List<PageElement> getElements(By elementLocator) {
+	protected List<PageElement> getElements(Locator elementLocator) {
 
 		long start = new Date().getTime();
 
-		List<WebElement> elements = new WebDriverWait(driver, waitTimeOutMillis()).until(ExpectedConditions.presenceOfAllElementsLocatedBy(elementLocator));
+		List<WebElement> elements = new WebDriverWait(driver, waitTimeOutMillis()).until(ExpectedConditions.presenceOfAllElementsLocatedBy(elementLocator.by));
 
 		List<PageElement> pageElements = new ArrayList<>();
 
@@ -218,12 +259,12 @@ public abstract class AbstractPage {
 		return pageElements;
 	}
 
-	protected PageElement getSubElement(PageElement pageElement, By elementLocator) {
+	protected PageElement getSubElement(PageElement pageElement, Locator elementLocator) {
 		// TODO
 		return null;
 	}
 
-	protected List<PageElement> getSubElements(PageElement pageElement, By elementLocator) {
+	protected List<PageElement> getSubElements(PageElement pageElement, Locator elementLocator) {
 		// TODO
 		return null;
 	}
