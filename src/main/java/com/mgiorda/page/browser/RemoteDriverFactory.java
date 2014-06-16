@@ -1,4 +1,4 @@
-package com.mgiorda.selenium.browser;
+package com.mgiorda.page.browser;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -7,7 +7,7 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import com.mgiorda.selenium.BrowserFactory;
+import com.mgiorda.page.BrowserFactory;
 
 public class RemoteDriverFactory implements BrowserFactory {
 

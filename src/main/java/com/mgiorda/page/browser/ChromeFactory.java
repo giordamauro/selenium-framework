@@ -1,4 +1,4 @@
-package com.mgiorda.selenium.browser;
+package com.mgiorda.page.browser;
 
 import java.io.File;
 import java.util.Map;
@@ -7,8 +7,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.mgiorda.commons.ClasspathUtil;
-import com.mgiorda.selenium.BrowserFactory;
+import com.mgiorda.commons.SpringUtil;
+import com.mgiorda.page.BrowserFactory;
 
 public class ChromeFactory implements BrowserFactory {
 
@@ -25,7 +25,7 @@ public class ChromeFactory implements BrowserFactory {
 			throw new IllegalStateException(String.format("Couldn't found chromeDriverProperty for current OperativeSystem: %s", currentOS));
 		}
 
-		File chromeFile = ClasspathUtil.getClasspathFile(driverProperty);
+		File chromeFile = SpringUtil.getClasspathFile(driverProperty);
 
 		System.setProperty("webdriver.chrome.driver", chromeFile.getAbsolutePath());
 	}

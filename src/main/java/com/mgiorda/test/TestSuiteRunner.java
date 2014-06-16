@@ -1,4 +1,4 @@
-package com.mgiorda.testng;
+package com.mgiorda.test;
 
 import org.testng.TestListenerAdapter;
 import org.testng.TestNG;

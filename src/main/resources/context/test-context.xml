@@ -20,7 +20,7 @@
 
 	<context:property-placeholder location="classpath:/context/test-context.properties" ignore-unresolvable="true"/>
 
-	<bean id="chromeFactory" class="com.mgiorda.selenium.browser.ChromeFactory">
+	<bean id="chromeFactory" class="com.mgiorda.page.browser.ChromeFactory">
 		<constructor-arg type="java.util.Map">
 			<util:map>
 				<entry key="WINDOWS" value="${chrome.driver.windows}"/>
@@ -29,20 +29,20 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="firefoxFactory" class="com.mgiorda.selenium.browser.FirefoxFactory"/>
+	<bean id="firefoxFactory" class="com.mgiorda.page.browser.FirefoxFactory"/>
 	
-<!-- 	<bean id="iexplorerFactory" class="com.mgiorda.selenium.browser.InternetExplorerFactory"> -->
+<!-- 	<bean id="iexplorerFactory" class="com.mgiorda.page.browser.InternetExplorerFactory"> -->
 <!-- 		<constructor-arg type="java.lang.String" value="classpath:/${iexplorer.driver}"/> -->
 <!-- 	</bean> -->
 	
-<!-- 	<bean id="remoteFactory" class="com.mgiorda.selenium.browser.RemoteDriverFactory"> -->
+<!-- 	<bean id="remoteFactory" class="com.mgiorda.page.browser.RemoteDriverFactory"> -->
 <!-- 		<constructor-arg type="java.lang.String" value="http://${remote.address}:${remote.port}/wd/hub"/> -->
 <!-- 		<constructor-arg type="org.openqa.selenium.Capabilities"> -->
 <!-- 			<bean id="defaultDesiredCapabilities" class="org.openqa.selenium.remote.DesiredCapabilities"/> -->
 <!-- 		</constructor-arg> -->
 <!-- 	</bean> -->
 
-	<bean id="webDriverFactory" class="com.mgiorda.selenium.WebDriverFactory">
+	<bean id="webDriverFactory" class="com.mgiorda.page.WebDriverFactory">
 		<constructor-arg type="java.util.Map">
 			<util:map>
 				<entry key="CHROME" value-ref="chromeFactory"/>

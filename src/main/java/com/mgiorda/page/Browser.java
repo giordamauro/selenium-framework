@@ -1,4 +1,4 @@
-package com.mgiorda.selenium;
+package com.mgiorda.page;
 
 public enum Browser {
 

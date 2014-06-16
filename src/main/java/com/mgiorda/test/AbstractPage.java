@@ -1,4 +1,4 @@
-package com.mgiorda.testng;
+package com.mgiorda.test;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,8 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.google.common.base.Predicate;
-import com.mgiorda.selenium.Browser;
-import com.mgiorda.selenium.WebDriverFactory;
+import com.mgiorda.page.Browser;
+import com.mgiorda.page.WebDriverFactory;
 
 public abstract class AbstractPage {
 

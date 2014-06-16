@@ -1,4 +1,4 @@
-package com.mgiorda.testng;
+package com.mgiorda.test;
 
 import java.lang.reflect.Field;
 
@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
 
-import com.mgiorda.testng.AbstractPage.PageElement;
+import com.mgiorda.test.AbstractPage.PageElement;
 
 class AnnotationsSupport {
 

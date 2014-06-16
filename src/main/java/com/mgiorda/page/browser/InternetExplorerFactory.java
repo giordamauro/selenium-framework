@@ -1,4 +1,4 @@
-package com.mgiorda.selenium.browser;
+package com.mgiorda.page.browser;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,8 +9,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.mgiorda.commons.ClasspathUtil;
-import com.mgiorda.selenium.BrowserFactory;
+import com.mgiorda.commons.SpringUtil;
+import com.mgiorda.page.BrowserFactory;
 
 public class InternetExplorerFactory implements BrowserFactory {
 
@@ -18,7 +18,7 @@ public class InternetExplorerFactory implements BrowserFactory {
 
 	public InternetExplorerFactory(String driverProperty) {
 
-		File resourceFile = ClasspathUtil.getClasspathFile(driverProperty);
+		File resourceFile = SpringUtil.getClasspathFile(driverProperty);
 		System.setProperty("webdriver.ie.driver", resourceFile.getAbsolutePath());
 	}
 

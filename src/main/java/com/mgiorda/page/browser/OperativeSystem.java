@@ -1,4 +1,4 @@
-package com.mgiorda.selenium.browser;
+package com.mgiorda.page.browser;
 
 public enum OperativeSystem {
 

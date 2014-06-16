@@ -1,4 +1,4 @@
-package com.mgiorda.testng;
+package com.mgiorda.test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
