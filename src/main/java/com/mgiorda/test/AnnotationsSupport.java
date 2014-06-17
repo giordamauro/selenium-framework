@@ -1,4 +1,4 @@
-package com.mgiorda.pagetest;
+package com.mgiorda.test;
 
 import java.lang.reflect.Field;
 
@@ -6,8 +6,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.mgiorda.page.LocateBy;
-import com.mgiorda.pagetest.AbstractPage.Locator;
-import com.mgiorda.pagetest.AbstractPage.PageElement;
+import com.mgiorda.test.AbstractPage.Locator;
+import com.mgiorda.test.AbstractPage.PageElement;
 
 class AnnotationsSupport {
 

@@ -1,4 +1,4 @@
-package com.mgiorda.pagetest;
+package com.mgiorda.test;
 
 import java.util.ArrayList;
 import java.util.Date;

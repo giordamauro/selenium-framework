@@ -5,11 +5,9 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.mgiorda.pagetest.TestSuiteRun;
+public class TestPoolRunner {
 
-public class TestNGPoolRunner {
-
-	private static final Log logger = LogFactory.getLog(TestNGPoolRunner.class);
+	private static final Log logger = LogFactory.getLog(TestPoolRunner.class);
 
 	private static final UncaughtExceptionHandler exceptionLogger = new UncaughtExceptionHandler() {
 
@@ -19,7 +17,7 @@ public class TestNGPoolRunner {
 		}
 	};
 
-	public TestNGPoolRunner(TestSuiteRun... suites) {
+	public TestPoolRunner(TestSuiteRun... suites) {
 
 		for (TestSuiteRun suite : suites) {
 			newTestThread(suite);
@@ -39,8 +37,7 @@ public class TestNGPoolRunner {
 		Thread thread = new Thread(runnable);
 		thread.setUncaughtExceptionHandler(exceptionLogger);
 
-		SuiteConfiguration configuration = suite.getConfiguration();
-		logger.info(String.format("Starting TestNG run thread %s - Suite '%s'", thread.getId(), configuration.getSuiteXml()));
+		logger.info(String.format("Starting TestNG run thread %s - Suite '%s'", thread.getId(), suite.getSuiteXml()));
 
 		thread.start();
 

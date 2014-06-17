@@ -1,4 +1,4 @@
-package com.mgiorda.pagetest;
+package com.mgiorda.test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,23 +8,41 @@ import org.testng.TestNG;
 import org.testng.xml.Parser;
 import org.testng.xml.XmlSuite;
 
-import com.mgiorda.test.SuiteConfiguration;
-
 public class TestSuiteRun {
 
-	private final SuiteConfiguration suiteConfiguration;
+	private final String suiteXml;
 
-	public TestSuiteRun(SuiteConfiguration suiteConfiguration) {
-		this.suiteConfiguration = suiteConfiguration;
+	private String outputDirectory = null;
+
+	// private String[] locations;
+
+	private Properties properties;
+
+	public TestSuiteRun(String suiteXml) {
+		this.suiteXml = suiteXml;
 	}
 
-	public SuiteConfiguration getConfiguration() {
-		return suiteConfiguration;
+	public String getOutputDirectory() {
+		return outputDirectory;
 	}
 
-	public void runSuite() {
+	public void setOutputDirectory(String outputDirectory) {
+		this.outputDirectory = outputDirectory;
+	}
 
-		String suiteXml = suiteConfiguration.getSuiteXml();
+	public String getSuiteXml() {
+		return suiteXml;
+	}
+
+	public Properties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+
+	void runSuite() {
 
 		TestNG testng = new TestNG();
 		Collection<XmlSuite> suites;
@@ -35,16 +53,15 @@ public class TestSuiteRun {
 		}
 		testng.setXmlSuites(new ArrayList<XmlSuite>(suites));
 
-		Properties properties = suiteConfiguration.getProperties();
 		if (properties != null) {
 			TestPoolManager.registerSuiteProperties(properties);
 		}
 
-		String outputDirectory = suiteConfiguration.getOutputDirectory();
 		if (outputDirectory != null) {
 			testng.setOutputDirectory(outputDirectory);
 		}
 
 		testng.run();
 	}
+
 }

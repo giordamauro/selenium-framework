@@ -1,4 +1,4 @@
-package com.mgiorda.pagetest;
+package com.mgiorda.test;
 
 import java.util.Properties;
 
@@ -10,7 +10,6 @@ import org.testng.annotations.Listeners;
 
 import com.mgiorda.commons.SpringUtil;
 import com.mgiorda.page.PageProperties;
-import com.mgiorda.test.TestProperties;
 
 @Listeners({ SuiteLogger.class, TestLogger.class })
 @ContextConfiguration("classpath:/context/test-context.xml")

@@ -1,4 +1,4 @@
-package com.mgiorda.pagetest;
+package com.mgiorda.test;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
