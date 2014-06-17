@@ -4,8 +4,8 @@ import java.lang.reflect.Field;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openqa.selenium.support.FindBy;
 
+import com.mgiorda.page.LocatorBy;
 import com.mgiorda.pagetest.AbstractPage.Locator;
 import com.mgiorda.pagetest.AbstractPage.PageElement;
 
@@ -24,7 +24,7 @@ class AnnotationsSupport {
 		Field[] declaredFields = pageClass.getDeclaredFields();
 		for (Field field : declaredFields) {
 
-			FindBy annotation = field.getAnnotation(FindBy.class);
+			LocatorBy annotation = field.getAnnotation(LocatorBy.class);
 			if (annotation != null && field.getType().isAssignableFrom(PageElement.class)) {
 
 				Locator elementLocator = getByFromAnnotation(annotation);
@@ -37,7 +37,7 @@ class AnnotationsSupport {
 		}
 	}
 
-	private static Locator getByFromAnnotation(FindBy annotation) {
+	private static Locator getByFromAnnotation(LocatorBy annotation) {
 
 		Locator elementLocator = null;
 
@@ -57,7 +57,7 @@ class AnnotationsSupport {
 		} else if (!css.equals("")) {
 			elementLocator = Locator.byCssSelector(css);
 		} else if (!className.equals("")) {
-			elementLocator = Locator.byClassName(className);
+			elementLocator = Locator.byClass(className);
 		} else if (!tagName.equals("")) {
 			elementLocator = Locator.byTagName(tagName);
 		} else if (!linkText.equals("")) {

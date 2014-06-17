@@ -7,7 +7,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 
 import com.mgiorda.commons.SpringUtil;
-import com.mgiorda.test.PageProperties;
+import com.mgiorda.page.PageProperties;
 import com.mgiorda.test.SuiteLogger;
 import com.mgiorda.test.TestProperties;
 

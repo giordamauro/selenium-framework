@@ -1,4 +1,4 @@
-package com.mgiorda.test;
+package com.mgiorda.page;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

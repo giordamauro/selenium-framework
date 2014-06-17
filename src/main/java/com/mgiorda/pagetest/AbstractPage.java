@@ -104,6 +104,10 @@ public abstract class AbstractPage {
 			this.by = by;
 		}
 
+		public String toString() {
+			return by.toString();
+		}
+
 		public static Locator byId(String id) {
 			return new Locator(By.id(id));
 		}
@@ -128,7 +132,7 @@ public abstract class AbstractPage {
 			return new Locator(By.xpath(xpath));
 		}
 
-		public static Locator byClassName(String className) {
+		public static Locator byClass(String className) {
 			return new Locator(By.className(className));
 		}
 
