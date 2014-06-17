@@ -24,7 +24,7 @@ import com.mgiorda.page.WebDriverFactory;
 
 public abstract class AbstractPage {
 
-	protected static class PageElement {
+	protected static final class PageElement {
 
 		private static final Log logger = LogFactory.getLog(PageElement.class);
 

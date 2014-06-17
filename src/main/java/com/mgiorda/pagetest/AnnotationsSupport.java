@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.mgiorda.page.LocatorBy;
+import com.mgiorda.page.LocateBy;
 import com.mgiorda.pagetest.AbstractPage.Locator;
 import com.mgiorda.pagetest.AbstractPage.PageElement;
 
@@ -24,7 +24,7 @@ class AnnotationsSupport {
 		Field[] declaredFields = pageClass.getDeclaredFields();
 		for (Field field : declaredFields) {
 
-			LocatorBy annotation = field.getAnnotation(LocatorBy.class);
+			LocateBy annotation = field.getAnnotation(LocateBy.class);
 			if (annotation != null && field.getType().isAssignableFrom(PageElement.class)) {
 
 				Locator elementLocator = getByFromAnnotation(annotation);
@@ -37,7 +37,7 @@ class AnnotationsSupport {
 		}
 	}
 
-	private static Locator getByFromAnnotation(LocatorBy annotation) {
+	private static Locator getByFromAnnotation(LocateBy annotation) {
 
 		Locator elementLocator = null;
 

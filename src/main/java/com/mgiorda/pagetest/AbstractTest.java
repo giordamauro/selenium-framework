@@ -1,5 +1,7 @@
 package com.mgiorda.pagetest;
 
+import java.util.Properties;
+
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.AfterClass;
@@ -8,7 +10,6 @@ import org.testng.annotations.Listeners;
 
 import com.mgiorda.commons.SpringUtil;
 import com.mgiorda.page.PageProperties;
-import com.mgiorda.test.SuiteLogger;
 import com.mgiorda.test.TestProperties;
 
 @Listeners({ SuiteLogger.class, TestLogger.class })
@@ -50,6 +51,11 @@ public abstract class AbstractTest extends AbstractTestNGSpringContextTests {
 			for (String propertySource : values) {
 				SpringUtil.addPropetiesFile(applicationContext, propertySource);
 			}
+		}
+
+		Properties properties = TestPoolManager.getSuiteProperties();
+		if (properties != null) {
+			SpringUtil.addProperties(applicationContext, properties);
 		}
 
 		SpringUtil.autowireBean(applicationContext, page);

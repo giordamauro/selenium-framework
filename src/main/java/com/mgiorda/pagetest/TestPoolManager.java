@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.testng.ISuite;
 import org.testng.ITestResult;
@@ -12,6 +13,8 @@ final class TestPoolManager {
 
 	private static final Map<Thread, ITestResult> threadTests = new HashMap<>();
 	private static final Map<ITestResult, List<AbstractPage>> testPages = new HashMap<>();
+	private static final Map<Thread, Properties> suiteProperties = new HashMap<>();
+	private static final Map<ISuite, Thread> suiteThreads = new HashMap<>();
 
 	private TestPoolManager() {
 
@@ -42,6 +45,11 @@ final class TestPoolManager {
 		pages.add(page);
 	}
 
+	public synchronized static void registerSuiteProperties(Properties properties) {
+		Thread thread = Thread.currentThread();
+		suiteProperties.put(thread, properties);
+	}
+
 	public static void finishPages(ITestResult test) {
 
 		List<AbstractPage> pages = testPages.get(test);
@@ -68,6 +76,17 @@ final class TestPoolManager {
 		return suite;
 	}
 
+	public static Properties getSuiteProperties() {
+
+		Properties properties = null;
+
+		ISuite suite = getCurrentTestSuite();
+		Thread suiteThread = suiteThreads.get(suite);
+		properties = suiteProperties.get(suiteThread);
+
+		return properties;
+	}
+
 	private static ITestResult getCurrentTestResult() {
 		Thread thread = Thread.currentThread();
 
@@ -77,5 +96,10 @@ final class TestPoolManager {
 		}
 
 		return test;
+	}
+
+	public static void registerSuite(ISuite suite) {
+		Thread thread = Thread.currentThread();
+		suiteThreads.put(suite, thread);
 	}
 }

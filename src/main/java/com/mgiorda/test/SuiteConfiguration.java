@@ -1,30 +1,19 @@
 package com.mgiorda.test;
 
-import com.mgiorda.page.Browser;
+import java.util.Properties;
 
 public class SuiteConfiguration {
 
 	private final String suiteXml;
 
-	private final Browser browser;
-
-	private int wailtTimeOut = 60; // Default value set to 60 seconds.
-
 	private String outputDirectory = null;
 
-	private String[] propertyFiles;
+	// private String[] locations;
 
-	public SuiteConfiguration(String suiteXml, Browser browser) {
+	private Properties properties;
+
+	public SuiteConfiguration(String suiteXml) {
 		this.suiteXml = suiteXml;
-		this.browser = browser;
-	}
-
-	public int getWailtTimeOut() {
-		return wailtTimeOut;
-	}
-
-	public void setWailtTimeOut(int wailtTimeOut) {
-		this.wailtTimeOut = wailtTimeOut;
 	}
 
 	public String getOutputDirectory() {
@@ -35,19 +24,15 @@ public class SuiteConfiguration {
 		this.outputDirectory = outputDirectory;
 	}
 
-	public String[] getPropertyFiles() {
-		return propertyFiles;
-	}
-
-	public void setPropertyFiles(String[] propertyFiles) {
-		this.propertyFiles = propertyFiles;
-	}
-
 	public String getSuiteXml() {
 		return suiteXml;
 	}
 
-	public Browser getBrowser() {
-		return browser;
+	public Properties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Properties properties) {
+		this.properties = properties;
 	}
 }

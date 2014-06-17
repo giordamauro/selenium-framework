@@ -1,4 +1,4 @@
-package com.mgiorda.test;
+package com.mgiorda.pagetest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +13,8 @@ public class SuiteLogger implements ISuiteListener {
 	public void onStart(ISuite suite) {
 		logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		logger.info(String.format("Starting test suite '%s'", suite.getName()));
+
+		TestPoolManager.registerSuite(suite);
 	}
 
 	@Override
