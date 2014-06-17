@@ -24,8 +24,6 @@ import com.mgiorda.page.WebDriverFactory;
 
 public abstract class AbstractPage {
 
-	// DO NOT change visibility to public - Is protected to prevent use of
-	// WebElements directly in tests
 	protected static class PageElement {
 
 		private static final Log logger = LogFactory.getLog(PageElement.class);
@@ -37,10 +35,14 @@ public abstract class AbstractPage {
 		}
 
 		public void click() {
+			logger.info(String.format("PageElement(%s) - Clicking", this.hashCode()));
+
 			element.click();
 		}
 
 		public void submit() {
+			logger.info(String.format("PageElement(%s) - Submitting", this.hashCode()));
+
 			element.submit();
 		}
 
@@ -50,12 +52,14 @@ public abstract class AbstractPage {
 			for (CharSequence seq : keysToSend) {
 				keys += seq.toString();
 			}
-			logger.info(String.format("PageElement(%s) - Sent keys '%s'", this.hashCode(), keys));
+			logger.info(String.format("PageElement(%s) - Sending keys '%s'", this.hashCode(), keys));
 
 			element.sendKeys(keysToSend);
 		}
 
 		public void clear() {
+			logger.info(String.format("PageElement(%s) - Clearing", this.hashCode()));
+
 			element.clear();
 		}
 
