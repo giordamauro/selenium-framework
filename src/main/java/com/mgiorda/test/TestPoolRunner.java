@@ -1,9 +1,19 @@
 package com.mgiorda.test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.testng.TestNG;
+import org.testng.xml.Parser;
+import org.testng.xml.XmlSuite;
+
+import com.mgiorda.commons.SpringUtil;
 
 public class TestPoolRunner {
 
@@ -17,29 +27,60 @@ public class TestPoolRunner {
 		}
 	};
 
-	public TestPoolRunner(TestSuiteRun... suites) {
+	private final SuiteTestRun[] suites;
 
-		for (TestSuiteRun suite : suites) {
-			newTestThread(suite);
+	public TestPoolRunner(SuiteTestRun... suites) {
+		this.suites = suites;
+	}
+
+	public void run() {
+
+		for (SuiteTestRun suite : suites) {
+
+			Runnable runnable = getRunnableForSuite(suite);
+
+			Thread thread = new Thread(runnable);
+			thread.setUncaughtExceptionHandler(exceptionLogger);
+
+			logger.info(String.format("Starting TestNG run thread %s - Suite '%s'", thread.getId(), suite.getFile()));
+
+			thread.start();
 		}
 	}
 
-	private void newTestThread(final TestSuiteRun suite) {
+	private Runnable getRunnableForSuite(final SuiteTestRun suite) {
 
-		Runnable runnable = new Runnable() {
+		return new Runnable() {
 
 			@Override
 			public void run() {
-				suite.runSuite();
+
+				String suiteXml = suite.getFile();
+				if (suiteXml == null) {
+					throw new IllegalStateException("Property 'file' in SuiteTestRun cannot be null - Suite " + suite.hashCode());
+				}
+
+				TestNG testng = new TestNG();
+				Collection<XmlSuite> suites;
+				try {
+					File suiteFile = SpringUtil.getClasspathFile(suiteXml);
+
+					InputStream suiteFileInputStream = new FileInputStream(suiteFile);
+					suites = new Parser(suiteFileInputStream).parse();
+				} catch (Exception e) {
+					throw new IllegalStateException(String.format("Exception reading suite file '%s'", suiteXml));
+				}
+				testng.setXmlSuites(new ArrayList<XmlSuite>(suites));
+
+				TestThreadPoolManager.registerSuiteProperties(suite.getProperties());
+
+				String outputDirectory = suite.getOutputDirectory();
+				if (outputDirectory != null) {
+					testng.setOutputDirectory(outputDirectory);
+				}
+
+				testng.run();
 			}
 		};
-
-		Thread thread = new Thread(runnable);
-		thread.setUncaughtExceptionHandler(exceptionLogger);
-
-		logger.info(String.format("Starting TestNG run thread %s - Suite '%s'", thread.getId(), suite.getSuiteXml()));
-
-		thread.start();
-
 	}
 }

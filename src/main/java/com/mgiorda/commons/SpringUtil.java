@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -15,6 +17,8 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.io.Resource;
 
 public final class SpringUtil {
+
+	private static final Log logger = LogFactory.getLog(SpringUtil.class);
 
 	private SpringUtil() {
 
@@ -58,14 +62,24 @@ public final class SpringUtil {
 
 	public static void autowireBean(ApplicationContext applicationContext, Object bean) {
 
-		AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
-		beanFactory.autowireBeanProperties(bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
-		beanFactory.initializeBean(bean, bean.getClass().getName());
+		try {
+
+			AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
+			beanFactory.autowireBeanProperties(bean, AutowireCapableBeanFactory.AUTOWIRE_NO, false);
+			beanFactory.initializeBean(bean, bean.getClass().getName());
+
+		} catch (Exception ex) {
+			logger.warn(String.format("Exception autowiring '%s'", bean.getClass()), ex);
+
+			throw ex;
+		}
 	}
 
-	public static void addPropetiesFile(ApplicationContext applicationContext, String propertySource) {
+	public static void addPropertiesFile(ApplicationContext applicationContext, String propertySource) {
 
 		Properties properties = new Properties();
+
+		propertySource = applicationContext.getEnvironment().resolvePlaceholders(propertySource);
 
 		try {
 			Resource resource = applicationContext.getResource("classpath:/" + propertySource);

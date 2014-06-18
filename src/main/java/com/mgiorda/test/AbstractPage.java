@@ -163,10 +163,10 @@ public abstract class AbstractPage {
 	@Autowired
 	private WebDriverFactory driverHandler;
 
-	@Value("${test.waitTimeOut}")
+	@Value("${suite.waitTimeOut}")
 	private int waitTimeOut;
 
-	@Value("${test.browser}")
+	@Value("${suite.browser}")
 	private Browser browser;
 
 	protected AbstractPage(String url) {
@@ -327,6 +327,17 @@ public abstract class AbstractPage {
 
 	private void initPageContext() {
 
+		Properties suiteProperties = TestThreadPoolManager.getSuitePropertiesForPage();
+		SpringUtil.addProperties(applicationContext, suiteProperties);
+
+		addPageProperties();
+
+		SpringUtil.autowireBean(applicationContext, this);
+		TestThreadPoolManager.registerPage(this);
+	}
+
+	private void addPageProperties() {
+
 		Class<?> pageClass = this.getClass();
 		PageProperties annotation = pageClass.getAnnotation(PageProperties.class);
 		if (annotation != null) {
@@ -334,17 +345,8 @@ public abstract class AbstractPage {
 			String[] values = annotation.value();
 
 			for (String propertySource : values) {
-				SpringUtil.addPropetiesFile(applicationContext, propertySource);
+				SpringUtil.addPropertiesFile(applicationContext, propertySource);
 			}
 		}
-
-		Properties properties = TestThreadPoolManager.getSuiteProperties();
-		if (properties != null) {
-			SpringUtil.addProperties(applicationContext, properties);
-		}
-
-		SpringUtil.autowireBean(applicationContext, this);
-		TestThreadPoolManager.registerPage(this);
 	}
-
 }

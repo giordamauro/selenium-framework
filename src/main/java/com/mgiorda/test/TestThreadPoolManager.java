@@ -76,12 +76,22 @@ final class TestThreadPoolManager {
 		return suite;
 	}
 
-	public static Properties getSuiteProperties() {
+	public static Properties getSuitePropertiesForPage() {
 
 		Properties properties = null;
 
 		ISuite suite = getCurrentTestSuite();
 		Thread suiteThread = suiteThreads.get(suite);
+		properties = suiteProperties.get(suiteThread);
+
+		return properties;
+	}
+
+	public static Properties getSuiteProperties() {
+
+		Properties properties = null;
+
+		Thread suiteThread = Thread.currentThread();
 		properties = suiteProperties.get(suiteThread);
 
 		return properties;

@@ -18,6 +18,13 @@
 
 	<context:annotation-config />
 
-	<context:property-placeholder ignore-unresolvable="true"/>
+	<context:property-placeholder />
+
+	<util:properties id="defaultSuiteProperties">
+		<prop key="suite.file">default</prop>
+		<prop key="suite.browser">CHROME</prop>
+		<prop key="suite.waitTimeOut">60</prop>
+		<prop key="suite.outputDirectory">default</prop>
+	</util:properties>
 
 </beans>
