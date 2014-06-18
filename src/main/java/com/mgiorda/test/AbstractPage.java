@@ -3,6 +3,7 @@ package com.mgiorda.test;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,9 +18,13 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 
 import com.google.common.base.Predicate;
+import com.mgiorda.commons.SpringUtil;
 import com.mgiorda.page.Browser;
+import com.mgiorda.page.PageProperties;
 import com.mgiorda.page.WebDriverFactory;
 
 public abstract class AbstractPage {
@@ -108,6 +113,7 @@ public abstract class AbstractPage {
 			this.by = by;
 		}
 
+		@Override
 		public String toString() {
 			return by.toString();
 		}
@@ -149,6 +155,11 @@ public abstract class AbstractPage {
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
+	private final WebDriver driver;
+	private final AbstractPage parentPage;
+
+	private final ApplicationContext applicationContext;
+
 	@Autowired
 	private WebDriverFactory driverHandler;
 
@@ -158,23 +169,20 @@ public abstract class AbstractPage {
 	@Value("${test.browser}")
 	private Browser browser;
 
-	private final WebDriver driver;
-	private final AbstractPage parentPage;
-
 	protected AbstractPage(String url) {
 
 		if (url == null) {
 			throw new IllegalArgumentException("Url constructor parameter cannot be null");
 		}
-
 		this.parentPage = null;
-		AbstractTest test = TestThreadPoolManager.getCurrentTest();
-		test.initPageContext(this);
+
+		applicationContext = new GenericXmlApplicationContext("classpath:/context/page-context.xml");
+		initPageContext();
 
 		this.driver = driverHandler.getNewDriver(browser);
 
 		goToUrl(url);
-		AnnotationsSupport.initFindBy(this);
+		AnnotationsSupport.initLocateBy(this);
 	}
 
 	protected AbstractPage(AbstractPage parentPage, String url) {
@@ -188,7 +196,8 @@ public abstract class AbstractPage {
 		// means not opening a new browser
 		this.driver = parentPage.driver;
 		this.waitTimeOut = parentPage.waitTimeOut;
-
+		this.applicationContext = parentPage.applicationContext;
+		initPageContext();
 	}
 
 	void onTestFinish() {
@@ -314,6 +323,28 @@ public abstract class AbstractPage {
 
 	private long waitTimeOutMillis() {
 		return waitTimeOut * 1000;
+	}
+
+	private void initPageContext() {
+
+		Class<?> pageClass = this.getClass();
+		PageProperties annotation = pageClass.getAnnotation(PageProperties.class);
+		if (annotation != null) {
+
+			String[] values = annotation.value();
+
+			for (String propertySource : values) {
+				SpringUtil.addPropetiesFile(applicationContext, propertySource);
+			}
+		}
+
+		Properties properties = TestThreadPoolManager.getSuiteProperties();
+		if (properties != null) {
+			SpringUtil.addProperties(applicationContext, properties);
+		}
+
+		SpringUtil.autowireBean(applicationContext, this);
+		TestThreadPoolManager.registerPage(this);
 	}
 
 }

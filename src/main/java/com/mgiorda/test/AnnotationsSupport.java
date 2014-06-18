@@ -17,7 +17,7 @@ class AnnotationsSupport {
 
 	}
 
-	public static <T extends AbstractPage> void initFindBy(T page) {
+	public static <T extends AbstractPage> void initLocateBy(T page) {
 
 		Class<?> pageClass = page.getClass();
 

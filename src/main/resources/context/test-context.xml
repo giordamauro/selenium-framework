@@ -18,40 +18,6 @@
 
 	<context:annotation-config />
 
-	<context:property-placeholder location="classpath:/context/test-context.properties" ignore-unresolvable="true"/>
-
-	<bean id="chromeFactory" class="com.mgiorda.page.browser.ChromeFactory">
-		<constructor-arg type="java.util.Map">
-			<util:map>
-				<entry key="WINDOWS" value="${chrome.driver.windows}"/>
-				<entry key="UNIX" value="${chrome.driver.unix}"/>
-			</util:map>
-		</constructor-arg>
-	</bean>
-
-	<bean id="firefoxFactory" class="com.mgiorda.page.browser.FirefoxFactory"/>
-	
-<!-- 	<bean id="iexplorerFactory" class="com.mgiorda.page.browser.InternetExplorerFactory"> -->
-<!-- 		<constructor-arg type="java.lang.String" value="classpath:/${iexplorer.driver}"/> -->
-<!-- 	</bean> -->
-	
-<!-- 	<bean id="remoteFactory" class="com.mgiorda.page.browser.RemoteDriverFactory"> -->
-<!-- 		<constructor-arg type="java.lang.String" value="http://${remote.address}:${remote.port}/wd/hub"/> -->
-<!-- 		<constructor-arg type="org.openqa.selenium.Capabilities"> -->
-<!-- 			<bean id="defaultDesiredCapabilities" class="org.openqa.selenium.remote.DesiredCapabilities"/> -->
-<!-- 		</constructor-arg> -->
-<!-- 	</bean> -->
-
-	<bean id="webDriverFactory" class="com.mgiorda.page.WebDriverFactory">
-		<constructor-arg type="java.util.Map">
-			<util:map>
-				<entry key="CHROME" value-ref="chromeFactory"/>
-				<entry key="FIREFOX" value-ref="firefoxFactory"/>
-<!-- 				<entry key="INTERNET_EXPLORER" value-ref="iexplorerFactory"/> -->
-<!-- 				<entry key="REMOTE" value-ref="remoteFactory"/> -->
-			</util:map>
-		</constructor-arg>
-		<constructor-arg type="int" value="${load.waitTimeOut}" />
-	</bean>
+	<context:property-placeholder ignore-unresolvable="true"/>
 
 </beans>
