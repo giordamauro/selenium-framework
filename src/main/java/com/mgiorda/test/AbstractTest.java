@@ -52,12 +52,12 @@ public abstract class AbstractTest extends AbstractTestNGSpringContextTests {
 			}
 		}
 
-		Properties properties = TestPoolManager.getSuiteProperties();
+		Properties properties = TestThreadPoolManager.getSuiteProperties();
 		if (properties != null) {
 			SpringUtil.addProperties(applicationContext, properties);
 		}
 
 		SpringUtil.autowireBean(applicationContext, page);
-		TestPoolManager.registerPage(page);
+		TestThreadPoolManager.registerPage(page);
 	}
 }

@@ -54,7 +54,7 @@ public class TestSuiteRun {
 		testng.setXmlSuites(new ArrayList<XmlSuite>(suites));
 
 		if (properties != null) {
-			TestPoolManager.registerSuiteProperties(properties);
+			TestThreadPoolManager.registerSuiteProperties(properties);
 		}
 
 		if (outputDirectory != null) {

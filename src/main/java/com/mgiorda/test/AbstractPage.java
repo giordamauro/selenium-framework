@@ -168,7 +168,7 @@ public abstract class AbstractPage {
 		}
 
 		this.parentPage = null;
-		AbstractTest test = TestPoolManager.getCurrentTest();
+		AbstractTest test = TestThreadPoolManager.getCurrentTest();
 		test.initPageContext(this);
 
 		this.driver = driverHandler.getNewDriver(browser);

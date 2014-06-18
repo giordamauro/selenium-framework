@@ -14,7 +14,7 @@ public class SuiteLogger implements ISuiteListener {
 		logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		logger.info(String.format("Starting test suite '%s'", suite.getName()));
 
-		TestPoolManager.registerSuite(suite);
+		TestThreadPoolManager.registerSuite(suite);
 	}
 
 	@Override

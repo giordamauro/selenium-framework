@@ -9,14 +9,14 @@ import java.util.Properties;
 import org.testng.ISuite;
 import org.testng.ITestResult;
 
-final class TestPoolManager {
+final class TestThreadPoolManager {
 
 	private static final Map<Thread, ITestResult> threadTests = new HashMap<>();
 	private static final Map<ITestResult, List<AbstractPage>> testPages = new HashMap<>();
 	private static final Map<Thread, Properties> suiteProperties = new HashMap<>();
 	private static final Map<ISuite, Thread> suiteThreads = new HashMap<>();
 
-	private TestPoolManager() {
+	private TestThreadPoolManager() {
 
 	}
 
