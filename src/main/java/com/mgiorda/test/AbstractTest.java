@@ -1,5 +1,6 @@
 package com.mgiorda.test;
 
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -8,6 +9,7 @@ import org.testng.annotations.Listeners;
 import com.mgiorda.commons.SpringUtil;
 
 @Listeners({ SuiteLogger.class, TestLogger.class })
+@ContextConfiguration("classpath:/context/test-context.xml")
 public abstract class AbstractTest extends AbstractTestNGSpringContextTests {
 
 	@BeforeClass

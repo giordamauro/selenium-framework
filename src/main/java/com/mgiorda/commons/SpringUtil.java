@@ -30,8 +30,10 @@ public final class SpringUtil {
 			Resource resource = appContext.getResource("classpath:" + fileProperty);
 
 			try {
-
-				classpathFile.getParentFile().mkdirs();
+				File parentFile = classpathFile.getParentFile();
+				if (parentFile != null) {
+					parentFile.mkdirs();
+				}
 				classpathFile.createNewFile();
 				InputStream inputStream = resource.getInputStream();
 
