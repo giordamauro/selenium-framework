@@ -15,9 +15,9 @@ import org.testng.xml.XmlSuite;
 
 import com.mgiorda.commons.SpringUtil;
 
-public class TestPoolRunner {
+public class TestRunner {
 
-	private static final Log logger = LogFactory.getLog(TestPoolRunner.class);
+	private static final Log logger = LogFactory.getLog(TestRunner.class);
 
 	private static final UncaughtExceptionHandler exceptionLogger = new UncaughtExceptionHandler() {
 
@@ -27,10 +27,24 @@ public class TestPoolRunner {
 		}
 	};
 
-	private final SuiteTestRun[] suites;
+	private SuiteTestRun[] suites;
 
-	public TestPoolRunner(SuiteTestRun... suites) {
+	private boolean parallel = true;
+
+	public SuiteTestRun[] getSuites() {
+		return suites;
+	}
+
+	public void setSuites(SuiteTestRun[] suites) {
 		this.suites = suites;
+	}
+
+	public boolean isParallel() {
+		return parallel;
+	}
+
+	public void setParallel(boolean runInParallel) {
+		this.parallel = runInParallel;
 	}
 
 	public void run() {
@@ -39,12 +53,18 @@ public class TestPoolRunner {
 
 			Runnable runnable = getRunnableForSuite(suite);
 
-			Thread thread = new Thread(runnable);
-			thread.setUncaughtExceptionHandler(exceptionLogger);
+			if (isParallel()) {
+				Thread thread = new Thread(runnable);
+				thread.setUncaughtExceptionHandler(exceptionLogger);
 
-			logger.info(String.format("Starting TestNG run thread %s - Suite '%s'", thread.getId(), suite.getFile()));
+				logger.info(String.format("Starting TestNG run thread %s - Suite '%s'", thread.getId(), suite.getFile()));
 
-			thread.start();
+				thread.start();
+			} else {
+				logger.info(String.format("Starting TestNG sequential run - Suite '%s'", suite.getFile()));
+
+				runnable.run();
+			}
 		}
 	}
 
@@ -72,6 +92,7 @@ public class TestPoolRunner {
 				}
 				testng.setXmlSuites(new ArrayList<XmlSuite>(suites));
 
+				logger.info("Registering suite properties: " + suite.getProperties());
 				TestThreadPoolManager.registerSuiteProperties(suite.getProperties());
 
 				String outputDirectory = suite.getOutputDirectory();
