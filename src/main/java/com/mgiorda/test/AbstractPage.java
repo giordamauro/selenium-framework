@@ -1,16 +1,21 @@
 package com.mgiorda.test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -20,11 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.testng.ISuite;
 
 import com.google.common.base.Predicate;
+import com.mgiorda.annotations.PageProperties;
+import com.mgiorda.annotations.PageURL;
 import com.mgiorda.commons.SpringUtil;
 import com.mgiorda.page.Browser;
-import com.mgiorda.page.PageProperties;
 import com.mgiorda.page.WebDriverFactory;
 
 public abstract class AbstractPage {
@@ -160,6 +167,8 @@ public abstract class AbstractPage {
 
 	private final ApplicationContext applicationContext;
 
+	private final String pageUrl;
+
 	@Autowired
 	private WebDriverFactory driverHandler;
 
@@ -168,6 +177,29 @@ public abstract class AbstractPage {
 
 	@Value("${suite.browser}")
 	private Browser browser;
+
+	protected AbstractPage() {
+
+		Class<?> pageClass = this.getClass();
+		PageURL annotation = pageClass.getAnnotation(PageURL.class);
+		if (annotation == null) {
+			throw new IllegalStateException("Cannot instantiate Page whitout String url constructor parameter or @PageURL class annotation");
+		}
+
+		String value = annotation.value();
+
+		this.parentPage = null;
+
+		applicationContext = new GenericXmlApplicationContext("classpath:/context/page-context.xml");
+		initPageContext();
+
+		this.pageUrl = applicationContext.getEnvironment().resolvePlaceholders(value);
+
+		this.driver = driverHandler.getNewDriver(browser);
+
+		goToUrl(pageUrl);
+		AnnotationsSupport.initLocateBy(this);
+	}
 
 	protected AbstractPage(String url) {
 
@@ -179,9 +211,11 @@ public abstract class AbstractPage {
 		applicationContext = new GenericXmlApplicationContext("classpath:/context/page-context.xml");
 		initPageContext();
 
+		this.pageUrl = applicationContext.getEnvironment().resolvePlaceholders(url);
+
 		this.driver = driverHandler.getNewDriver(browser);
 
-		goToUrl(url);
+		goToUrl(pageUrl);
 		AnnotationsSupport.initLocateBy(this);
 	}
 
@@ -198,11 +232,50 @@ public abstract class AbstractPage {
 		this.waitTimeOut = parentPage.waitTimeOut;
 		this.applicationContext = parentPage.applicationContext;
 		initPageContext();
+
+		this.pageUrl = applicationContext.getEnvironment().resolvePlaceholders(url);
+
+		goToUrl(pageUrl);
+		AnnotationsSupport.initLocateBy(this);
+	}
+
+	void onTestFail() {
+
+		ISuite currentTestSuite = TestThreadPoolManager.getCurrentTestSuite();
+		String filePath = currentTestSuite.getOutputDirectory() + File.separator + "fail-photos" + File.separator + browser + File.separator + new Date().getTime() + ".png";
+
+		takeScreenShot(filePath);
+	}
+
+	public void takeScreenShot(String filePath) {
+
+		TakesScreenshot screenShotDriver = null;
+		try {
+			screenShotDriver = (TakesScreenshot) driver;
+		} catch (Exception e) {
+			logger.warn(String.format("Driver '%s' cannot take screenshots", driver));
+		}
+
+		if (screenShotDriver != null) {
+			File screenShot = screenShotDriver.getScreenshotAs(OutputType.FILE);
+
+			try {
+				logger.info(String.format("Saving screenshot to file '%s'", filePath));
+
+				FileUtils.copyFile(screenShot, new File(filePath));
+			} catch (IOException e) {
+
+				throw new IllegalStateException(String.format("Exception trying to save screenshot to file '%s'", filePath), e);
+			}
+		}
 	}
 
 	void onTestFinish() {
-
 		this.quit();
+	}
+
+	public String getPageURL() {
+		return pageUrl;
 	}
 
 	public void quit() {
@@ -223,7 +296,7 @@ public abstract class AbstractPage {
 
 			long start = new Date().getTime();
 
-			new WebDriverWait(driver, waitTimeOutMillis()).until(ExpectedConditions.presenceOfElementLocated(elementLocator.by));
+			new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(elementLocator.by));
 
 			long end = new Date().getTime();
 			long waitTime = end - start;
@@ -235,14 +308,13 @@ public abstract class AbstractPage {
 		}
 
 		return exists;
-
 	}
 
 	protected PageElement getElement(Locator elementLocator) {
 
 		long start = new Date().getTime();
 
-		WebElement element = new WebDriverWait(driver, waitTimeOutMillis()).until(ExpectedConditions.presenceOfElementLocated(elementLocator.by));
+		WebElement element = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(elementLocator.by));
 
 		PageElement pageElement = new PageElement(element);
 
@@ -258,7 +330,7 @@ public abstract class AbstractPage {
 
 		long start = new Date().getTime();
 
-		List<WebElement> elements = new WebDriverWait(driver, waitTimeOutMillis()).until(ExpectedConditions.presenceOfAllElementsLocatedBy(elementLocator.by));
+		List<WebElement> elements = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfAllElementsLocatedBy(elementLocator.by));
 
 		List<PageElement> pageElements = new ArrayList<>();
 
@@ -298,7 +370,7 @@ public abstract class AbstractPage {
 
 		long start = new Date().getTime();
 
-		new WebDriverWait(driver, waitTimeOutMillis()).until(new Predicate<WebDriver>() {
+		new WebDriverWait(driver, waitTimeOut).until(new Predicate<WebDriver>() {
 
 			@Override
 			public boolean apply(WebDriver driver) {
@@ -319,10 +391,6 @@ public abstract class AbstractPage {
 		long waitTime = end - start;
 
 		return waitTime;
-	}
-
-	private long waitTimeOutMillis() {
-		return waitTimeOut * 1000;
 	}
 
 	private void initPageContext() {

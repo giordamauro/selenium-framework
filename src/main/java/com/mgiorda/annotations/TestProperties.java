@@ -1,4 +1,4 @@
-package com.mgiorda.page;
+package com.mgiorda.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PageProperties {
+public @interface TestProperties {
 
 	String[] value();
 }

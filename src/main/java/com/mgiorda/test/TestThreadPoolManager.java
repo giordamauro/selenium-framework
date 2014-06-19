@@ -60,6 +60,16 @@ final class TestThreadPoolManager {
 		}
 	}
 
+	public static void failPages(ITestResult test) {
+
+		List<AbstractPage> pages = testPages.get(test);
+		if (pages != null) {
+			for (AbstractPage page : pages) {
+				page.onTestFail();
+			}
+		}
+	}
+
 	public static AbstractTest getCurrentTest() {
 
 		ITestResult test = getCurrentTestResult();

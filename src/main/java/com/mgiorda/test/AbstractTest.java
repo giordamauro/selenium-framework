@@ -10,6 +10,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 
+import com.mgiorda.annotations.TestProperties;
 import com.mgiorda.commons.SpringUtil;
 
 @Listeners({ SuiteLogger.class, TestLogger.class })
