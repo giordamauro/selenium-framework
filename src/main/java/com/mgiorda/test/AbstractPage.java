@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
@@ -28,6 +29,7 @@ import org.springframework.context.support.GenericXmlApplicationContext;
 import org.testng.ISuite;
 
 import com.google.common.base.Predicate;
+import com.mgiorda.annotations.PageContext;
 import com.mgiorda.annotations.PageProperties;
 import com.mgiorda.annotations.PageURL;
 import com.mgiorda.commons.SpringUtil;
@@ -165,9 +167,9 @@ public abstract class AbstractPage {
 	private final WebDriver driver;
 	private final AbstractPage parentPage;
 
-	private final ApplicationContext applicationContext;
+	private ApplicationContext applicationContext;
 
-	private final String pageUrl;
+	private String pageUrl;
 
 	@Autowired
 	private WebDriverFactory driverHandler;
@@ -190,10 +192,9 @@ public abstract class AbstractPage {
 
 		this.parentPage = null;
 
-		applicationContext = new GenericXmlApplicationContext("classpath:/context/page-context.xml");
 		initPageContext();
 
-		this.pageUrl = applicationContext.getEnvironment().resolvePlaceholders(value);
+		pageUrl = applicationContext.getEnvironment().resolvePlaceholders(value);
 
 		this.driver = driverHandler.getNewDriver(browser);
 
@@ -208,7 +209,6 @@ public abstract class AbstractPage {
 		}
 		this.parentPage = null;
 
-		applicationContext = new GenericXmlApplicationContext("classpath:/context/page-context.xml");
 		initPageContext();
 
 		this.pageUrl = applicationContext.getEnvironment().resolvePlaceholders(url);
@@ -230,7 +230,6 @@ public abstract class AbstractPage {
 		// means not opening a new browser
 		this.driver = parentPage.driver;
 		this.waitTimeOut = parentPage.waitTimeOut;
-		this.applicationContext = parentPage.applicationContext;
 		initPageContext();
 
 		this.pageUrl = applicationContext.getEnvironment().resolvePlaceholders(url);
@@ -395,6 +394,13 @@ public abstract class AbstractPage {
 
 	private void initPageContext() {
 
+		String[] locations = { "classpath:/context/page-context.xml" };
+
+		String[] contextLocations = getContextLocations();
+		locations = ArrayUtils.addAll(locations, contextLocations);
+
+		applicationContext = new GenericXmlApplicationContext(locations);
+
 		Properties suiteProperties = TestThreadPoolManager.getSuitePropertiesForPage();
 		SpringUtil.addProperties(applicationContext, suiteProperties);
 
@@ -416,5 +422,18 @@ public abstract class AbstractPage {
 				SpringUtil.addPropertiesFile(applicationContext, propertySource);
 			}
 		}
+	}
+
+	private String[] getContextLocations() {
+
+		String[] contextLocations = {};
+
+		Class<?> testClass = this.getClass();
+		PageContext annotation = testClass.getAnnotation(PageContext.class);
+		if (annotation != null) {
+			contextLocations = annotation.value();
+		}
+
+		return contextLocations;
 	}
 }

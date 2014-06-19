@@ -2,6 +2,7 @@ package com.mgiorda.test;
 
 import java.util.Properties;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -10,6 +11,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 
+import com.mgiorda.annotations.TestContext;
 import com.mgiorda.annotations.TestProperties;
 import com.mgiorda.commons.SpringUtil;
 
@@ -20,11 +22,18 @@ public abstract class AbstractTest {
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
-	private ApplicationContext testAppContext = new GenericXmlApplicationContext("classpath:/context/test-context.xml");
+	private ApplicationContext testAppContext = null;
 
 	@BeforeClass
 	public void beforeClass() {
 		staticLogger.info(String.format("Initiating test Class '%s'", this.getClass().getSimpleName()));
+
+		String[] locations = { "classpath:/context/test-context.xml" };
+
+		String[] contextLocations = getContextLocations();
+		locations = ArrayUtils.addAll(locations, contextLocations);
+
+		testAppContext = new GenericXmlApplicationContext(locations);
 
 		setSuiteProperties();
 		addTestProperties();
@@ -48,6 +57,19 @@ public abstract class AbstractTest {
 		}
 
 		SpringUtil.addProperties(testAppContext, suiteProperties);
+	}
+
+	private String[] getContextLocations() {
+
+		String[] contextLocations = {};
+
+		Class<?> testClass = this.getClass();
+		TestContext annotation = testClass.getAnnotation(TestContext.class);
+		if (annotation != null) {
+			contextLocations = annotation.value();
+		}
+
+		return contextLocations;
 	}
 
 	private void addTestProperties() {
