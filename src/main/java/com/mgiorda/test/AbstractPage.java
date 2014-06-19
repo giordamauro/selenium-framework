@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,9 +45,12 @@ public abstract class AbstractPage {
 
 		private static final Log logger = LogFactory.getLog(PageElement.class);
 
+		private final AbstractPage page;
+
 		private final WebElement element;
 
-		private PageElement(WebElement element) {
+		private PageElement(AbstractPage page, WebElement element) {
+			this.page = page;
 			this.element = element;
 		}
 
@@ -77,6 +81,14 @@ public abstract class AbstractPage {
 			logger.info(String.format("PageElement(%s) - Clearing", this.hashCode()));
 
 			element.clear();
+		}
+
+		public PageElement getElement(Locator elementLocator) {
+			return page.getSubElement(this, elementLocator);
+		}
+
+		public List<PageElement> getElements(Locator elementLocator) {
+			return page.getSubElements(this, elementLocator);
 		}
 
 		public String getTagName() {
@@ -331,7 +343,7 @@ public abstract class AbstractPage {
 		By by = getLocatorByPlaceholder(elementLocator);
 		WebElement element = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(by));
 
-		PageElement pageElement = new PageElement(element);
+		PageElement pageElement = new PageElement(this, element);
 
 		long end = new Date().getTime();
 		long waitTime = end - start;
@@ -351,7 +363,7 @@ public abstract class AbstractPage {
 		List<PageElement> pageElements = new ArrayList<>();
 
 		for (WebElement element : elements) {
-			PageElement pageElement = new PageElement(element);
+			PageElement pageElement = new PageElement(this, element);
 
 			pageElements.add(pageElement);
 		}
@@ -457,10 +469,17 @@ public abstract class AbstractPage {
 
 		String[] contextLocations = {};
 
-		Class<?> testClass = this.getClass();
-		PageContext annotation = testClass.getAnnotation(PageContext.class);
+		Class<?> pageClass = this.getClass();
+		PageContext annotation = pageClass.getAnnotation(PageContext.class);
 		if (annotation != null) {
 			contextLocations = annotation.value();
+
+			if (contextLocations.length == 0) {
+				URL contextURL = pageClass.getResource(pageClass.getSimpleName() + "-context.xml");
+				String contextFile = contextURL.getFile();
+
+				contextLocations = new String[] { contextFile };
+			}
 		}
 
 		return contextLocations;
