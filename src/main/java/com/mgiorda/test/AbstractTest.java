@@ -1,5 +1,7 @@
 package com.mgiorda.test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -17,6 +19,27 @@ import com.mgiorda.commons.SpringUtil;
 
 @Listeners({ SuiteLogger.class, TestLogger.class })
 public abstract class AbstractTest {
+
+	protected static final class PageAssert {
+
+		private PageAssert() {
+
+		}
+
+		public static void assertTitle(AbstractPage page, String expectedTitle) {
+
+			if (page == null || expectedTitle == null) {
+				throw new IllegalArgumentException("Page and Expected title cannot be null");
+			}
+
+			String pageTitle = page.getTitle();
+
+			if (!expectedTitle.equals(pageTitle)) {
+
+				throw new AssertionError(String.format("Page '%s' title not equal - Expected '%s' but was: '%s'", page, expectedTitle, pageTitle));
+			}
+		}
+	}
 
 	private static final Log staticLogger = LogFactory.getLog(AbstractPage.class);
 
@@ -75,6 +98,18 @@ public abstract class AbstractTest {
 	private void addTestProperties() {
 
 		Class<?> testClass = this.getClass();
+
+		InputStream resource = testClass.getResourceAsStream(testClass.getSimpleName() + ".properties");
+		if (resource != null) {
+			Properties properties = new Properties();
+			try {
+				properties.load(resource);
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+			SpringUtil.addProperties(testAppContext, properties);
+		}
+
 		TestProperties annotation = testClass.getAnnotation(TestProperties.class);
 		if (annotation != null) {
 

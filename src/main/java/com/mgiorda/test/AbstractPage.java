@@ -2,6 +2,8 @@ package com.mgiorda.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -116,47 +118,50 @@ public abstract class AbstractPage {
 
 	protected static final class Locator {
 
-		private final By by;
+		private final Class<? extends By> byClass;
 
-		private Locator(By by) {
-			this.by = by;
-		}
+		private final String value;
 
-		@Override
-		public String toString() {
-			return by.toString();
+		private Locator(Class<? extends By> byClass, String value) {
+
+			if (value == null) {
+				throw new IllegalArgumentException("Locator value cannot be null");
+			}
+
+			this.byClass = byClass;
+			this.value = value;
 		}
 
 		public static Locator byId(String id) {
-			return new Locator(By.id(id));
+			return new Locator(By.ById.class, id);
 		}
 
 		public static Locator byLinkText(String linkText) {
-			return new Locator(By.linkText(linkText));
+			return new Locator(By.ByLinkText.class, linkText);
 		}
 
 		public static Locator byPartialLinkText(String partialLinkText) {
-			return new Locator(By.partialLinkText(partialLinkText));
+			return new Locator(By.ByPartialLinkText.class, partialLinkText);
 		}
 
 		public static Locator byName(String name) {
-			return new Locator(By.name(name));
+			return new Locator(By.ByName.class, name);
 		}
 
 		public static Locator byTagName(String tagName) {
-			return new Locator(By.tagName(tagName));
+			return new Locator(By.ByTagName.class, tagName);
 		}
 
 		public static Locator byXpath(String xpath) {
-			return new Locator(By.xpath(xpath));
+			return new Locator(By.ByXPath.class, xpath);
 		}
 
 		public static Locator byClass(String className) {
-			return new Locator(By.className(className));
+			return new Locator(By.ByClassName.class, className);
 		}
 
-		public static Locator byCssSelector(String id) {
-			return new Locator(By.id(id));
+		public static Locator byCssSelector(String cssSelector) {
+			return new Locator(By.ByCssSelector.class, cssSelector);
 		}
 	}
 
@@ -241,9 +246,14 @@ public abstract class AbstractPage {
 	void onTestFail() {
 
 		ISuite currentTestSuite = TestThreadPoolManager.getCurrentTestSuite();
-		String filePath = currentTestSuite.getOutputDirectory() + File.separator + "fail-photos" + File.separator + browser + File.separator + new Date().getTime() + ".png";
+		String filePath = currentTestSuite.getOutputDirectory() + File.separator + "fail-photos" + File.separator + browser + File.separator + getCurrentTime() + ".png";
 
 		takeScreenShot(filePath);
+	}
+
+	// So that never would be two photos with same time stamp
+	private synchronized long getCurrentTime() {
+		return new Date().getTime();
 	}
 
 	public void takeScreenShot(String filePath) {
@@ -273,8 +283,12 @@ public abstract class AbstractPage {
 		this.quit();
 	}
 
-	public String getPageURL() {
+	public String getUrl() {
 		return pageUrl;
+	}
+
+	public String getTitle() {
+		return driver.getTitle();
 	}
 
 	public void quit() {
@@ -295,7 +309,8 @@ public abstract class AbstractPage {
 
 			long start = new Date().getTime();
 
-			new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(elementLocator.by));
+			By by = getLocatorByPlaceholder(elementLocator);
+			new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(by));
 
 			long end = new Date().getTime();
 			long waitTime = end - start;
@@ -313,7 +328,8 @@ public abstract class AbstractPage {
 
 		long start = new Date().getTime();
 
-		WebElement element = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(elementLocator.by));
+		By by = getLocatorByPlaceholder(elementLocator);
+		WebElement element = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(by));
 
 		PageElement pageElement = new PageElement(element);
 
@@ -329,7 +345,8 @@ public abstract class AbstractPage {
 
 		long start = new Date().getTime();
 
-		List<WebElement> elements = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfAllElementsLocatedBy(elementLocator.by));
+		By by = getLocatorByPlaceholder(elementLocator);
+		List<WebElement> elements = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
 
 		List<PageElement> pageElements = new ArrayList<>();
 
@@ -413,6 +430,18 @@ public abstract class AbstractPage {
 	private void addPageProperties() {
 
 		Class<?> pageClass = this.getClass();
+
+		InputStream resource = pageClass.getResourceAsStream(pageClass.getSimpleName() + ".properties");
+		if (resource != null) {
+			Properties properties = new Properties();
+			try {
+				properties.load(resource);
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+			SpringUtil.addProperties(applicationContext, properties);
+		}
+
 		PageProperties annotation = pageClass.getAnnotation(PageProperties.class);
 		if (annotation != null) {
 
@@ -435,5 +464,20 @@ public abstract class AbstractPage {
 		}
 
 		return contextLocations;
+	}
+
+	private By getLocatorByPlaceholder(Locator elementLocator) {
+
+		String replacedValue = applicationContext.getEnvironment().resolvePlaceholders(elementLocator.value);
+		Class<? extends By> byClass = elementLocator.byClass;
+		try {
+			Constructor<? extends By> constructor = byClass.getConstructor(String.class);
+			By byLocator = constructor.newInstance(replacedValue);
+
+			return byLocator;
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 }
