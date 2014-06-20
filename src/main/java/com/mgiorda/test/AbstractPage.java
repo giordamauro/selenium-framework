@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -22,6 +23,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +115,37 @@ public abstract class AbstractPage {
 
 		public String getCssValue(String propertyName) {
 			return element.getCssValue(propertyName);
+		}
+	}
+
+	protected static abstract class AbstractElement {
+
+		protected final Log logger = LogFactory.getLog(this.getClass());
+
+		protected final PageElement pageElement;
+
+		public AbstractElement(PageElement pageElement) {
+			this.pageElement = pageElement;
+		}
+
+		protected boolean existsElement(Locator elementLocator) {
+			// TODO
+			return false;
+		}
+
+		protected int countElements(Locator elementLocator) {
+			// TODO
+			return 0;
+		}
+
+		protected PageElement getElement(Locator elementLocator) {
+			// TODO
+			return null;
+		}
+
+		protected List<PageElement> getElements(Locator elementLocator) {
+			// TODO
+			return null;
 		}
 	}
 
@@ -243,19 +276,6 @@ public abstract class AbstractPage {
 		AnnotationsSupport.initLocateBy(this);
 	}
 
-	void onTestFail() {
-
-		ISuite currentTestSuite = TestThreadPoolManager.getCurrentTestSuite();
-		String filePath = currentTestSuite.getOutputDirectory() + File.separator + "fail-photos" + File.separator + browser + File.separator + getCurrentTime() + ".png";
-
-		takeScreenShot(filePath);
-	}
-
-	// So that never would be two photos with same time stamp
-	private synchronized long getCurrentTime() {
-		return new Date().getTime();
-	}
-
 	public void takeScreenShot(String filePath) {
 
 		TakesScreenshot screenShotDriver = null;
@@ -279,16 +299,12 @@ public abstract class AbstractPage {
 		}
 	}
 
-	void onTestFinish() {
-		this.quit();
+	public String getTitle() {
+		return driver.getTitle();
 	}
 
 	public String getUrl() {
 		return pageUrl;
-	}
-
-	public String getTitle() {
-		return driver.getTitle();
 	}
 
 	public void quit() {
@@ -301,21 +317,30 @@ public abstract class AbstractPage {
 		}
 	}
 
-	protected boolean existsElement(Locator elementLocator) {
+	void onTestFail() {
+
+		ISuite currentTestSuite = TestThreadPoolManager.getCurrentTestSuite();
+		String filePath = currentTestSuite.getOutputDirectory() + File.separator + "fail-photos" + File.separator + browser + File.separator + getCurrentTime() + ".png";
+
+		takeScreenShot(filePath);
+	}
+
+	// So that never would be two photos with same time stamp
+	private synchronized long getCurrentTime() {
+		return new Date().getTime();
+	}
+
+	void onTestFinish() {
+		this.quit();
+	}
+
+	boolean existsElement(Locator elementLocator) {
 
 		boolean exists = true;
+		By by = getLocatorByPlaceholder(elementLocator);
 
 		try {
-
-			long start = new Date().getTime();
-
-			By by = getLocatorByPlaceholder(elementLocator);
-			new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(by));
-
-			long end = new Date().getTime();
-			long waitTime = end - start;
-
-			staticLogger.info(String.format("Found '%s' existent page element '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), elementLocator, waitTime));
+			waitForElement(by);
 
 		} catch (TimeoutException e) {
 			exists = false;
@@ -324,29 +349,39 @@ public abstract class AbstractPage {
 		return exists;
 	}
 
-	protected PageElement getElement(Locator elementLocator) {
+	int getElementCount(Locator elementLocator) {
 
-		long start = new Date().getTime();
+		int count = 0;
 
 		By by = getLocatorByPlaceholder(elementLocator);
-		WebElement element = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(by));
+
+		if (existsElement(elementLocator)) {
+
+			List<WebElement> elements = driver.findElements(by);
+			count = elements.size();
+		}
+
+		return count;
+	}
+
+	PageElement getElement(Locator elementLocator) {
+
+		By by = getLocatorByPlaceholder(elementLocator);
+		waitForElement(by);
+
+		WebElement element = driver.findElement(by);
 
 		PageElement pageElement = new PageElement(element);
-
-		long end = new Date().getTime();
-		long waitTime = end - start;
-
-		staticLogger.info(String.format("Found '%s' page element '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), elementLocator, waitTime));
 
 		return pageElement;
 	}
 
-	protected List<PageElement> getElements(Locator elementLocator) {
-
-		long start = new Date().getTime();
+	List<PageElement> getElements(Locator elementLocator) {
 
 		By by = getLocatorByPlaceholder(elementLocator);
-		List<WebElement> elements = new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
+		waitForElement(by);
+
+		List<WebElement> elements = driver.findElements(by);
 
 		List<PageElement> pageElements = new ArrayList<>();
 
@@ -356,22 +391,104 @@ public abstract class AbstractPage {
 			pageElements.add(pageElement);
 		}
 
+		return Collections.unmodifiableList(pageElements);
+	}
+
+	boolean existsSubElement(PageElement pageElement, Locator elementLocator) {
+
+		boolean exists = true;
+
+		WebElement element = pageElement.element;
+		By by = getLocatorByPlaceholder(elementLocator);
+
+		try {
+			waitForSubElement(element, by);
+
+		} catch (TimeoutException e) {
+			exists = false;
+		}
+
+		return exists;
+	}
+
+	int getSubElementCount(PageElement pageElement, Locator elementLocator) {
+
+		int count = 0;
+
+		WebElement element = pageElement.element;
+		By by = getLocatorByPlaceholder(elementLocator);
+
+		if (existsElement(elementLocator)) {
+
+			List<WebElement> elements = element.findElements(by);
+			count = elements.size();
+		}
+
+		return count;
+	}
+
+	PageElement getSubElement(PageElement pageElement, Locator elementLocator) {
+
+		WebElement element = pageElement.element;
+		By by = getLocatorByPlaceholder(elementLocator);
+
+		waitForSubElement(element, by);
+
+		WebElement subElement = element.findElement(by);
+		PageElement pageSubElement = new PageElement(subElement);
+
+		return pageSubElement;
+	}
+
+	List<PageElement> getSubElements(PageElement pageElement, Locator elementLocator) {
+
+		WebElement element = pageElement.element;
+		By by = getLocatorByPlaceholder(elementLocator);
+
+		waitForSubElement(element, by);
+
+		List<WebElement> elements = element.findElements(by);
+
+		List<PageElement> pageElements = new ArrayList<>();
+
+		for (WebElement subElement : elements) {
+			PageElement pageSubElement = new PageElement(subElement);
+
+			pageElements.add(pageSubElement);
+		}
+
+		return Collections.unmodifiableList(pageElements);
+	}
+
+	private void waitForElement(By by) throws TimeoutException {
+
+		long start = new Date().getTime();
+
+		new WebDriverWait(driver, waitTimeOut).until(ExpectedConditions.presenceOfElementLocated(by));
+
 		long end = new Date().getTime();
 		long waitTime = end - start;
 
-		staticLogger.info(String.format("Found '%s' page elements '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), elementLocator, waitTime));
-
-		return pageElements;
+		staticLogger.info(String.format("Found '%s' page element %s - Waited %s milliseconds", this.getClass().getSimpleName(), by, waitTime));
 	}
 
-	protected PageElement getSubElement(PageElement pageElement, Locator elementLocator) {
-		// TODO
-		return null;
-	}
+	private void waitForSubElement(final WebElement element, final By by) throws TimeoutException {
 
-	protected List<PageElement> getSubElements(PageElement pageElement, Locator elementLocator) {
-		// TODO
-		return null;
+		long start = new Date().getTime();
+
+		ExpectedCondition<WebElement> presenceOfSubElement = new ExpectedCondition<WebElement>() {
+			@Override
+			public WebElement apply(WebDriver driver) {
+				return element.findElement(by);
+			}
+		};
+
+		new WebDriverWait(driver, waitTimeOut).until(presenceOfSubElement);
+
+		long end = new Date().getTime();
+		long waitTime = end - start;
+
+		staticLogger.info(String.format("Found '%s' nested page element '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), by, waitTime));
 	}
 
 	private void goToUrl(String url) {
