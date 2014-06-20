@@ -15,10 +15,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -40,163 +38,7 @@ import com.mgiorda.commons.SpringUtil;
 import com.mgiorda.page.Browser;
 import com.mgiorda.page.WebDriverFactory;
 
-public abstract class AbstractPage {
-
-	protected static final class PageElement {
-
-		private static final Log logger = LogFactory.getLog(PageElement.class);
-
-		private final WebElement element;
-
-		private PageElement(WebElement element) {
-			this.element = element;
-		}
-
-		public void click() {
-			logger.info(String.format("PageElement(%s) - Clicking", this.hashCode()));
-
-			element.click();
-		}
-
-		public void submit() {
-			logger.info(String.format("PageElement(%s) - Submitting", this.hashCode()));
-
-			element.submit();
-		}
-
-		public void sendKeys(CharSequence... keysToSend) {
-
-			String keys = "";
-			for (CharSequence seq : keysToSend) {
-				keys += seq.toString();
-			}
-			logger.info(String.format("PageElement(%s) - Sending keys '%s'", this.hashCode(), keys));
-
-			element.sendKeys(keysToSend);
-		}
-
-		public void clear() {
-			logger.info(String.format("PageElement(%s) - Clearing", this.hashCode()));
-
-			element.clear();
-		}
-
-		public String getTagName() {
-			return element.getTagName();
-		}
-
-		public String getAttribute(String name) {
-			return element.getAttribute(name);
-		}
-
-		public boolean isSelected() {
-			return element.isSelected();
-		}
-
-		public boolean isEnabled() {
-			return element.isEnabled();
-		}
-
-		public String getText() {
-			return element.getText();
-		}
-
-		public boolean isDisplayed() {
-			return element.isDisplayed();
-		}
-
-		public Point getLocation() {
-			return element.getLocation();
-		}
-
-		public Dimension getSize() {
-			return element.getSize();
-		}
-
-		public String getCssValue(String propertyName) {
-			return element.getCssValue(propertyName);
-		}
-	}
-
-	protected static abstract class AbstractElement {
-
-		protected final Log logger = LogFactory.getLog(this.getClass());
-
-		protected final PageElement pageElement;
-
-		public AbstractElement(PageElement pageElement) {
-			this.pageElement = pageElement;
-		}
-
-		protected boolean existsElement(Locator elementLocator) {
-			// TODO
-			return false;
-		}
-
-		protected int countElements(Locator elementLocator) {
-			// TODO
-			return 0;
-		}
-
-		protected PageElement getElement(Locator elementLocator) {
-			// TODO
-			return null;
-		}
-
-		protected List<PageElement> getElements(Locator elementLocator) {
-			// TODO
-			return null;
-		}
-	}
-
-	protected static final class Locator {
-
-		private final Class<? extends By> byClass;
-
-		private final String value;
-
-		private Locator(Class<? extends By> byClass, String value) {
-
-			if (value == null) {
-				throw new IllegalArgumentException("Locator value cannot be null");
-			}
-
-			this.byClass = byClass;
-			this.value = value;
-		}
-
-		public static Locator byId(String id) {
-			return new Locator(By.ById.class, id);
-		}
-
-		public static Locator byLinkText(String linkText) {
-			return new Locator(By.ByLinkText.class, linkText);
-		}
-
-		public static Locator byPartialLinkText(String partialLinkText) {
-			return new Locator(By.ByPartialLinkText.class, partialLinkText);
-		}
-
-		public static Locator byName(String name) {
-			return new Locator(By.ByName.class, name);
-		}
-
-		public static Locator byTagName(String tagName) {
-			return new Locator(By.ByTagName.class, tagName);
-		}
-
-		public static Locator byXpath(String xpath) {
-			return new Locator(By.ByXPath.class, xpath);
-		}
-
-		public static Locator byClass(String className) {
-			return new Locator(By.ByClassName.class, className);
-		}
-
-		public static Locator byCssSelector(String cssSelector) {
-			return new Locator(By.ByCssSelector.class, cssSelector);
-		}
-	}
+public abstract class AbstractPage extends ProtectedClassesAbstractPage {
 
 	private static final Log staticLogger = LogFactory.getLog(AbstractPage.class);
 
@@ -371,7 +213,7 @@ public abstract class AbstractPage {
 
 		WebElement element = driver.findElement(by);
 
-		PageElement pageElement = new PageElement(element);
+		PageElement pageElement = new PageElement(this, element);
 
 		return pageElement;
 	}
@@ -386,7 +228,7 @@ public abstract class AbstractPage {
 		List<PageElement> pageElements = new ArrayList<>();
 
 		for (WebElement element : elements) {
-			PageElement pageElement = new PageElement(element);
+			PageElement pageElement = new PageElement(this, element);
 
 			pageElements.add(pageElement);
 		}
@@ -398,7 +240,7 @@ public abstract class AbstractPage {
 
 		boolean exists = true;
 
-		WebElement element = pageElement.element;
+		WebElement element = pageElement.getWebElement();
 		By by = getLocatorByPlaceholder(elementLocator);
 
 		try {
@@ -415,7 +257,7 @@ public abstract class AbstractPage {
 
 		int count = 0;
 
-		WebElement element = pageElement.element;
+		WebElement element = pageElement.getWebElement();
 		By by = getLocatorByPlaceholder(elementLocator);
 
 		if (existsElement(elementLocator)) {
@@ -429,20 +271,20 @@ public abstract class AbstractPage {
 
 	PageElement getSubElement(PageElement pageElement, Locator elementLocator) {
 
-		WebElement element = pageElement.element;
+		WebElement element = pageElement.getWebElement();
 		By by = getLocatorByPlaceholder(elementLocator);
 
 		waitForSubElement(element, by);
 
 		WebElement subElement = element.findElement(by);
-		PageElement pageSubElement = new PageElement(subElement);
+		PageElement pageSubElement = new PageElement(this, subElement);
 
 		return pageSubElement;
 	}
 
 	List<PageElement> getSubElements(PageElement pageElement, Locator elementLocator) {
 
-		WebElement element = pageElement.element;
+		WebElement element = pageElement.getWebElement();
 		By by = getLocatorByPlaceholder(elementLocator);
 
 		waitForSubElement(element, by);
@@ -452,7 +294,7 @@ public abstract class AbstractPage {
 		List<PageElement> pageElements = new ArrayList<>();
 
 		for (WebElement subElement : elements) {
-			PageElement pageSubElement = new PageElement(subElement);
+			PageElement pageSubElement = new PageElement(this, subElement);
 
 			pageElements.add(pageSubElement);
 		}
@@ -585,8 +427,8 @@ public abstract class AbstractPage {
 
 	private By getLocatorByPlaceholder(Locator elementLocator) {
 
-		String replacedValue = applicationContext.getEnvironment().resolvePlaceholders(elementLocator.value);
-		Class<? extends By> byClass = elementLocator.byClass;
+		String replacedValue = applicationContext.getEnvironment().resolvePlaceholders(elementLocator.getValue());
+		Class<? extends By> byClass = elementLocator.getByClass();
 		try {
 			Constructor<? extends By> constructor = byClass.getConstructor(String.class);
 			By byLocator = constructor.newInstance(replacedValue);

@@ -11,9 +11,9 @@ import org.openqa.selenium.TimeoutException;
 
 import com.mgiorda.annotations.By;
 import com.mgiorda.annotations.Locate;
-import com.mgiorda.test.AbstractPage.AbstractElement;
-import com.mgiorda.test.AbstractPage.Locator;
-import com.mgiorda.test.AbstractPage.PageElement;
+import com.mgiorda.test.ProtectedClassesAbstractPage.AbstractElement;
+import com.mgiorda.test.ProtectedClassesAbstractPage.Locator;
+import com.mgiorda.test.ProtectedClassesAbstractPage.PageElement;
 
 class AnnotationsSupport {
 
