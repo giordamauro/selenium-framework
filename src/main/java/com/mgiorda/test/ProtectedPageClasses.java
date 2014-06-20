@@ -9,7 +9,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 
-public class ProtectedClassesAbstractPage {
+abstract class ProtectedPageClasses {
 
 	protected static final class PageElement {
 
@@ -137,6 +137,14 @@ public class ProtectedClassesAbstractPage {
 			List<PageElement> elements = page.getSubElements(pageElement, elementLocator);
 
 			return elements;
+		}
+
+		protected <T extends AbstractElement> T newElement(Class<T> elementClass, PageElement pageElement) {
+
+			AbstractPage page = pageElement.getPage();
+			T element = page.factoryAbstractElement(elementClass, pageElement);
+
+			return element;
 		}
 	}
 

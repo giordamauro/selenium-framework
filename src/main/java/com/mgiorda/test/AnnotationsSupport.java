@@ -1,6 +1,5 @@
 package com.mgiorda.test;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +10,9 @@ import org.openqa.selenium.TimeoutException;
 
 import com.mgiorda.annotations.By;
 import com.mgiorda.annotations.Locate;
-import com.mgiorda.test.ProtectedClassesAbstractPage.AbstractElement;
-import com.mgiorda.test.ProtectedClassesAbstractPage.Locator;
-import com.mgiorda.test.ProtectedClassesAbstractPage.PageElement;
+import com.mgiorda.test.ProtectedPageClasses.AbstractElement;
+import com.mgiorda.test.ProtectedPageClasses.Locator;
+import com.mgiorda.test.ProtectedPageClasses.PageElement;
 
 class AnnotationsSupport {
 
@@ -23,7 +22,7 @@ class AnnotationsSupport {
 
 	}
 
-	public static <T extends AbstractPage> void initLocateBy(T page) {
+	public static <T extends AbstractPage> void initLocators(T page) {
 
 		Class<?> pageClass = page.getClass();
 
@@ -114,24 +113,21 @@ class AnnotationsSupport {
 			value = getPageElementsValue(page, elementLocators);
 
 		} else if (fieldType.isAssignableFrom(AbstractElement.class)) {
-			value = getValueForAbstractElement(fieldType, page, elementLocators);
+
+			@SuppressWarnings("unchecked")
+			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) fieldType;
+			value = getValueForAbstractElement(elementClass, page, elementLocators);
 		}
 
 		return value;
 	}
 
-	private static <T extends AbstractPage> Object getValueForAbstractElement(Class<?> fieldType, T page, List<Locator> elementLocators) {
+	private static <T extends AbstractPage> Object getValueForAbstractElement(Class<? extends AbstractElement> fieldType, T page, List<Locator> elementLocators) {
 
 		PageElement pageElement = getPageElementValue(page, elementLocators);
-		try {
-			Constructor<?> constructor = fieldType.getConstructor(PageElement.class);
-			Object newInstance = constructor.newInstance(pageElement);
+		Object element = page.factoryAbstractElement(fieldType, pageElement);
 
-			return newInstance;
-
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
+		return element;
 	}
 
 	private static <T extends AbstractPage> int getCountElement(T page, List<Locator> elementLocators) {

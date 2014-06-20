@@ -38,7 +38,7 @@ import com.mgiorda.commons.SpringUtil;
 import com.mgiorda.page.Browser;
 import com.mgiorda.page.WebDriverFactory;
 
-public abstract class AbstractPage extends ProtectedClassesAbstractPage {
+public abstract class AbstractPage extends ProtectedPageClasses {
 
 	private static final Log staticLogger = LogFactory.getLog(AbstractPage.class);
 
@@ -79,7 +79,7 @@ public abstract class AbstractPage extends ProtectedClassesAbstractPage {
 		this.driver = driverHandler.getNewDriver(browser);
 
 		goToUrl(pageUrl);
-		AnnotationsSupport.initLocateBy(this);
+		AnnotationsSupport.initLocators(this);
 	}
 
 	protected AbstractPage(String url) {
@@ -96,7 +96,7 @@ public abstract class AbstractPage extends ProtectedClassesAbstractPage {
 		this.driver = driverHandler.getNewDriver(browser);
 
 		goToUrl(pageUrl);
-		AnnotationsSupport.initLocateBy(this);
+		AnnotationsSupport.initLocators(this);
 	}
 
 	protected AbstractPage(AbstractPage parentPage, String url) {
@@ -115,7 +115,7 @@ public abstract class AbstractPage extends ProtectedClassesAbstractPage {
 		this.pageUrl = applicationContext.getEnvironment().resolvePlaceholders(url);
 
 		goToUrl(pageUrl);
-		AnnotationsSupport.initLocateBy(this);
+		AnnotationsSupport.initLocators(this);
 	}
 
 	public void takeScreenShot(String filePath) {
@@ -300,6 +300,18 @@ public abstract class AbstractPage extends ProtectedClassesAbstractPage {
 		}
 
 		return Collections.unmodifiableList(pageElements);
+	}
+
+	<T extends AbstractElement> T factoryAbstractElement(Class<T> elementClass, PageElement pageElement) {
+		try {
+			Constructor<T> constructor = elementClass.getConstructor(PageElement.class);
+			T newInstance = constructor.newInstance(pageElement);
+
+			return newInstance;
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	private void waitForElement(By by) throws TimeoutException {
