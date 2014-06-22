@@ -1,0 +1,110 @@
+package com.mgiorda.test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.google.common.base.Predicate;
+import com.mgiorda.page.Browser;
+
+public class DriverActionHandler {
+
+	private static final Log staticLogger = LogFactory.getLog(AbstractPage.class);
+
+	private final WebDriverWait driverWait;
+
+	private final WebDriver driver;
+
+	private final Browser browser;
+
+	public DriverActionHandler(WebDriverWait webDriverWait, WebDriver driver, Browser browser) {
+
+		this.driverWait = webDriverWait;
+		this.driver = driver;
+		this.browser = browser;
+	}
+
+	public String getTitle() {
+		return driver.getTitle();
+	}
+
+	public String getUrl() {
+		return driver.getCurrentUrl();
+	}
+
+	public Browser getBrowser() {
+		return browser;
+	}
+
+	public void quit() {
+		if (!driver.toString().contains("(null)")) {
+			driver.quit();
+		}
+	}
+
+	public void goToUrl(String url) {
+
+		driver.navigate().to(url);
+
+		long start = new Date().getTime();
+
+		Predicate<WebDriver> stateReady = new Predicate<WebDriver>() {
+
+			@Override
+			public boolean apply(WebDriver driver) {
+
+				boolean apply = false;
+
+				JavascriptExecutor js = (JavascriptExecutor) driver;
+				Object obj = js.executeScript("return document.readyState");
+
+				if (obj != null) {
+					String value = String.valueOf(obj);
+
+					apply = (value.equals("complete"));
+				}
+
+				return apply;
+			}
+		};
+
+		driverWait.until(stateReady);
+
+		long end = new Date().getTime();
+		long waitTime = end - start;
+
+		staticLogger.info(String.format("Navigated form page '%s' to url '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), url, waitTime));
+	}
+
+	public void takeScreenShot(String filePath) {
+
+		TakesScreenshot screenShotDriver = null;
+		try {
+			screenShotDriver = (TakesScreenshot) driver;
+		} catch (Exception e) {
+			staticLogger.warn(String.format("Driver '%s' cannot take screenshots", driver));
+		}
+
+		if (screenShotDriver != null) {
+			File screenShot = screenShotDriver.getScreenshotAs(OutputType.FILE);
+
+			try {
+				staticLogger.info(String.format("Saving screenshot to file '%s'", filePath));
+
+				FileUtils.copyFile(screenShot, new File(filePath));
+			} catch (IOException e) {
+
+				throw new IllegalStateException(String.format("Exception trying to save screenshot to file '%s'", filePath), e);
+			}
+		}
+	}
+}

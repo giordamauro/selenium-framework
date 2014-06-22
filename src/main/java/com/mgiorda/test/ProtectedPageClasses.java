@@ -15,16 +15,10 @@ abstract class ProtectedPageClasses {
 
 		private static final Log logger = LogFactory.getLog(PageElement.class);
 
-		private final AbstractPage page;
 		private final WebElement element;
 
-		PageElement(AbstractPage page, WebElement element) {
-			this.page = page;
+		PageElement(WebElement element) {
 			this.element = element;
-		}
-
-		AbstractPage getPage() {
-			return page;
 		}
 
 		WebElement getWebElement() {
@@ -102,47 +96,44 @@ abstract class ProtectedPageClasses {
 		protected final Log logger = LogFactory.getLog(this.getClass());
 
 		protected final PageElement pageElement;
+		protected final PageElementHandler elementHandler;
 
 		public AbstractElement(PageElement pageElement) {
 			this.pageElement = pageElement;
+			this.elementHandler = new PageElementHandler(pageElement);
 		}
 
 		protected boolean existsElement(Locator elementLocator) {
 
-			AbstractPage page = pageElement.getPage();
-			boolean exists = page.existsSubElement(pageElement, elementLocator);
+			boolean exists = elementHandler.existsSubElement(pageElement, elementLocator);
 
 			return exists;
 		}
 
 		protected int countElements(Locator elementLocator) {
 
-			AbstractPage page = pageElement.getPage();
-			int count = page.getSubElementCount(pageElement, elementLocator);
+			int count = elementHandler.getSubElementCount(pageElement, elementLocator);
 
 			return count;
 		}
 
 		protected PageElement getElement(Locator elementLocator) {
 
-			AbstractPage page = pageElement.getPage();
-			PageElement element = page.getSubElement(pageElement, elementLocator);
+			PageElement element = elementHandler.getSubElement(pageElement, elementLocator);
 
 			return element;
 		}
 
 		protected List<PageElement> getElements(Locator elementLocator) {
 
-			AbstractPage page = pageElement.getPage();
-			List<PageElement> elements = page.getSubElements(pageElement, elementLocator);
+			List<PageElement> elements = elementHandler.getSubElements(pageElement, elementLocator);
 
 			return elements;
 		}
 
 		protected <T extends AbstractElement> T newElement(Class<T> elementClass, PageElement pageElement) {
 
-			AbstractPage page = pageElement.getPage();
-			T element = page.factoryAbstractElement(elementClass, pageElement);
+			T element = elementHandler.factoryAbstractElement(elementClass, pageElement);
 
 			return element;
 		}

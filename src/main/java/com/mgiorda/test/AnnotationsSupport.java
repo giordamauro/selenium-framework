@@ -37,7 +37,7 @@ class AnnotationsSupport {
 					throw new IllegalStateException(String.format("Couldn't find an element locator for field '%s' in page class '%s'", field.getName(), pageClass.getSimpleName()));
 				}
 
-				Object value = getLocatorElement(field.getType(), page, elementLocators);
+				Object value = getLocatorElement(field.getType(), page.getElementHandler(), elementLocators);
 				if (value == null) {
 					throw new IllegalStateException(String.format("Cannot autowire field '%s' of type '%s' in page '%s'", field.getName(), field.getType(), pageClass));
 				}
@@ -96,51 +96,51 @@ class AnnotationsSupport {
 		return elementLocator;
 	}
 
-	private static <T extends AbstractPage> Object getLocatorElement(Class<?> fieldType, T page, List<Locator> elementLocators) {
+	private static Object getLocatorElement(Class<?> fieldType, PageElementHandler pageElementHandler, List<Locator> elementLocators) {
 
 		Object value = null;
 
 		if (fieldType.isAssignableFrom(Boolean.class) || fieldType.isAssignableFrom(boolean.class)) {
-			value = getExistsElement(page, elementLocators);
+			value = getExistsElement(pageElementHandler, elementLocators);
 
 		} else if (fieldType.isAssignableFrom(Integer.class) || fieldType.isAssignableFrom(int.class)) {
-			value = getCountElement(page, elementLocators);
+			value = getCountElement(pageElementHandler, elementLocators);
 
 		} else if (fieldType.isAssignableFrom(PageElement.class)) {
-			value = getPageElementValue(page, elementLocators);
+			value = getPageElementValue(pageElementHandler, elementLocators);
 
 		} else if (fieldType.isAssignableFrom(List.class)) {
-			value = getPageElementsValue(page, elementLocators);
+			value = getPageElementsValue(pageElementHandler, elementLocators);
 
 		} else if (fieldType.isAssignableFrom(AbstractElement.class)) {
 
 			@SuppressWarnings("unchecked")
 			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) fieldType;
-			value = getValueForAbstractElement(elementClass, page, elementLocators);
+			value = getValueForAbstractElement(elementClass, pageElementHandler, elementLocators);
 		}
 
 		return value;
 	}
 
-	private static <T extends AbstractPage> Object getValueForAbstractElement(Class<? extends AbstractElement> fieldType, T page, List<Locator> elementLocators) {
+	private static Object getValueForAbstractElement(Class<? extends AbstractElement> fieldType, PageElementHandler pageElementHandler, List<Locator> elementLocators) {
 
-		PageElement pageElement = getPageElementValue(page, elementLocators);
-		Object element = page.factoryAbstractElement(fieldType, pageElement);
+		PageElement pageElement = getPageElementValue(pageElementHandler, elementLocators);
+		Object element = pageElementHandler.factoryAbstractElement(fieldType, pageElement);
 
 		return element;
 	}
 
-	private static <T extends AbstractPage> int getCountElement(T page, List<Locator> elementLocators) {
+	private static int getCountElement(PageElementHandler pageElementHandler, List<Locator> elementLocators) {
 
 		int count = 0;
 
 		if (elementLocators.size() == 1) {
-			count = page.getElementCount(elementLocators.get(0));
+			count = pageElementHandler.getElementCount(elementLocators.get(0));
 
 		} else {
 			try {
-				PageElement parentElement = getParentElement(page, elementLocators);
-				count = page.getSubElementCount(parentElement, elementLocators.get(elementLocators.size() - 1));
+				PageElement parentElement = getParentElement(pageElementHandler, elementLocators);
+				count = pageElementHandler.getSubElementCount(parentElement, elementLocators.get(elementLocators.size() - 1));
 			} catch (TimeoutException e) {
 				count = 0;
 			}
@@ -149,17 +149,17 @@ class AnnotationsSupport {
 		return count;
 	}
 
-	private static <T extends AbstractPage> boolean getExistsElement(T page, List<Locator> elementLocators) {
+	private static boolean getExistsElement(PageElementHandler pageElementHandler, List<Locator> elementLocators) {
 
 		boolean exists = true;
 
 		if (elementLocators.size() == 1) {
-			exists = page.existsElement(elementLocators.get(0));
+			exists = pageElementHandler.existsElement(elementLocators.get(0));
 
 		} else {
 			try {
-				PageElement parentElement = getParentElement(page, elementLocators);
-				exists = page.existsSubElement(parentElement, elementLocators.get(elementLocators.size() - 1));
+				PageElement parentElement = getParentElement(pageElementHandler, elementLocators);
+				exists = pageElementHandler.existsSubElement(parentElement, elementLocators.get(elementLocators.size() - 1));
 			} catch (TimeoutException e) {
 				exists = false;
 			}
@@ -168,17 +168,17 @@ class AnnotationsSupport {
 		return exists;
 	}
 
-	private static <T extends AbstractPage> PageElement getPageElementValue(T page, List<Locator> elementLocators) {
+	private static PageElement getPageElementValue(PageElementHandler pageElementHandler, List<Locator> elementLocators) {
 
 		PageElement pageElement = null;
 
 		if (elementLocators.size() == 1) {
-			pageElement = page.getElement(elementLocators.get(0));
+			pageElement = pageElementHandler.getElement(elementLocators.get(0));
 
 		} else {
 			try {
-				PageElement parentElement = getParentElement(page, elementLocators);
-				pageElement = page.getSubElement(parentElement, elementLocators.get(elementLocators.size() - 1));
+				PageElement parentElement = getParentElement(pageElementHandler, elementLocators);
+				pageElement = pageElementHandler.getSubElement(parentElement, elementLocators.get(elementLocators.size() - 1));
 			} catch (TimeoutException e) {
 				pageElement = null;
 			}
@@ -187,18 +187,18 @@ class AnnotationsSupport {
 		return pageElement;
 	}
 
-	private static <T extends AbstractPage> List<PageElement> getPageElementsValue(T page, List<Locator> elementLocators) {
+	private static List<PageElement> getPageElementsValue(PageElementHandler pageElementHandler, List<Locator> elementLocators) {
 
 		List<PageElement> pageElements = null;
 
 		if (elementLocators.size() == 1) {
 
-			pageElements = page.getElements(elementLocators.get(0));
+			pageElements = pageElementHandler.getElements(elementLocators.get(0));
 
 		} else {
 			try {
-				PageElement parentElement = getParentElement(page, elementLocators);
-				pageElements = page.getSubElements(parentElement, elementLocators.get(elementLocators.size() - 1));
+				PageElement parentElement = getParentElement(pageElementHandler, elementLocators);
+				pageElements = pageElementHandler.getSubElements(parentElement, elementLocators.get(elementLocators.size() - 1));
 			} catch (TimeoutException e) {
 				pageElements = null;
 			}
@@ -207,15 +207,15 @@ class AnnotationsSupport {
 		return pageElements;
 	}
 
-	private static <T extends AbstractPage> PageElement getParentElement(T page, List<Locator> elementLocators) throws TimeoutException {
+	private static PageElement getParentElement(PageElementHandler pageElementHandler, List<Locator> elementLocators) throws TimeoutException {
 
-		PageElement pageElement = page.getElement(elementLocators.get(0));
+		PageElement pageElement = pageElementHandler.getElement(elementLocators.get(0));
 
 		int i = 1;
 		while (i < elementLocators.size() - 1) {
 
 			Locator locator = elementLocators.get(i);
-			pageElement = page.getSubElement(pageElement, locator);
+			pageElement = pageElementHandler.getSubElement(pageElement, locator);
 
 			i++;
 		}
