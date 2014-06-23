@@ -11,6 +11,8 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Predicate;
@@ -24,13 +26,10 @@ public class DriverActionHandler {
 
 	private final WebDriver driver;
 
-	private final Browser browser;
-
-	public DriverActionHandler(WebDriverWait webDriverWait, WebDriver driver, Browser browser) {
+	public DriverActionHandler(WebDriverWait webDriverWait, WebDriver driver) {
 
 		this.driverWait = webDriverWait;
 		this.driver = driver;
-		this.browser = browser;
 	}
 
 	public String getTitle() {
@@ -42,6 +41,15 @@ public class DriverActionHandler {
 	}
 
 	public Browser getBrowser() {
+
+		Browser browser = null;
+
+		if (driver.getClass().isAssignableFrom(ChromeDriver.class)) {
+			browser = Browser.CHROME;
+		} else if (driver.getClass().isAssignableFrom(FirefoxDriver.class)) {
+			browser = Browser.FIREFOX;
+		}
+
 		return browser;
 	}
 
@@ -54,6 +62,13 @@ public class DriverActionHandler {
 	public void goToUrl(String url) {
 
 		driver.navigate().to(url);
+
+		this.waitForPageToLoad();
+
+		staticLogger.info(String.format("Navigated form page '%s' to url '%s'", this.getClass().getSimpleName(), url));
+	}
+
+	void waitForPageToLoad() {
 
 		long start = new Date().getTime();
 
@@ -82,7 +97,7 @@ public class DriverActionHandler {
 		long end = new Date().getTime();
 		long waitTime = end - start;
 
-		staticLogger.info(String.format("Navigated form page '%s' to url '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), url, waitTime));
+		staticLogger.info(String.format("Waited for page '%s' to laod - Waited %s milliseconds", this.getClass().getSimpleName(), waitTime));
 	}
 
 	public void takeScreenShot(String filePath) {
@@ -106,5 +121,13 @@ public class DriverActionHandler {
 				throw new IllegalStateException(String.format("Exception trying to save screenshot to file '%s'", filePath), e);
 			}
 		}
+	}
+
+	WebDriver getDriver() {
+		return driver;
+	}
+
+	WebDriverWait getDriverWait() {
+		return driverWait;
 	}
 }

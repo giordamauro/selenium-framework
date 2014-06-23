@@ -36,7 +36,7 @@ class AnnotationsSupport {
 					throw new IllegalStateException(String.format("Couldn't find an element locator for field '%s' in page class '%s'", field.getName(), pageClass.getSimpleName()));
 				}
 
-				Object value = getLocatorElement(field.getType(), page.getElementHandler(), locators);
+				Object value = getLocatorElement(field.getType(), page, locators);
 				if (value == null) {
 					throw new IllegalStateException(String.format("Cannot autowire field '%s' of type '%s' in page '%s'", field.getName(), field.getType(), pageClass));
 				}
@@ -97,33 +97,33 @@ class AnnotationsSupport {
 		return elementLocator;
 	}
 
-	private static Object getLocatorElement(Class<?> fieldType, PageElementHandler pageElementHandler, Locator[] locators) {
+	private static Object getLocatorElement(Class<?> fieldType, AbstractPage page, Locator[] locators) {
 
 		Object value = null;
 
 		if (fieldType.isAssignableFrom(Boolean.class) || fieldType.isAssignableFrom(boolean.class)) {
-			value = pageElementHandler.existsElement(locators);
+			value = page.getElementHandler().existsElement(locators);
 
 		} else if (fieldType.isAssignableFrom(Integer.class) || fieldType.isAssignableFrom(int.class)) {
-			value = pageElementHandler.getElementCount(locators);
+			value = page.getElementHandler().getElementCount(locators);
 
 		} else if (fieldType.isAssignableFrom(PageElement.class)) {
-			value = pageElementHandler.getElement(locators);
+			value = page.getElementHandler().getElement(locators);
 
 		} else if (fieldType.isAssignableFrom(List.class)) {
-			value = pageElementHandler.getElements(locators);
+			value = page.getElementHandler().getElements(locators);
 
 		} else if (fieldType.isAssignableFrom(AbstractElement.class)) {
 
 			@SuppressWarnings("unchecked")
 			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) fieldType;
-			value = getValueForAbstractElement(elementClass, pageElementHandler, locators);
+			value = getValueForAbstractElement(elementClass, page.getElementHandler(), locators);
 
 		} else if (fieldType.isAssignableFrom(AbstractPage.class)) {
 
 			@SuppressWarnings("unchecked")
 			Class<? extends AbstractPage> pageClass = (Class<? extends AbstractPage>) fieldType;
-			value = getValueForAbstractPage(pageClass, pageElementHandler, locators);
+			value = getValueForAbstractPage(pageClass, page, locators);
 		}
 
 		return value;
@@ -137,10 +137,10 @@ class AnnotationsSupport {
 		return element;
 	}
 
-	private static Object getValueForAbstractPage(Class<? extends AbstractPage> fieldType, PageElementHandler pageElementHandler, Locator[] locators) {
+	private static Object getValueForAbstractPage(Class<? extends AbstractPage> fieldType, AbstractPage page, Locator[] locators) {
 
-		PageElement pageElement = pageElementHandler.getElement(locators);
-		Object element = AbstractPage.factory(fieldType, pageElementHandler, pageElement);
+		PageElement pageElement = page.getElementHandler().getElement(locators);
+		Object element = AbstractPage.factory(fieldType, page, pageElement);
 
 		return element;
 	}

@@ -10,7 +10,8 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.testng.ISuite;
@@ -24,13 +25,10 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
-	private ApplicationContext applicationContext;
+	private final ApplicationContext applicationContext;
 
-	@Autowired
-	private PageElementHandler elementHandler;
-
-	@Autowired
-	private DriverActionHandler driverHandler;
+	private final PageElementHandler elementHandler;
+	private final DriverActionHandler driverHandler;
 
 	protected AbstractPage(String url) {
 
@@ -45,10 +43,25 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 			url = annotation.value();
 		}
 
+		String[] locations = getContextLocations();
+		if (locations.length == 0) {
+			// TODO change for original-suite file, or one in default
+			locations = new String[] { "classpath:/suite-context.xml" };
+		}
+
+		this.applicationContext = new GenericXmlApplicationContext(locations);
 		initPageContext();
+
+		WebDriver driver = applicationContext.getBean(WebDriver.class);
+		long timeOutInSeconds = applicationContext.getEnvironment().getProperty("${suite.waitTimeOut}", Long.class);
+		WebDriverWait driverWait = new WebDriverWait(driver, timeOutInSeconds);
+
+		this.elementHandler = new PageElementHandler(driver, driverWait);
 		elementHandler.setApplicationContext(applicationContext);
 
 		String pageUrl = applicationContext.getEnvironment().resolvePlaceholders(url);
+
+		this.driverHandler = new DriverActionHandler(driverWait, driver);
 
 		driverHandler.goToUrl(pageUrl);
 		AnnotationsSupport.initLocators(this);
@@ -58,15 +71,57 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		this((String) null);
 	}
 
-	AbstractPage(AbstractPage parentPage) {
+	AbstractPage(AbstractPage parentPage, PageElement pageElement) {
+
+		String[] locations = getContextLocations();
+		if (locations.length == 0) {
+			this.applicationContext = parentPage.applicationContext;
+		} else {
+			this.applicationContext = new GenericXmlApplicationContext(locations);
+		}
+
+		initPageContext();
+		AnnotationsSupport.initLocators(this);
 
 		this.driverHandler = parentPage.driverHandler;
-		this.applicationContext = parentPage.applicationContext;
+		this.elementHandler = new PageElementHandler(parentPage.elementHandler, pageElement);
 	}
 
 	protected AbstractPage(AbstractPage parentPage, String url) {
-		// TODO
-		this(url);
+
+		// TODO -> mantener WebDriver: no abrir uno nuevo.
+
+		String[] locations = getContextLocations();
+		if (locations.length == 0) {
+			this.applicationContext = parentPage.applicationContext;
+		} else {
+			this.applicationContext = new GenericXmlApplicationContext(locations);
+		}
+
+		initPageContext();
+		AnnotationsSupport.initLocators(this);
+
+		this.driverHandler = parentPage.driverHandler;
+		this.elementHandler = new PageElementHandler(driverHandler.getDriver(), driverHandler.getDriverWait());
+
+		if (url == null) {
+
+			Class<?> pageClass = this.getClass();
+			PageURL annotation = pageClass.getAnnotation(PageURL.class);
+			if (annotation != null) {
+				url = annotation.value();
+			}
+		}
+
+		if (url != null) {
+			driverHandler.goToUrl(url);
+		} else {
+			driverHandler.waitForPageToLoad();
+		}
+	}
+
+	protected AbstractPage(AbstractPage parentPage) {
+		this(parentPage, (String) null);
 	}
 
 	public String getTitle() {
@@ -101,14 +156,6 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 	}
 
 	private void initPageContext() {
-
-		String[] locations = getContextLocations();
-		if (locations.length == 0) {
-			// TODO change for original-suite file, or one in default
-			locations = new String[] { "classpath:/suite-context.xml" };
-		}
-
-		applicationContext = new GenericXmlApplicationContext(locations);
 
 		Properties suiteProperties = TestThreadPoolManager.getSuitePropertiesForPage();
 		SpringUtil.addProperties(applicationContext, suiteProperties);
@@ -147,8 +194,6 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 	private String[] getContextLocations() {
 
-		// TODO Agregar contexto por defecto
-
 		String[] contextLocations = {};
 
 		Class<?> pageClass = this.getClass();
@@ -167,17 +212,10 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		return contextLocations;
 	}
 
-	public static <T extends AbstractPage> T factory(Class<T> elementClass, PageElementHandler elementHandler, PageElement pageElement) {
+	public static <T extends AbstractPage> T factory(Class<T> elementClass, AbstractPage page, PageElement pageElement) {
 		try {
-			Constructor<T> constructor = elementClass.getConstructor(PageElement.class);
-			T newInstance = constructor.newInstance(pageElement);
-
-			// TODO Agregar context por defecto
-			newInstance.addPageProperties();
-
-			SpringUtil.autowireBean(newInstance.getApplicationContext(), newInstance);
-
-			AnnotationsSupport.initLocators(newInstance);
+			Constructor<T> constructor = elementClass.getConstructor(AbstractPage.class, PageElement.class);
+			T newInstance = constructor.newInstance(page, pageElement);
 
 			return newInstance;
 

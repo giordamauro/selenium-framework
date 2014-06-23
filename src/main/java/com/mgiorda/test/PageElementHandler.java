@@ -20,7 +20,7 @@ import org.springframework.context.ApplicationContext;
 import com.mgiorda.test.ProtectedPageClasses.Locator;
 import com.mgiorda.test.ProtectedPageClasses.PageElement;
 
-public class PageElementHandler {
+class PageElementHandler {
 
 	private static final Log staticLogger = LogFactory.getLog(AbstractPage.class);
 
