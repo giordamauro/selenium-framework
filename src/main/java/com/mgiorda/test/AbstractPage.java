@@ -57,9 +57,12 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		initPageContext();
 
 		WebDriverFactory driverFactory = applicationContext.getBean(WebDriverFactory.class);
-		this.browser = applicationContext.getEnvironment().getProperty("${suite.browser}", Browser.class);
+		String browserProperty = applicationContext.getEnvironment().resolvePlaceholders("${suite.browser}");
+		this.browser = Browser.valueOf(browserProperty);
 		WebDriver driver = driverFactory.getNewDriver(browser);
-		long timeOutInSeconds = applicationContext.getEnvironment().getProperty("${suite.waitTimeOut}", Long.class);
+
+		String waitTimeOutProperty = applicationContext.getEnvironment().resolvePlaceholders("${suite.waitTimeOut}");
+		long timeOutInSeconds = Long.valueOf(waitTimeOutProperty);
 		WebDriverWait driverWait = new WebDriverWait(driver, timeOutInSeconds);
 
 		this.elementHandler = new PageElementHandler(driver, driverWait);
