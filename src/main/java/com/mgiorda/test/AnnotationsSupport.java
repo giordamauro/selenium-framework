@@ -9,9 +9,9 @@ import org.apache.commons.logging.LogFactory;
 
 import com.mgiorda.annotations.By;
 import com.mgiorda.annotations.Locate;
-import com.mgiorda.test.ProtectedPageClasses.AbstractElement;
 import com.mgiorda.test.ProtectedPageClasses.Locator;
 import com.mgiorda.test.ProtectedPageClasses.PageElement;
+import com.mgiorda.test.ProtectedPageClasses.PageElementHandler;
 
 class AnnotationsSupport {
 
@@ -42,6 +42,31 @@ class AnnotationsSupport {
 				}
 
 				setField(page, field, value);
+			}
+		}
+	}
+
+	public static <T extends AbstractElement> void initElementLocators(T element) {
+
+		Class<?> pageClass = element.getClass();
+
+		Field[] declaredFields = pageClass.getDeclaredFields();
+		for (Field field : declaredFields) {
+
+			Locate annotation = field.getAnnotation(Locate.class);
+			if (annotation != null) {
+
+				Locator[] locators = getLocatorsFromAnnotation(annotation);
+				if (locators.length == 0) {
+					throw new IllegalStateException(String.format("Couldn't find an element locator for field '%s' in page class '%s'", field.getName(), pageClass.getSimpleName()));
+				}
+
+				Object value = getLocatorElementForHandler(field.getType(), element.getElementHandler(), locators);
+				if (value == null) {
+					throw new IllegalStateException(String.format("Cannot autowire field '%s' of type '%s' in page '%s'", field.getName(), field.getType(), pageClass));
+				}
+
+				setField(element, field, value);
 			}
 		}
 	}
@@ -101,29 +126,40 @@ class AnnotationsSupport {
 
 		Object value = null;
 
+		if (AbstractPage.class.isAssignableFrom(fieldType)) {
+
+			@SuppressWarnings("unchecked")
+			Class<? extends AbstractPage> pageClass = (Class<? extends AbstractPage>) fieldType;
+			value = getValueForAbstractPage(pageClass, page, locators);
+
+		} else {
+			value = getLocatorElementForHandler(fieldType, page.getElementHandler(), locators);
+		}
+
+		return value;
+	}
+
+	private static Object getLocatorElementForHandler(Class<?> fieldType, PageElementHandler elementHandler, Locator[] locators) {
+
+		Object value = null;
+
 		if (fieldType.isAssignableFrom(Boolean.class) || fieldType.isAssignableFrom(boolean.class)) {
-			value = page.getElementHandler().existsElement(locators);
+			value = elementHandler.existsElement(locators);
 
 		} else if (fieldType.isAssignableFrom(Integer.class) || fieldType.isAssignableFrom(int.class)) {
-			value = page.getElementHandler().getElementCount(locators);
+			value = elementHandler.getElementCount(locators);
 
 		} else if (fieldType.isAssignableFrom(PageElement.class)) {
-			value = page.getElementHandler().getElement(locators);
+			value = elementHandler.getElement(locators);
 
 		} else if (fieldType.isAssignableFrom(List.class)) {
-			value = page.getElementHandler().getElements(locators);
+			value = elementHandler.getElements(locators);
 
 		} else if (AbstractElement.class.isAssignableFrom(fieldType)) {
 
 			@SuppressWarnings("unchecked")
 			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) fieldType;
-			value = getValueForAbstractElement(elementClass, page.getElementHandler(), locators);
-
-		} else if (AbstractPage.class.isAssignableFrom(fieldType)) {
-
-			@SuppressWarnings("unchecked")
-			Class<? extends AbstractPage> pageClass = (Class<? extends AbstractPage>) fieldType;
-			value = getValueForAbstractPage(pageClass, page, locators);
+			value = getValueForAbstractElement(elementClass, elementHandler, locators);
 		}
 
 		return value;
@@ -145,15 +181,15 @@ class AnnotationsSupport {
 		return element;
 	}
 
-	private static <T extends AbstractPage> void setField(T page, Field field, Object value) {
+	private static void setField(Object target, Field field, Object value) {
 
 		boolean isFieldAccessible = field.isAccessible();
 
 		field.setAccessible(true);
 		try {
 
-			logger.info(String.format("Setting '%s' page field '%s' with element '%s'", page.getClass().getSimpleName(), field.getName(), value));
-			field.set(page, value);
+			logger.info(String.format("Setting '%s' field in class '%s' with element '%s'", target.getClass().getSimpleName(), field.getName(), value));
+			field.set(target, value);
 
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 
