@@ -113,13 +113,13 @@ class AnnotationsSupport {
 		} else if (fieldType.isAssignableFrom(List.class)) {
 			value = page.getElementHandler().getElements(locators);
 
-		} else if (fieldType.isAssignableFrom(AbstractElement.class)) {
+		} else if (AbstractElement.class.isAssignableFrom(fieldType)) {
 
 			@SuppressWarnings("unchecked")
 			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) fieldType;
 			value = getValueForAbstractElement(elementClass, page.getElementHandler(), locators);
 
-		} else if (fieldType.isAssignableFrom(AbstractPage.class)) {
+		} else if (AbstractPage.class.isAssignableFrom(fieldType)) {
 
 			@SuppressWarnings("unchecked")
 			Class<? extends AbstractPage> pageClass = (Class<? extends AbstractPage>) fieldType;

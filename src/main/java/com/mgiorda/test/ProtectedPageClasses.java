@@ -109,7 +109,11 @@ abstract class ProtectedPageClasses {
 		public static <T extends AbstractElement> T factory(Class<T> elementClass, PageElementHandler elementHandler, PageElement pageElement) {
 			try {
 				Constructor<T> constructor = elementClass.getConstructor(PageElement.class);
+				boolean accessible = constructor.isAccessible();
+
+				constructor.setAccessible(true);
 				T newInstance = constructor.newInstance(pageElement);
+				constructor.setAccessible(accessible);
 
 				newInstance.setElementHandler(elementHandler);
 

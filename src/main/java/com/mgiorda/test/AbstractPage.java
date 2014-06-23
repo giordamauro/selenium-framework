@@ -141,7 +141,7 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 		ISuite currentTestSuite = TestThreadPoolManager.getCurrentTestSuite();
 
-		Long currentTime = null;
+		Long currentTime = Long.valueOf(0);
 		// So that never would be two photos with same time stamp
 		synchronized (currentTime) {
 			currentTime = new Date().getTime();
@@ -224,7 +224,11 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 	public static <T extends AbstractPage> T factory(Class<T> elementClass, AbstractPage page, PageElement pageElement) {
 		try {
 			Constructor<T> constructor = elementClass.getConstructor(AbstractPage.class, PageElement.class);
+			boolean accessible = constructor.isAccessible();
+
+			constructor.setAccessible(true);
 			T newInstance = constructor.newInstance(page, pageElement);
+			constructor.setAccessible(accessible);
 
 			return newInstance;
 
