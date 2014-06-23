@@ -118,6 +118,12 @@ class AnnotationsSupport {
 			@SuppressWarnings("unchecked")
 			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) fieldType;
 			value = getValueForAbstractElement(elementClass, pageElementHandler, locators);
+
+		} else if (fieldType.isAssignableFrom(AbstractPage.class)) {
+
+			@SuppressWarnings("unchecked")
+			Class<? extends AbstractPage> pageClass = (Class<? extends AbstractPage>) fieldType;
+			value = getValueForAbstractPage(pageClass, pageElementHandler, locators);
 		}
 
 		return value;
@@ -127,6 +133,14 @@ class AnnotationsSupport {
 
 		PageElement pageElement = pageElementHandler.getElement(locators);
 		Object element = AbstractElement.factory(fieldType, pageElementHandler, pageElement);
+
+		return element;
+	}
+
+	private static Object getValueForAbstractPage(Class<? extends AbstractPage> fieldType, PageElementHandler pageElementHandler, Locator[] locators) {
+
+		PageElement pageElement = pageElementHandler.getElement(locators);
+		Object element = AbstractPage.factory(fieldType, pageElementHandler, pageElement);
 
 		return element;
 	}

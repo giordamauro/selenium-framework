@@ -3,6 +3,7 @@ package com.mgiorda.test;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.Date;
 import java.util.Properties;
 
@@ -53,7 +54,13 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 	}
 
 	protected AbstractPage() {
-		this(null);
+		this((String) null);
+	}
+
+	AbstractPage(AbstractPage parentPage) {
+
+		this.driverHandler = parentPage.driverHandler;
+		this.applicationContext = parentPage.applicationContext;
 	}
 
 	protected AbstractPage(AbstractPage parentPage, String url) {
@@ -111,7 +118,7 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		TestThreadPoolManager.registerPage(this);
 	}
 
-	private void addPageProperties() {
+	void addPageProperties() {
 
 		Class<?> pageClass = this.getClass();
 
@@ -139,6 +146,8 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 	private String[] getContextLocations() {
 
+		// TODO Agregar contexto por defecto
+
 		String[] contextLocations = {};
 
 		Class<?> testClass = this.getClass();
@@ -148,5 +157,24 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		}
 
 		return contextLocations;
+	}
+
+	public static <T extends AbstractPage> T factory(Class<T> elementClass, PageElementHandler elementHandler, PageElement pageElement) {
+		try {
+			Constructor<T> constructor = elementClass.getConstructor(PageElement.class);
+			T newInstance = constructor.newInstance(pageElement);
+
+			// TODO Agregar context por defecto
+			newInstance.addPageProperties();
+
+			SpringUtil.autowireBean(newInstance.getApplicationContext(), newInstance);
+
+			AnnotationsSupport.initLocators(newInstance);
+
+			return newInstance;
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 }
