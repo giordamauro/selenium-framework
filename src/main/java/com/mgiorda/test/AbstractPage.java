@@ -45,6 +45,7 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		}
 
 		initPageContext();
+		elementHandler.setApplicationContext(applicationContext);
 
 		String pageUrl = applicationContext.getEnvironment().resolvePlaceholders(url);
 

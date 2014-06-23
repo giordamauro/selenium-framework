@@ -1,6 +1,6 @@
 package com.mgiorda.test;
 
-import java.util.List;
+import java.lang.reflect.Constructor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -95,47 +95,24 @@ abstract class ProtectedPageClasses {
 
 		protected final Log logger = LogFactory.getLog(this.getClass());
 
-		protected final PageElement pageElement;
 		protected final PageElementHandler elementHandler;
 
 		public AbstractElement(PageElement pageElement) {
-			this.pageElement = pageElement;
-			this.elementHandler = new PageElementHandler(pageElement);
+			// TODO
+			// this.elementHandler = new PageElementHandler(pageElement);
+			this.elementHandler = null;
 		}
 
-		protected boolean existsElement(Locator elementLocator) {
+		public static <T extends AbstractElement> T factory(Class<T> elementClass, PageElement pageElement) {
+			try {
+				Constructor<T> constructor = elementClass.getConstructor(PageElement.class);
+				T newInstance = constructor.newInstance(pageElement);
 
-			boolean exists = elementHandler.existsSubElement(pageElement, elementLocator);
+				return newInstance;
 
-			return exists;
-		}
-
-		protected int countElements(Locator elementLocator) {
-
-			int count = elementHandler.getSubElementCount(pageElement, elementLocator);
-
-			return count;
-		}
-
-		protected PageElement getElement(Locator elementLocator) {
-
-			PageElement element = elementHandler.getSubElement(pageElement, elementLocator);
-
-			return element;
-		}
-
-		protected List<PageElement> getElements(Locator elementLocator) {
-
-			List<PageElement> elements = elementHandler.getSubElements(pageElement, elementLocator);
-
-			return elements;
-		}
-
-		protected <T extends AbstractElement> T newElement(Class<T> elementClass, PageElement pageElement) {
-
-			T element = elementHandler.factoryAbstractElement(elementClass, pageElement);
-
-			return element;
+			} catch (Exception e) {
+				throw new IllegalStateException(e);
+			}
 		}
 	}
 
