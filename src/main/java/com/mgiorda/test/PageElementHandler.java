@@ -28,6 +28,7 @@ public class PageElementHandler {
 	private final WebDriverWait driverWait;
 
 	private ApplicationContext applicationContext;
+	private final PageElement rootElement;
 
 	public PageElementHandler(WebDriver driver, WebDriverWait driverWait) {
 
@@ -37,6 +38,17 @@ public class PageElementHandler {
 
 		this.driver = driver;
 		this.driverWait = driverWait;
+
+		this.rootElement = null;
+	}
+
+	PageElementHandler(PageElementHandler elementHandler, PageElement rootElement) {
+
+		this.driver = elementHandler.driver;
+		this.driverWait = elementHandler.driverWait;
+		this.applicationContext = elementHandler.applicationContext;
+
+		this.rootElement = rootElement;
 	}
 
 	void setApplicationContext(ApplicationContext applicationContext) {
@@ -48,7 +60,7 @@ public class PageElementHandler {
 		boolean exists = true;
 
 		try {
-			PageElement parentElement = getParentElement(locators);
+			PageElement parentElement = getParentElement(rootElement, locators);
 			exists = existsElement(parentElement, locators[locators.length - 1]);
 
 		} catch (TimeoutException e) {
@@ -63,7 +75,7 @@ public class PageElementHandler {
 		int count = 0;
 
 		try {
-			PageElement parentElement = getParentElement(locators);
+			PageElement parentElement = getParentElement(rootElement, locators);
 			count = getElementCount(parentElement, locators[locators.length - 1]);
 
 		} catch (TimeoutException e) {
@@ -75,7 +87,7 @@ public class PageElementHandler {
 
 	public PageElement getElement(Locator... locators) throws TimeoutException {
 
-		PageElement parentElement = getParentElement(locators);
+		PageElement parentElement = getParentElement(rootElement, locators);
 		PageElement element = getElement(parentElement, locators[locators.length - 1]);
 
 		return element;
@@ -83,7 +95,7 @@ public class PageElementHandler {
 
 	public List<PageElement> getElements(Locator... locators) throws TimeoutException {
 
-		PageElement parentElement = getParentElement(locators);
+		PageElement parentElement = getParentElement(rootElement, locators);
 		List<PageElement> elements = getElements(parentElement, locators[locators.length - 1]);
 
 		return elements;
@@ -176,13 +188,11 @@ public class PageElementHandler {
 		return Collections.unmodifiableList(pageElements);
 	}
 
-	private PageElement getParentElement(Locator[] locators) throws TimeoutException {
+	private PageElement getParentElement(PageElement parentElement, Locator[] locators) throws TimeoutException {
 
 		if (locators == null || locators.length == 0) {
 			throw new IllegalArgumentException("Locator... cannot be null or empty");
 		}
-
-		PageElement parentElement = null;
 
 		int i = 0;
 		while (i < locators.length - 1) {

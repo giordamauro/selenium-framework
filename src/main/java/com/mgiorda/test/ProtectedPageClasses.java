@@ -95,18 +95,23 @@ abstract class ProtectedPageClasses {
 
 		protected final Log logger = LogFactory.getLog(this.getClass());
 
-		protected final PageElementHandler elementHandler;
+		protected final PageElement pageElement;
+		protected PageElementHandler elementHandler;
 
 		public AbstractElement(PageElement pageElement) {
-			// TODO
-			// this.elementHandler = new PageElementHandler(pageElement);
-			this.elementHandler = null;
+			this.pageElement = pageElement;
 		}
 
-		public static <T extends AbstractElement> T factory(Class<T> elementClass, PageElement pageElement) {
+		void setElementHandler(PageElementHandler elementHandler) {
+			this.elementHandler = new PageElementHandler(elementHandler, pageElement);
+		}
+
+		public static <T extends AbstractElement> T factory(Class<T> elementClass, PageElementHandler elementHandler, PageElement pageElement) {
 			try {
 				Constructor<T> constructor = elementClass.getConstructor(PageElement.class);
 				T newInstance = constructor.newInstance(pageElement);
+
+				newInstance.setElementHandler(elementHandler);
 
 				return newInstance;
 

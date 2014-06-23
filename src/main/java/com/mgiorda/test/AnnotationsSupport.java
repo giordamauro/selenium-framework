@@ -126,7 +126,7 @@ class AnnotationsSupport {
 	private static Object getValueForAbstractElement(Class<? extends AbstractElement> fieldType, PageElementHandler pageElementHandler, Locator[] locators) {
 
 		PageElement pageElement = pageElementHandler.getElement(locators);
-		Object element = AbstractElement.factory(fieldType, pageElement);
+		Object element = AbstractElement.factory(fieldType, pageElementHandler, pageElement);
 
 		return element;
 	}

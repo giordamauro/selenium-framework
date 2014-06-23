@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Properties;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +70,6 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		ISuite currentTestSuite = TestThreadPoolManager.getCurrentTestSuite();
 
 		Long currentTime = null;
-
 		// So that never would be two photos with same time stamp
 		synchronized (currentTime) {
 			currentTime = new Date().getTime();
@@ -96,10 +94,11 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 	private void initPageContext() {
 
-		String[] locations = { "classpath:/context/page-context.xml" };
-
-		String[] contextLocations = getContextLocations();
-		locations = ArrayUtils.addAll(locations, contextLocations);
+		String[] locations = getContextLocations();
+		if (locations.length == 0) {
+			// TODO change for original-suite file, or one in default
+			locations = new String[] { "classpath:/suite-context.xml" };
+		}
 
 		applicationContext = new GenericXmlApplicationContext(locations);
 
