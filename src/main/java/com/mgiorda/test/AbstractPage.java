@@ -20,6 +20,8 @@ import com.mgiorda.annotations.PageContext;
 import com.mgiorda.annotations.PageProperties;
 import com.mgiorda.annotations.PageURL;
 import com.mgiorda.commons.SpringUtil;
+import com.mgiorda.page.Browser;
+import com.mgiorda.page.WebDriverFactory;
 
 public abstract class AbstractPage extends ProtectedPageClasses {
 
@@ -29,6 +31,8 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 	private final PageElementHandler elementHandler;
 	private final DriverActionHandler driverHandler;
+
+	private final Browser browser;
 
 	protected AbstractPage(String url) {
 
@@ -52,7 +56,9 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		this.applicationContext = new GenericXmlApplicationContext(locations);
 		initPageContext();
 
-		WebDriver driver = applicationContext.getBean(WebDriver.class);
+		WebDriverFactory driverFactory = applicationContext.getBean(WebDriverFactory.class);
+		this.browser = applicationContext.getEnvironment().getProperty("${suite.browser}", Browser.class);
+		WebDriver driver = driverFactory.getNewDriver(browser);
 		long timeOutInSeconds = applicationContext.getEnvironment().getProperty("${suite.waitTimeOut}", Long.class);
 		WebDriverWait driverWait = new WebDriverWait(driver, timeOutInSeconds);
 
@@ -85,11 +91,10 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 		this.driverHandler = parentPage.driverHandler;
 		this.elementHandler = new PageElementHandler(parentPage.elementHandler, pageElement);
+		this.browser = parentPage.browser;
 	}
 
 	protected AbstractPage(AbstractPage parentPage, String url) {
-
-		// TODO -> mantener WebDriver: no abrir uno nuevo.
 
 		String[] locations = getContextLocations();
 		if (locations.length == 0) {
@@ -103,6 +108,7 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 		this.driverHandler = parentPage.driverHandler;
 		this.elementHandler = new PageElementHandler(driverHandler.getDriver(), driverHandler.getDriverWait());
+		this.browser = parentPage.browser;
 
 		if (url == null) {
 
@@ -138,7 +144,7 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 			currentTime = new Date().getTime();
 		}
 
-		String filePath = currentTestSuite.getOutputDirectory() + File.separator + "fail-photos" + File.separator + driverHandler.getBrowser() + File.separator + currentTime + ".png";
+		String filePath = currentTestSuite.getOutputDirectory() + File.separator + "fail-photos" + File.separator + browser + File.separator + currentTime + ".png";
 
 		driverHandler.takeScreenShot(filePath);
 	}
