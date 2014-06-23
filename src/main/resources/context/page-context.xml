@@ -18,7 +18,7 @@
 
 	<context:annotation-config />
 
-	<context:property-placeholder location="classpath:/context/page-context.properties" />
+	<context:property-placeholder location="classpath*:context/page-context.properties" />
 
 	<bean id="chromeFactory" class="com.mgiorda.page.browser.ChromeFactory">
 		<constructor-arg type="java.util.Map">

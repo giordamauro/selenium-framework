@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 
@@ -50,7 +49,7 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		String[] locations = getContextLocations();
 		if (locations.length == 0) {
 			// TODO change for original-suite file, or one in default
-			locations = new String[] { "classpath:/suite-context.xml" };
+			locations = new String[] { "classpath*:suite-context.xml" };
 		}
 
 		this.applicationContext = new GenericXmlApplicationContext(locations);
@@ -104,6 +103,7 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 			this.applicationContext = parentPage.applicationContext;
 		} else {
 			this.applicationContext = new GenericXmlApplicationContext(locations);
+
 		}
 
 		initPageContext();
@@ -211,8 +211,9 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 			contextLocations = annotation.value();
 
 			if (contextLocations.length == 0) {
-				URL contextURL = pageClass.getResource(pageClass.getSimpleName() + "-context.xml");
-				String contextFile = contextURL.getFile();
+
+				String path = pageClass.getName().replaceAll(".", "/");
+				String contextFile = "classpath*:/" + path + "-context.xml";
 
 				contextLocations = new String[] { contextFile };
 			}

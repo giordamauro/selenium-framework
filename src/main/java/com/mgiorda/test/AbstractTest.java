@@ -2,7 +2,6 @@ package com.mgiorda.test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Properties;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -93,8 +92,9 @@ public abstract class AbstractTest {
 			contextLocations = annotation.value();
 
 			if (contextLocations.length == 0) {
-				URL contextURL = testClass.getResource(testClass.getSimpleName() + "-context.xml");
-				String contextFile = contextURL.getFile();
+
+				String path = testClass.getName().replaceAll("\\.", "/");
+				String contextFile = "classpath*:" + path + "-context.xml";
 
 				contextLocations = new String[] { contextFile };
 			}
