@@ -2,6 +2,7 @@ package com.mgiorda.test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -48,7 +49,7 @@ public abstract class AbstractTest {
 	private ApplicationContext testAppContext = null;
 
 	@BeforeClass
-	public void beforeClass() {
+	public void $beforeClass() {
 		staticLogger.info(String.format("Initiating test Class '%s'", this.getClass().getSimpleName()));
 
 		String[] locations = { "classpath:/context/test-context.xml" };
@@ -65,7 +66,7 @@ public abstract class AbstractTest {
 	}
 
 	@AfterClass
-	public void logAfterClass() {
+	public void $logAfterClass() {
 
 		staticLogger.info(String.format("Finishing test Class '%s'", this.getClass().getSimpleName()));
 	}
@@ -90,6 +91,13 @@ public abstract class AbstractTest {
 		TestContext annotation = testClass.getAnnotation(TestContext.class);
 		if (annotation != null) {
 			contextLocations = annotation.value();
+
+			if (contextLocations.length == 0) {
+				URL contextURL = testClass.getResource(testClass.getSimpleName() + "-context.xml");
+				String contextFile = contextURL.getFile();
+
+				contextLocations = new String[] { contextFile };
+			}
 		}
 
 		return contextLocations;
