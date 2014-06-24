@@ -48,8 +48,8 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 		String[] locations = getContextLocations();
 		if (locations.length == 0) {
-			// TODO change for original-suite file, or one in default
-			locations = new String[] { "classpath*:suite-context.xml" };
+			Properties suiteProperties = TestThreadPoolManager.getSuitePropertiesForPage();
+			locations = new String[] { "classpath*:" + suiteProperties.getProperty("suite.context") };
 		}
 
 		this.applicationContext = new GenericXmlApplicationContext(locations);
@@ -103,7 +103,6 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 			this.applicationContext = parentPage.applicationContext;
 		} else {
 			this.applicationContext = new GenericXmlApplicationContext(locations);
-
 		}
 
 		initPageContext();

@@ -9,6 +9,8 @@ public class SuiteTestRun {
 
 	private String file;
 
+	private String context = "context/page-context.xml";
+
 	private Browser browser;
 
 	private int waitTimeOut = 60;
@@ -49,6 +51,18 @@ public class SuiteTestRun {
 		this.outputDirectory = outputDirectory;
 	}
 
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+
+	public String getContext() {
+		return context;
+	}
+
+	public void setContext(String context) {
+		this.context = context;
+	}
+
 	public Properties getProperties() {
 
 		Properties suiteProperties = new Properties();
@@ -60,6 +74,7 @@ public class SuiteTestRun {
 		suiteProperties.put("suite.file", file);
 		suiteProperties.put("suite.waitTimeOut", waitTimeOut);
 		suiteProperties.put("suite.browser", browser);
+		suiteProperties.put("suite.context", context);
 
 		String outputDir = getOutputDirectory();
 		if (outputDir == null) {
@@ -68,9 +83,5 @@ public class SuiteTestRun {
 		suiteProperties.put("suite.outputDirectory", outputDir);
 
 		return suiteProperties;
-	}
-
-	public void setProperties(Properties properties) {
-		this.properties = properties;
 	}
 }

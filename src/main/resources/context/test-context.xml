@@ -24,6 +24,7 @@
 		<prop key="suite.file">default</prop>
 		<prop key="suite.browser">CHROME</prop>
 		<prop key="suite.waitTimeOut">60</prop>
+		<prop key="suite.context">context/page-context.xml</prop>
 		<prop key="suite.outputDirectory">default</prop>
 	</util:properties>
 
