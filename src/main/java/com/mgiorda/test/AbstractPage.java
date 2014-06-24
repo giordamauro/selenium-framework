@@ -16,10 +16,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.testng.ISuite;
 
-import com.mgiorda.annotations.PageContext;
-import com.mgiorda.annotations.PageProperties;
-import com.mgiorda.annotations.PageURL;
-import com.mgiorda.commons.SpringUtil;
+import com.mgiorda.annotation.PageContext;
+import com.mgiorda.annotation.PageProperties;
+import com.mgiorda.annotation.PageURL;
+import com.mgiorda.common.SpringUtil;
 import com.mgiorda.page.Browser;
 import com.mgiorda.page.WebDriverFactory;
 

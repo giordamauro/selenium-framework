@@ -1,4 +1,4 @@
-package com.mgiorda.annotations;
+package com.mgiorda.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PageProperties {
+public @interface PageURL {
 
-	String[] value();
+	String value();
 }

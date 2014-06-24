@@ -1,4 +1,4 @@
-package com.mgiorda.commons;
+package com.mgiorda.common;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Layout;

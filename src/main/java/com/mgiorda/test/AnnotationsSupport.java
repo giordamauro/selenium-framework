@@ -7,8 +7,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.mgiorda.annotations.By;
-import com.mgiorda.annotations.Locate;
+import com.mgiorda.annotation.By;
+import com.mgiorda.annotation.Locate;
 import com.mgiorda.test.ProtectedPageClasses.Locator;
 import com.mgiorda.test.ProtectedPageClasses.PageElement;
 import com.mgiorda.test.ProtectedPageClasses.PageElementHandler;

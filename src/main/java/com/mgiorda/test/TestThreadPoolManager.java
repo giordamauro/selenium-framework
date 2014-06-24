@@ -12,7 +12,11 @@ import org.testng.ITestResult;
 final class TestThreadPoolManager {
 
 	private static final Map<Thread, ITestResult> threadTests = new HashMap<>();
-	private static final Map<ITestResult, List<AbstractPage>> testPages = new HashMap<>();
+	private static final Map<Thread, AbstractTest> threadTestInstances = new HashMap<>();
+
+	private static final Map<ITestResult, List<AbstractPage>> testResultPages = new HashMap<>();
+	private static final Map<AbstractTest, List<AbstractPage>> testInstancePages = new HashMap<>();
+
 	private static final Map<Thread, Properties> suiteProperties = new HashMap<>();
 	private static final Map<ISuite, Thread> suiteThreads = new HashMap<>();
 
@@ -32,17 +36,37 @@ final class TestThreadPoolManager {
 		threadTests.put(thread, test);
 	}
 
+	public synchronized static void registerTestInstance(AbstractTest test) {
+		Thread thread = Thread.currentThread();
+		threadTestInstances.put(thread, test);
+	}
+
 	public synchronized static void registerPage(AbstractPage page) {
 
-		ITestResult test = getCurrentTestResult();
+		Thread thread = Thread.currentThread();
 
-		List<AbstractPage> pages = testPages.get(test);
-		if (pages == null) {
-			pages = new ArrayList<>();
-			testPages.put(test, pages);
+		ITestResult testResult = threadTests.get(thread);
+		if (testResult != null) {
+
+			List<AbstractPage> pages = testResultPages.get(testResult);
+			if (pages == null) {
+				pages = new ArrayList<>();
+				testResultPages.put(testResult, pages);
+			}
+
+			pages.add(page);
+
+		} else {
+			AbstractTest testInstance = threadTestInstances.get(thread);
+
+			List<AbstractPage> pages = testInstancePages.get(testResult);
+			if (pages == null) {
+				pages = new ArrayList<>();
+				testInstancePages.put(testInstance, pages);
+			}
+
+			pages.add(page);
 		}
-
-		pages.add(page);
 	}
 
 	public synchronized static void registerSuiteProperties(Properties properties) {
@@ -52,7 +76,17 @@ final class TestThreadPoolManager {
 
 	public static void finishPages(ITestResult test) {
 
-		List<AbstractPage> pages = testPages.get(test);
+		List<AbstractPage> pages = testResultPages.get(test);
+		if (pages != null) {
+			for (AbstractPage page : pages) {
+				page.onTestFinish();
+			}
+		}
+	}
+
+	public static void finishPages(AbstractTest test) {
+
+		List<AbstractPage> pages = testInstancePages.get(test);
 		if (pages != null) {
 			for (AbstractPage page : pages) {
 				page.onTestFinish();
@@ -62,7 +96,7 @@ final class TestThreadPoolManager {
 
 	public static void failPages(ITestResult test) {
 
-		List<AbstractPage> pages = testPages.get(test);
+		List<AbstractPage> pages = testResultPages.get(test);
 		if (pages != null) {
 			for (AbstractPage page : pages) {
 				page.onTestFail();
@@ -90,9 +124,14 @@ final class TestThreadPoolManager {
 
 		Properties properties = null;
 
-		ISuite suite = getCurrentTestSuite();
-		Thread suiteThread = suiteThreads.get(suite);
-		properties = suiteProperties.get(suiteThread);
+		Thread currentThread = Thread.currentThread();
+		properties = suiteProperties.get(currentThread);
+
+		if (properties == null) {
+			ISuite suite = getCurrentTestSuite();
+			Thread suiteThread = suiteThreads.get(suite);
+			properties = suiteProperties.get(suiteThread);
+		}
 
 		return properties;
 	}

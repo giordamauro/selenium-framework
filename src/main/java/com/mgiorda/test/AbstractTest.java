@@ -13,9 +13,9 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 
-import com.mgiorda.annotations.TestContext;
-import com.mgiorda.annotations.TestProperties;
-import com.mgiorda.commons.SpringUtil;
+import com.mgiorda.annotation.TestContext;
+import com.mgiorda.annotation.TestProperties;
+import com.mgiorda.common.SpringUtil;
 
 @Listeners({ SuiteLogger.class, TestLogger.class })
 public abstract class AbstractTest {
@@ -62,10 +62,14 @@ public abstract class AbstractTest {
 		addTestProperties();
 
 		SpringUtil.autowireBean(testAppContext, this);
+
+		TestThreadPoolManager.registerTestInstance(this);
 	}
 
 	@AfterClass
 	public void $logAfterClass() {
+
+		TestThreadPoolManager.finishPages(this);
 
 		staticLogger.info(String.format("Finishing test Class '%s'", this.getClass().getSimpleName()));
 	}

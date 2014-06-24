@@ -58,7 +58,6 @@ public class TestLogger implements ITestListener {
 	public void onStart(ITestContext context) {
 
 		logger.info(String.format("Initiating test named: '%s'", context.getName()));
-
 	}
 
 	@Override

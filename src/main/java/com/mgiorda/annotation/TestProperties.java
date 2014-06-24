@@ -1,4 +1,4 @@
-package com.mgiorda.annotations;
+package com.mgiorda.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,4 +1,4 @@
-package com.mgiorda.commons;
+package com.mgiorda.common;
 
 import java.io.IOException;
 
