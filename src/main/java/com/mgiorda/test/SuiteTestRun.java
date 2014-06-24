@@ -15,6 +15,8 @@ public class SuiteTestRun {
 
 	private int waitTimeOut = 60;
 
+	private long afterActionTime = 500;
+
 	private String outputDirectory = null;
 
 	private Properties properties;
@@ -63,6 +65,14 @@ public class SuiteTestRun {
 		this.context = context;
 	}
 
+	public long getAfterActionTime() {
+		return afterActionTime;
+	}
+
+	public void setAfterActionTime(long afterActionTime) {
+		this.afterActionTime = afterActionTime;
+	}
+
 	public Properties getProperties() {
 
 		Properties suiteProperties = new Properties();
@@ -75,6 +85,7 @@ public class SuiteTestRun {
 		suiteProperties.put("suite.waitTimeOut", waitTimeOut);
 		suiteProperties.put("suite.browser", browser);
 		suiteProperties.put("suite.context", context);
+		suiteProperties.put("suite.afterActionTime", afterActionTime);
 
 		String outputDir = getOutputDirectory();
 		if (outputDir == null) {

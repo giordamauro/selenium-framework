@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Properties;
 
@@ -25,6 +26,11 @@ import com.mgiorda.page.WebDriverFactory;
 public abstract class AbstractPage extends ProtectedPageClasses {
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
+
+	private static final String SUITE_CONTEXT_PROPERTY = "suite.context";
+	private static final String SUITE_TIMEOUT_PROPERTY = "${suite.waitTimeOut}";
+	private static final String SUITE_BROWSER_PROPERTY = "${suite.browser}";
+	private static final String SUITE_ACTION_TIME_PROPERTY = "${suite.afterActionTime}";
 
 	private final ApplicationContext applicationContext;
 
@@ -49,22 +55,22 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		String[] locations = getContextLocations();
 		if (locations.length == 0) {
 			Properties suiteProperties = TestThreadPoolManager.getSuitePropertiesForPage();
-			locations = new String[] { "classpath*:" + suiteProperties.getProperty("suite.context") };
+			locations = new String[] { "classpath*:" + suiteProperties.getProperty(SUITE_CONTEXT_PROPERTY) };
 		}
 
 		this.applicationContext = new GenericXmlApplicationContext(locations);
 		initPageContext();
 
 		WebDriverFactory driverFactory = applicationContext.getBean(WebDriverFactory.class);
-		String browserProperty = applicationContext.getEnvironment().resolvePlaceholders("${suite.browser}");
-		this.browser = Browser.valueOf(browserProperty);
+		this.browser = getPropertyPlaceholder(SUITE_BROWSER_PROPERTY, Browser.class);
 		WebDriver driver = driverFactory.getNewDriver(browser);
 
-		String waitTimeOutProperty = applicationContext.getEnvironment().resolvePlaceholders("${suite.waitTimeOut}");
-		long timeOutInSeconds = Long.valueOf(waitTimeOutProperty);
+		long timeOutInSeconds = getPropertyPlaceholder(SUITE_TIMEOUT_PROPERTY, Long.class);
 		WebDriverWait driverWait = new WebDriverWait(driver, timeOutInSeconds);
 
-		this.elementHandler = new PageElementHandler(driver, driverWait);
+		long afterActionTime = getPropertyPlaceholder(SUITE_ACTION_TIME_PROPERTY, Long.class);
+
+		this.elementHandler = new PageElementHandler(driver, driverWait, afterActionTime);
 		elementHandler.setApplicationContext(applicationContext);
 
 		String pageUrl = applicationContext.getEnvironment().resolvePlaceholders(url);
@@ -109,7 +115,7 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		AnnotationsSupport.initLocators(this);
 
 		this.driverHandler = parentPage.driverHandler;
-		this.elementHandler = new PageElementHandler(driverHandler.getDriver(), driverHandler.getDriverWait());
+		this.elementHandler = new PageElementHandler(driverHandler.getDriver(), driverHandler.getDriverWait(), parentPage.getElementHandler().getAfterActionTime());
 		this.browser = parentPage.browser;
 
 		if (url == null) {
@@ -134,6 +140,14 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 	public String getTitle() {
 		return driverHandler.getTitle();
+	}
+
+	protected void waitForExecution(int seconds) {
+		try {
+			Thread.sleep(1000 * seconds);
+		} catch (InterruptedException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	void onTestFail() {
@@ -231,6 +245,23 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 			constructor.setAccessible(accessible);
 
 			return newInstance;
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	private <T> T getPropertyPlaceholder(String property, Class<T> propertyClass) {
+
+		String propertyValue = applicationContext.getEnvironment().resolvePlaceholders(property);
+
+		try {
+			Method method = propertyClass.getMethod("valueOf", String.class);
+
+			@SuppressWarnings("unchecked")
+			T returnValue = (T) method.invoke(null, propertyValue);
+
+			return returnValue;
 
 		} catch (Exception e) {
 			throw new IllegalStateException(e);

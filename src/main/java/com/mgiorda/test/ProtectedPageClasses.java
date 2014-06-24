@@ -26,25 +26,37 @@ abstract class ProtectedPageClasses {
 		private static final Log logger = LogFactory.getLog(PageElement.class);
 
 		private final WebElement element;
+		private final long afterActionTime;
 
-		PageElement(WebElement element) {
+		PageElement(WebElement element, long afterActionTime) {
 			this.element = element;
+			this.afterActionTime = afterActionTime;
 		}
 
 		WebElement getWebElement() {
 			return element;
 		}
 
+		private void waitForActionTime() {
+			try {
+				Thread.sleep(afterActionTime);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
 		public void click() {
 			logger.info(String.format("PageElement(%s) - Clicking", this.hashCode()));
 
 			element.click();
+			waitForActionTime();
 		}
 
 		public void submit() {
 			logger.info(String.format("PageElement(%s) - Submitting", this.hashCode()));
 
 			element.submit();
+			waitForActionTime();
 		}
 
 		public void sendKeys(CharSequence... keysToSend) {
@@ -163,11 +175,12 @@ abstract class ProtectedPageClasses {
 
 		private final WebDriver driver;
 		private final WebDriverWait driverWait;
+		private final long afterActionTime;
 
 		private ApplicationContext applicationContext;
 		private final PageElement rootElement;
 
-		public PageElementHandler(WebDriver driver, WebDriverWait driverWait) {
+		public PageElementHandler(WebDriver driver, WebDriverWait driverWait, long afterActionTime) {
 
 			if (driver == null || driverWait == null) {
 				throw new IllegalArgumentException("Driver and driverWait cannot be null");
@@ -175,6 +188,7 @@ abstract class ProtectedPageClasses {
 
 			this.driver = driver;
 			this.driverWait = driverWait;
+			this.afterActionTime = afterActionTime;
 
 			this.rootElement = null;
 		}
@@ -183,6 +197,7 @@ abstract class ProtectedPageClasses {
 
 			this.driver = elementHandler.driver;
 			this.driverWait = elementHandler.driverWait;
+			this.afterActionTime = elementHandler.afterActionTime;
 			this.applicationContext = elementHandler.applicationContext;
 
 			this.rootElement = rootElement;
@@ -190,6 +205,10 @@ abstract class ProtectedPageClasses {
 
 		void setApplicationContext(ApplicationContext applicationContext) {
 			this.applicationContext = applicationContext;
+		}
+
+		long getAfterActionTime() {
+			return afterActionTime;
 		}
 
 		public boolean existsElement(Locator... locators) {
@@ -293,7 +312,7 @@ abstract class ProtectedPageClasses {
 				waitForElement(by);
 				element = driver.findElement(by);
 			}
-			PageElement pageElement = new PageElement(element);
+			PageElement pageElement = new PageElement(element, afterActionTime);
 
 			return pageElement;
 		}
@@ -317,7 +336,7 @@ abstract class ProtectedPageClasses {
 			List<PageElement> pageElements = new ArrayList<>();
 
 			for (WebElement element : elements) {
-				PageElement pageElement = new PageElement(element);
+				PageElement pageElement = new PageElement(element, afterActionTime);
 
 				pageElements.add(pageElement);
 			}
