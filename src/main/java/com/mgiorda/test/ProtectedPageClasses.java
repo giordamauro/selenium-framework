@@ -377,6 +377,8 @@ abstract class ProtectedPageClasses {
 
 		private void waitForElement(By by) throws TimeoutException {
 
+			staticLogger.info(String.format("Waiting for page element '%s'", by));
+
 			long start = new Date().getTime();
 
 			driverWait.until(ExpectedConditions.presenceOfElementLocated(by));
@@ -388,6 +390,8 @@ abstract class ProtectedPageClasses {
 		}
 
 		private void waitForSubElement(final WebElement element, final By by) throws TimeoutException {
+
+			staticLogger.info(String.format("Waiting for nested page element '%s' under '%s'", by, element));
 
 			long start = new Date().getTime();
 

@@ -8,10 +8,10 @@ import com.mgiorda.test.AbstractElement;
 
 public class Table extends AbstractElement {
 
-	@Locate(@By(xpath = "tr[th]"))
+	@Locate(@By(xpath = "(tr[th]) | (thead/tr[th])"))
 	private TableHeaders headers;
 
-	@Locate(@By(xpath = "tr[td]"))
+	@Locate(@By(xpath = "(tr[td]) | (tbody/tr[td])"))
 	private List<TableRow> rows;
 
 	public Table(PageElement pageElement) {
