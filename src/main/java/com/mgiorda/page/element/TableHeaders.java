@@ -20,8 +20,16 @@ public class TableHeaders extends AbstractElement {
 		return Collections.unmodifiableList(headers);
 	}
 
-	public PageElement getHeaderForColumn(int column) {
+	public PageElement getElementForColumn(int column) {
 		return headers.get(column);
+	}
+
+	public <T extends AbstractElement> T getColumnAs(int column, Class<T> elementClass) {
+
+		PageElement pageElement = getElementForColumn(column);
+		T abstractElement = AbstractElement.factory(elementClass, elementHandler, pageElement);
+
+		return abstractElement;
 	}
 
 	public int getColumnsSize() {

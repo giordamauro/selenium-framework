@@ -14,6 +14,7 @@ public abstract class AbstractElement extends ProtectedPageClasses {
 
 	public AbstractElement(PageElement pageElement) {
 		this.pageElement = pageElement;
+		this.pageElement.setAbstractElement(this);
 	}
 
 	PageElementHandler getElementHandler() {
@@ -31,6 +32,26 @@ public abstract class AbstractElement extends ProtectedPageClasses {
 
 			constructor.setAccessible(true);
 			T newInstance = constructor.newInstance(pageElement);
+			constructor.setAccessible(accessible);
+
+			newInstance.setElementHandler(elementHandler);
+
+			AnnotationsSupport.initElementLocators(newInstance);
+
+			return newInstance;
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	public static <T extends AbstractElement> T factoryGeneric(Class<T> elementClass, PageElementHandler elementHandler, T abstractElement, Class<?> constructorType) {
+		try {
+			Constructor<T> constructor = elementClass.getConstructor(constructorType);
+			boolean accessible = constructor.isAccessible();
+
+			constructor.setAccessible(true);
+			T newInstance = constructor.newInstance(abstractElement);
 			constructor.setAccessible(accessible);
 
 			newInstance.setElementHandler(elementHandler);

@@ -28,6 +28,8 @@ abstract class ProtectedPageClasses {
 		private final WebElement element;
 		private final long afterActionTime;
 
+		private AbstractElement abstractElement;
+
 		PageElement(WebElement element, long afterActionTime) {
 			this.element = element;
 			this.afterActionTime = afterActionTime;
@@ -37,23 +39,19 @@ abstract class ProtectedPageClasses {
 			return element;
 		}
 
-		private void waitForActionTime() {
-			try {
-				Thread.sleep(afterActionTime);
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
+		void setAbstractElement(AbstractElement abstractElement) {
+			this.abstractElement = abstractElement;
 		}
 
 		public void click() {
-			logger.info(String.format("PageElement(%s) - Clicking", this.hashCode()));
+			this.logAction("Clicking");
 
 			element.click();
 			waitForActionTime();
 		}
 
 		public void submit() {
-			logger.info(String.format("PageElement(%s) - Submitting", this.hashCode()));
+			this.logAction("Submitting");
 
 			element.submit();
 			waitForActionTime();
@@ -65,13 +63,13 @@ abstract class ProtectedPageClasses {
 			for (CharSequence seq : keysToSend) {
 				keys += seq.toString();
 			}
-			logger.info(String.format("PageElement(%s) - Sending keys '%s'", this.hashCode(), keys));
+			this.logAction(String.format("Sending keys '%s'", keys));
 
 			element.sendKeys(keysToSend);
 		}
 
 		public void clear() {
-			logger.info(String.format("PageElement(%s) - Clearing", this.hashCode()));
+			this.logAction("Clearing");
 
 			element.clear();
 		}
@@ -110,6 +108,23 @@ abstract class ProtectedPageClasses {
 
 		public String getCssValue(String propertyName) {
 			return element.getCssValue(propertyName);
+		}
+
+		private void waitForActionTime() {
+			try {
+				Thread.sleep(afterActionTime);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		private void logAction(String action) {
+
+			if (abstractElement == null) {
+				logger.info(String.format("PageElement(%s) - %s", element, action));
+			} else {
+				logger.info(String.format("%s(%s) - %s", abstractElement.getClass(), element, action));
+			}
 		}
 	}
 
@@ -369,7 +384,7 @@ abstract class ProtectedPageClasses {
 			long end = new Date().getTime();
 			long waitTime = end - start;
 
-			staticLogger.info(String.format("Found '%s' page element %s - Waited %s milliseconds", this.getClass().getSimpleName(), by, waitTime));
+			staticLogger.info(String.format("Found page element %s - Waited %s milliseconds", by, waitTime));
 		}
 
 		private void waitForSubElement(final WebElement element, final By by) throws TimeoutException {
@@ -388,7 +403,7 @@ abstract class ProtectedPageClasses {
 			long end = new Date().getTime();
 			long waitTime = end - start;
 
-			staticLogger.info(String.format("Found '%s' nested page element '%s' - Waited %s milliseconds", this.getClass().getSimpleName(), by, waitTime));
+			staticLogger.info(String.format("Found nested page element '%s' - Waited %s milliseconds", by, waitTime));
 		}
 
 		private By getLocatorByPlaceholder(Locator elementLocator) {

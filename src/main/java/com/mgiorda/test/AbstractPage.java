@@ -77,7 +77,7 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 		this.driverHandler = new DriverActionHandler(driverWait, driver);
 
-		driverHandler.goToUrl(pageUrl);
+		driverHandler.goToUrl(this, pageUrl);
 		AnnotationsSupport.initLocators(this);
 	}
 
@@ -112,7 +112,6 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		}
 
 		initPageContext();
-		AnnotationsSupport.initLocators(this);
 
 		this.driverHandler = parentPage.driverHandler;
 		this.elementHandler = new PageElementHandler(driverHandler.getDriver(), driverHandler.getDriverWait(), parentPage.getElementHandler().getAfterActionTime());
@@ -128,10 +127,12 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		}
 
 		if (url != null) {
-			driverHandler.goToUrl(url);
+			String pageUrl = applicationContext.getEnvironment().resolvePlaceholders(url);
+			driverHandler.goToUrl(this, pageUrl);
 		} else {
-			driverHandler.waitForPageToLoad();
+			driverHandler.waitForPageToLoad(this);
 		}
+		AnnotationsSupport.initLocators(this);
 	}
 
 	protected AbstractPage(AbstractPage parentPage) {

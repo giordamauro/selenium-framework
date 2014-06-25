@@ -218,7 +218,7 @@ class AnnotationsSupport {
 		field.setAccessible(true);
 		try {
 
-			logger.info(String.format("Setting '%s' field in class '%s' with element '%s'", target.getClass().getSimpleName(), field.getName(), value));
+			logger.info(String.format("Setting '%s' field in class '%s' with element '%s'", field.getName(), target.getClass().getSimpleName(), value));
 			field.set(target, value);
 
 		} catch (IllegalArgumentException | IllegalAccessException e) {

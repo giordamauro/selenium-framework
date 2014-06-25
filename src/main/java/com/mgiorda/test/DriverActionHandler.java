@@ -43,16 +43,16 @@ public class DriverActionHandler {
 		}
 	}
 
-	public void goToUrl(String url) {
+	public void goToUrl(AbstractPage page, String url) {
 
 		driver.navigate().to(url);
 
-		this.waitForPageToLoad();
+		this.waitForPageToLoad(page);
 
-		staticLogger.info(String.format("Navigated form page '%s' to url '%s'", this.getClass().getSimpleName(), url));
+		staticLogger.info(String.format("Navigated form page '%s' to url '%s'", page.getClass(), url));
 	}
 
-	void waitForPageToLoad() {
+	void waitForPageToLoad(AbstractPage page) {
 
 		long start = new Date().getTime();
 
@@ -81,7 +81,7 @@ public class DriverActionHandler {
 		long end = new Date().getTime();
 		long waitTime = end - start;
 
-		staticLogger.info(String.format("Waited for page '%s' to laod - Waited %s milliseconds", this.getClass().getSimpleName(), waitTime));
+		staticLogger.info(String.format("Waited for page '%s' to laod - Waited %s milliseconds", page.getClass(), waitTime));
 	}
 
 	public void takeScreenShot(String filePath) {

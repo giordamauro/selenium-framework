@@ -20,8 +20,16 @@ public class TableRow extends AbstractElement {
 		return Collections.unmodifiableList(dataValues);
 	}
 
-	public PageElement getDataForColumn(int column) {
+	public PageElement getElementForColumn(int column) {
 		return dataValues.get(column);
+	}
+
+	public <T extends AbstractElement> T getColumnAs(int column, Class<T> elementClass) {
+
+		PageElement pageElement = getElementForColumn(column);
+		T abstractElement = AbstractElement.factory(elementClass, elementHandler, pageElement);
+
+		return abstractElement;
 	}
 
 	public int getColumnsSize() {
