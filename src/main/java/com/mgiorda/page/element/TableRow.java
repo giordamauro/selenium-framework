@@ -10,29 +10,29 @@ import com.mgiorda.test.AbstractElement;
 public class TableRow extends AbstractElement {
 
 	@Locate(@By(tagName = "td"))
-	private List<PageElement> dataValues;
+	private List<PageElement> dataColumns;
 
 	public TableRow(PageElement pageElement) {
 		super(pageElement);
 	}
 
-	public List<PageElement> getDataValues() {
-		return Collections.unmodifiableList(dataValues);
+	protected List<PageElement> getColumns() {
+		return Collections.unmodifiableList(dataColumns);
 	}
 
-	public PageElement getElementForColumn(int column) {
-		return dataValues.get(column);
+	protected PageElement getColumn(int column) {
+		return dataColumns.get(column);
 	}
 
 	public <T extends AbstractElement> T getColumnAs(int column, Class<T> elementClass) {
 
-		PageElement pageElement = getElementForColumn(column);
+		PageElement pageElement = getColumn(column);
 		T abstractElement = AbstractElement.factory(elementClass, elementHandler, pageElement);
 
 		return abstractElement;
 	}
 
 	public int getColumnsSize() {
-		return dataValues.size();
+		return dataColumns.size();
 	}
 }

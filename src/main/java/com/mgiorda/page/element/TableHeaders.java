@@ -16,14 +16,6 @@ public class TableHeaders extends AbstractElement {
 		super(pageElement);
 	}
 
-	public List<PageElement> getHeaders() {
-		return Collections.unmodifiableList(headers);
-	}
-
-	public PageElement getElementForColumn(int column) {
-		return headers.get(column);
-	}
-
 	public <T extends AbstractElement> T getColumnAs(int column, Class<T> elementClass) {
 
 		PageElement pageElement = getElementForColumn(column);
@@ -34,5 +26,33 @@ public class TableHeaders extends AbstractElement {
 
 	public int getColumnsSize() {
 		return headers.size();
+	}
+
+	int getColumnForHeader(String headerName) {
+
+		int headerColumn = -1;
+
+		int i = 0;
+		while (i < getColumnsSize() && headerColumn == -1) {
+
+			Label header = getColumnAs(i, Label.class);
+			if (headerName.equalsIgnoreCase(header.getText())) {
+				headerColumn = i;
+			}
+			i++;
+		}
+		if (headerColumn == -1) {
+			throw new IllegalStateException(String.format("Couln't find table header named '%s'", headerColumn));
+		}
+
+		return i;
+	}
+
+	protected List<PageElement> getHeaders() {
+		return Collections.unmodifiableList(headers);
+	}
+
+	protected PageElement getElementForColumn(int column) {
+		return headers.get(column);
 	}
 }
