@@ -1,6 +1,7 @@
 package com.mgiorda.test;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ class AnnotationsSupport {
 					throw new IllegalStateException(String.format("Couldn't find an element locator for field '%s' in page class '%s'", field.getName(), pageClass.getSimpleName()));
 				}
 
-				Object value = getLocatorElement(field.getType(), page, locators);
+				Object value = getLocatorElement(field, page, locators);
 				if (value == null) {
 					throw new IllegalStateException(String.format("Cannot autowire field '%s' of type '%s' in page '%s'", field.getName(), field.getType(), pageClass));
 				}
@@ -61,7 +62,7 @@ class AnnotationsSupport {
 					throw new IllegalStateException(String.format("Couldn't find an element locator for field '%s' in page class '%s'", field.getName(), pageClass.getSimpleName()));
 				}
 
-				Object value = getLocatorElementForHandler(field.getType(), element.getElementHandler(), locators);
+				Object value = getLocatorElementForHandler(field, element.getElementHandler(), locators);
 				if (value == null) {
 					throw new IllegalStateException(String.format("Cannot autowire field '%s' of type '%s' in page '%s'", field.getName(), field.getType(), pageClass));
 				}
@@ -122,9 +123,11 @@ class AnnotationsSupport {
 		return elementLocator;
 	}
 
-	private static Object getLocatorElement(Class<?> fieldType, AbstractPage page, Locator[] locators) {
+	private static Object getLocatorElement(Field field, AbstractPage page, Locator[] locators) {
 
 		Object value = null;
+
+		Class<?> fieldType = field.getType();
 
 		if (AbstractPage.class.isAssignableFrom(fieldType)) {
 
@@ -133,36 +136,63 @@ class AnnotationsSupport {
 			value = getValueForAbstractPage(pageClass, page, locators);
 
 		} else {
-			value = getLocatorElementForHandler(fieldType, page.getElementHandler(), locators);
+			value = getLocatorElementForHandler(field, page.getElementHandler(), locators);
 		}
 
 		return value;
 	}
 
-	private static Object getLocatorElementForHandler(Class<?> fieldType, PageElementHandler elementHandler, Locator[] locators) {
+	private static Object getLocatorElementForHandler(Field field, PageElementHandler elementHandler, Locator[] locators) {
 
 		Object value = null;
 
-		if (fieldType.isAssignableFrom(Boolean.class) || fieldType.isAssignableFrom(boolean.class)) {
+		Class<?> fieldClass = field.getType();
+
+		if (fieldClass.isAssignableFrom(Boolean.class) || fieldClass.isAssignableFrom(boolean.class)) {
 			value = elementHandler.existsElement(locators);
 
-		} else if (fieldType.isAssignableFrom(Integer.class) || fieldType.isAssignableFrom(int.class)) {
+		} else if (fieldClass.isAssignableFrom(Integer.class) || fieldClass.isAssignableFrom(int.class)) {
 			value = elementHandler.getElementCount(locators);
 
-		} else if (fieldType.isAssignableFrom(PageElement.class)) {
+		} else if (fieldClass.isAssignableFrom(PageElement.class)) {
 			value = elementHandler.getElement(locators);
 
-		} else if (fieldType.isAssignableFrom(List.class)) {
-			value = elementHandler.getElements(locators);
+		} else if (fieldClass.isAssignableFrom(List.class)) {
 
-		} else if (AbstractElement.class.isAssignableFrom(fieldType)) {
+			ParameterizedType fieldType = (ParameterizedType) field.getGenericType();
+			Class<?> listClass = (Class<?>) fieldType.getActualTypeArguments()[0];
+
+			if (listClass.isAssignableFrom(PageElement.class)) {
+				value = elementHandler.getElements(locators);
+			} else if (AbstractElement.class.isAssignableFrom(listClass)) {
+
+				@SuppressWarnings("unchecked")
+				Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) listClass;
+				value = getListForAbstractElement(elementClass, elementHandler, locators);
+			}
+
+		} else if (AbstractElement.class.isAssignableFrom(fieldClass)) {
 
 			@SuppressWarnings("unchecked")
-			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) fieldType;
+			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) fieldClass;
 			value = getValueForAbstractElement(elementClass, elementHandler, locators);
 		}
 
 		return value;
+	}
+
+	private static List<Object> getListForAbstractElement(Class<? extends AbstractElement> fieldType, PageElementHandler pageElementHandler, Locator[] locators) {
+
+		List<Object> listValue = new ArrayList<Object>();
+
+		List<PageElement> elements = pageElementHandler.getElements(locators);
+		for (PageElement pageElement : elements) {
+
+			Object element = AbstractElement.factory(fieldType, pageElementHandler, pageElement);
+			listValue.add(element);
+		}
+
+		return listValue;
 	}
 
 	private static Object getValueForAbstractElement(Class<? extends AbstractElement> fieldType, PageElementHandler pageElementHandler, Locator[] locators) {
@@ -197,4 +227,5 @@ class AnnotationsSupport {
 		}
 		field.setAccessible(isFieldAccessible);
 	}
+
 }
