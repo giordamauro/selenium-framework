@@ -2,6 +2,7 @@ package com.mgiorda.test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -37,6 +38,33 @@ public abstract class AbstractTest {
 			if (!expectedTitle.equals(pageTitle)) {
 
 				throw new AssertionError(String.format("Page '%s' title not equal - Expected '%s' but was: '%s'", page, expectedTitle, pageTitle));
+			}
+		}
+	}
+
+	protected static final class AssertUtil {
+
+		private AssertUtil() {
+
+		}
+
+		public static void assertListContainsIgnoreCase(List<String> values, String expectedValue) {
+
+			if (values == null || expectedValue == null) {
+				throw new IllegalArgumentException("Page and Expected title cannot be null");
+			}
+
+			boolean contains = false;
+			int i = 0;
+			while (i < values.size() && !contains) {
+				String value = values.get(i);
+				if (value.equalsIgnoreCase(expectedValue)) {
+					contains = true;
+				}
+				i++;
+			}
+			if (!contains) {
+				throw new AssertionError(String.format("Expected value '%s' not contained (ignoreCase) in list '%s'", expectedValue, values));
 			}
 		}
 	}

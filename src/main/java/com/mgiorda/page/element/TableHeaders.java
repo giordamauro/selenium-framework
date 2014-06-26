@@ -38,8 +38,9 @@ public class TableHeaders extends AbstractElement {
 			Label header = getColumnAs(i, Label.class);
 			if (headerName.equalsIgnoreCase(header.getText())) {
 				headerColumn = i;
+			} else {
+				i++;
 			}
-			i++;
 		}
 		if (headerColumn == -1) {
 			throw new IllegalStateException(String.format("Couln't find table header named '%s'", headerColumn));

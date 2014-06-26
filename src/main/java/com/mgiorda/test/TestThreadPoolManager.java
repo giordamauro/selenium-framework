@@ -102,6 +102,14 @@ final class TestThreadPoolManager {
 				page.onTestFail();
 			}
 		}
+
+		AbstractTest instanceTest = (AbstractTest) test.getInstance();
+		List<AbstractPage> instancePages = testInstancePages.get(instanceTest);
+		if (instancePages != null) {
+			for (AbstractPage page : instancePages) {
+				page.onTestFail();
+			}
+		}
 	}
 
 	public static AbstractTest getCurrentTest() {

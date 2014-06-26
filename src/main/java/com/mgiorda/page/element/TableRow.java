@@ -24,12 +24,12 @@ public class TableRow extends AbstractElement {
 		return dataColumns.get(column);
 	}
 
-	public <T extends AbstractElement> T getColumnAs(int column, Class<T> elementClass) {
+	public <T> T getColumnAs(int column, Class<T> expectedClass) {
 
 		PageElement pageElement = getColumn(column);
-		T abstractElement = AbstractElement.factory(elementClass, elementHandler, pageElement);
+		T value = AbstractElement.factoryValue(expectedClass, elementHandler, pageElement);
 
-		return abstractElement;
+		return value;
 	}
 
 	public int getColumnsSize() {

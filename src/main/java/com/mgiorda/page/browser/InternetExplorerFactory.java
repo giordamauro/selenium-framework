@@ -18,7 +18,7 @@ public class InternetExplorerFactory implements BrowserFactory {
 
 	public InternetExplorerFactory(String driverProperty) {
 
-		File resourceFile = SpringUtil.getClasspathFile(driverProperty);
+		File resourceFile = SpringUtil.getCreateClasspathFile(driverProperty);
 		System.setProperty("webdriver.ie.driver", resourceFile.getAbsolutePath());
 	}
 

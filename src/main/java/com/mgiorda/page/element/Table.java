@@ -27,7 +27,14 @@ public class Table extends AbstractElement {
 		return rows;
 	}
 
-	public <T extends AbstractElement> List<T> getColumnRowsAs(int column, Class<T> elementClass) {
+	public List<String> getValuesForColumnAs(int column) {
+
+		List<String> values = getValuesForColumnAs(column, String.class);
+
+		return values;
+	}
+
+	public <T> List<T> getValuesForColumnAs(int column, Class<T> elementClass) {
 
 		List<T> elements = new ArrayList<>();
 
@@ -39,10 +46,17 @@ public class Table extends AbstractElement {
 		return elements;
 	}
 
-	public <T extends AbstractElement> List<T> getRowsForHeaderAs(String headerName, Class<T> elementClass) {
+	public List<String> getValuesForHeader(String headerName) {
+
+		List<String> values = getValuesForHeaderAs(headerName, String.class);
+
+		return values;
+	}
+
+	public <T> List<T> getValuesForHeaderAs(String headerName, Class<T> elementClass) {
 
 		int headerColumn = headers.getColumnForHeader(headerName);
-		List<T> columnRows = getColumnRowsAs(headerColumn, elementClass);
+		List<T> columnRows = getValuesForColumnAs(headerColumn, elementClass);
 
 		return columnRows;
 	}

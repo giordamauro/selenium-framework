@@ -25,7 +25,7 @@ public class ChromeFactory implements BrowserFactory {
 			throw new IllegalStateException(String.format("Couldn't found chromeDriverProperty for current OperativeSystem: %s", currentOS));
 		}
 
-		File chromeFile = SpringUtil.getClasspathFile(driverProperty);
+		File chromeFile = SpringUtil.getCreateClasspathFile(driverProperty);
 
 		System.setProperty("webdriver.chrome.driver", chromeFile.getAbsolutePath());
 	}

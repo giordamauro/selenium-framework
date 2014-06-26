@@ -79,6 +79,8 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 		driverHandler.goToUrl(this, pageUrl);
 		AnnotationsSupport.initLocators(this);
+
+		TestThreadPoolManager.registerPage(this);
 	}
 
 	protected AbstractPage() {
@@ -126,10 +128,16 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 			}
 		}
 
+		String currentUrl = null;
 		if (url != null) {
 			String pageUrl = applicationContext.getEnvironment().resolvePlaceholders(url);
-			driverHandler.goToUrl(this, pageUrl);
-		} else {
+			currentUrl = driverHandler.getUrl();
+
+			if (!pageUrl.equals(currentUrl)) {
+				driverHandler.goToUrl(this, pageUrl);
+			}
+		}
+		if (currentUrl == null) {
 			driverHandler.waitForPageToLoad(this);
 		}
 		AnnotationsSupport.initLocators(this);
@@ -186,7 +194,6 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 		addPageProperties();
 
 		SpringUtil.autowireBean(applicationContext, this);
-		TestThreadPoolManager.registerPage(this);
 	}
 
 	void addPageProperties() {

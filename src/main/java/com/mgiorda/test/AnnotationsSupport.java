@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.mgiorda.annotation.By;
 import com.mgiorda.annotation.Locate;
+import com.mgiorda.page.element.Label;
 import com.mgiorda.test.ProtectedPageClasses.Locator;
 import com.mgiorda.test.ProtectedPageClasses.PageElement;
 import com.mgiorda.test.ProtectedPageClasses.PageElementHandler;
@@ -148,22 +149,29 @@ class AnnotationsSupport {
 
 		Class<?> fieldClass = field.getType();
 
-		if (fieldClass.isAssignableFrom(Boolean.class) || fieldClass.isAssignableFrom(boolean.class)) {
+		if (Boolean.class.isAssignableFrom(fieldClass) || fieldClass.equals(boolean.class)) {
 			value = elementHandler.existsElement(locators);
 
-		} else if (fieldClass.isAssignableFrom(Integer.class) || fieldClass.isAssignableFrom(int.class)) {
+		} else if (Integer.class.isAssignableFrom(fieldClass) || fieldClass.equals(int.class)) {
 			value = elementHandler.getElementCount(locators);
 
-		} else if (fieldClass.isAssignableFrom(PageElement.class)) {
+		} else if (PageElement.class.isAssignableFrom(fieldClass)) {
 			value = elementHandler.getElement(locators);
 
-		} else if (fieldClass.isAssignableFrom(List.class)) {
+		} else if (String.class.isAssignableFrom(fieldClass)) {
+			value = getValueForAbstractElement(Label.class, elementHandler, locators);
+
+		} else if (List.class.isAssignableFrom(fieldClass)) {
 
 			ParameterizedType fieldType = (ParameterizedType) field.getGenericType();
 			Class<?> listClass = (Class<?>) fieldType.getActualTypeArguments()[0];
 
-			if (listClass.isAssignableFrom(PageElement.class)) {
+			if (PageElement.class.isAssignableFrom(listClass)) {
 				value = elementHandler.getElements(locators);
+
+			} else if (String.class.isAssignableFrom(listClass)) {
+				value = getListForAbstractElement(Label.class, elementHandler, locators);
+
 			} else if (AbstractElement.class.isAssignableFrom(listClass)) {
 
 				@SuppressWarnings("unchecked")
@@ -213,12 +221,20 @@ class AnnotationsSupport {
 
 	private static void setField(Object target, Field field, Object value) {
 
+		Class<?> fieldClass = field.getType();
+		Class<?> valueClass = value.getClass();
+
+		if (String.class.isAssignableFrom(fieldClass) && Label.class.isAssignableFrom(valueClass)) {
+			Label labelValue = (Label) value;
+			value = labelValue.getText();
+		}
+
 		boolean isFieldAccessible = field.isAccessible();
 
 		field.setAccessible(true);
 		try {
 
-			logger.info(String.format("Setting '%s' field in class '%s' with element '%s'", field.getName(), target.getClass().getSimpleName(), value));
+			logger.info(String.format("Setting annotated field '%s' in class '%s' with value '%s'", field.getName(), target.getClass().getSimpleName(), value));
 			field.set(target, value);
 
 		} catch (IllegalArgumentException | IllegalAccessException e) {

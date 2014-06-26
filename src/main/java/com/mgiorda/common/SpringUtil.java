@@ -24,7 +24,7 @@ public final class SpringUtil {
 
 	}
 
-	public static File getClasspathFile(String fileProperty) {
+	public static File getCreateClasspathFile(String fileProperty) {
 
 		File classpathFile = new File(fileProperty);
 		if (!classpathFile.exists()) {
@@ -58,6 +58,21 @@ public final class SpringUtil {
 		}
 
 		return classpathFile;
+	}
+
+	public static File getClasspathFile(String fileProperty) {
+
+		@SuppressWarnings("resource")
+		ApplicationContext appContext = new ClassPathXmlApplicationContext();
+		Resource resource = appContext.getResource("classpath:" + fileProperty);
+
+		try {
+			File file = resource.getFile();
+
+			return file;
+		} catch (Exception e) {
+			throw new IllegalStateException(String.format("Exception getting Classpath file '%s'", fileProperty), e);
+		}
 	}
 
 	public static void autowireBean(ApplicationContext applicationContext, Object bean) {
