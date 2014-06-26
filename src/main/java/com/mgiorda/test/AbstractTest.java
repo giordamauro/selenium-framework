@@ -48,7 +48,7 @@ public abstract class AbstractTest {
 
 		}
 
-		public static void assertListContainsIgnoreCase(List<String> values, String expectedValue) {
+		public static void assertListContainsCaseInsensitive(List<String> values, String expectedValue) {
 
 			if (values == null || expectedValue == null) {
 				throw new IllegalArgumentException("Page and Expected title cannot be null");

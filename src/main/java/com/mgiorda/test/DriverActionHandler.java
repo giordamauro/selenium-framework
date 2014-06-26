@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -38,7 +39,10 @@ public class DriverActionHandler {
 	}
 
 	public void quit() {
+
 		if (!driver.toString().contains("(null)")) {
+
+			staticLogger.info(String.format("Quitting driver '%s'", driver));
 			driver.quit();
 		}
 	}
@@ -52,7 +56,7 @@ public class DriverActionHandler {
 		staticLogger.info(String.format("Navigated form page '%s' to url '%s'", page.getClass(), url));
 	}
 
-	void waitForPageToLoad(AbstractPage page) {
+	void waitForPageToLoad(AbstractPage page) throws TimeoutException {
 
 		long start = new Date().getTime();
 

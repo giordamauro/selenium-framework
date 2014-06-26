@@ -1,6 +1,8 @@
 package com.mgiorda.test;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,26 +29,6 @@ public abstract class AbstractElement extends ProtectedPageClasses {
 		this.elementHandler = new PageElementHandler(elementHandler, pageElement);
 	}
 
-	public static <T extends AbstractElement> T factory(Class<T> elementClass, PageElementHandler elementHandler, PageElement pageElement) {
-		try {
-			Constructor<T> constructor = elementClass.getConstructor(PageElement.class);
-			boolean accessible = constructor.isAccessible();
-
-			constructor.setAccessible(true);
-			T newInstance = constructor.newInstance(pageElement);
-			constructor.setAccessible(accessible);
-
-			newInstance.setElementHandler(elementHandler);
-
-			AnnotationsSupport.initElementLocators(newInstance);
-
-			return newInstance;
-
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
-	}
-
 	public static <T> T factoryValue(Class<T> expectedClass, PageElementHandler elementHandler, PageElement pageElement) {
 
 		if (AbstractElement.class.isAssignableFrom(expectedClass)) {
@@ -71,4 +53,43 @@ public abstract class AbstractElement extends ProtectedPageClasses {
 			throw new IllegalStateException(String.format("Cannot factory value for class '%s': should be AbstractElement or String", expectedClass));
 		}
 	}
+
+	public static <T extends AbstractElement> T factory(Class<T> elementClass, PageElementHandler elementHandler, PageElement pageElement) {
+		try {
+			Constructor<T> constructor = elementClass.getConstructor(PageElement.class);
+			boolean accessible = constructor.isAccessible();
+
+			constructor.setAccessible(true);
+			T newInstance = constructor.newInstance(pageElement);
+			constructor.setAccessible(accessible);
+
+			newInstance.setElementHandler(elementHandler);
+
+			AnnotationsSupport.initElementLocators(newInstance);
+
+			callAfterPropertiesSet(elementClass, newInstance);
+
+			return newInstance;
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	private static <T extends AbstractElement> void callAfterPropertiesSet(Class<T> elementClass, T newInstance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		try {
+			Method afterProperties = elementClass.getDeclaredMethod("afterPropertiesSet");
+			if (afterProperties != null) {
+				boolean methodAccessible = afterProperties.isAccessible();
+				afterProperties.setAccessible(true);
+
+				afterProperties.invoke(newInstance);
+				afterProperties.setAccessible(methodAccessible);
+			}
+		} catch (NoSuchMethodException e) {
+
+			// method doesn't exist, nothing to do
+		}
+	}
+
 }

@@ -12,8 +12,14 @@ public class TableRow extends AbstractElement {
 	@Locate(@By(tagName = "td"))
 	private List<PageElement> dataColumns;
 
+	private TableHeaders headers;
+
 	public TableRow(PageElement pageElement) {
 		super(pageElement);
+	}
+
+	void setTableHeaders(TableHeaders headers) {
+		this.headers = headers;
 	}
 
 	protected List<PageElement> getColumns() {
@@ -22,6 +28,14 @@ public class TableRow extends AbstractElement {
 
 	protected PageElement getColumn(int column) {
 		return dataColumns.get(column);
+	}
+
+	public <T> T getValueForHeaderAs(String headerName, Class<T> expectedClass) {
+
+		int column = headers.getColumnForHeader(headerName);
+		T value = getColumnAs(column, expectedClass);
+
+		return value;
 	}
 
 	public <T> T getColumnAs(int column, Class<T> expectedClass) {

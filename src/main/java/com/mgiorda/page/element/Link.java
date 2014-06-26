@@ -12,4 +12,9 @@ public class Link extends AbstractElement {
 		pageElement.click();
 	}
 
+	public String getLinkText() {
+		String text = pageElement.getText();
+
+		return text;
+	}
 }

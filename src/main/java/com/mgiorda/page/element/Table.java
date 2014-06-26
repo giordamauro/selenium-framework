@@ -19,6 +19,13 @@ public class Table extends AbstractElement {
 		super(pageElement);
 	}
 
+	void afterPropertiesSet() {
+
+		for (TableRow row : rows) {
+			row.setTableHeaders(headers);
+		}
+	}
+
 	public TableHeaders getHeaders() {
 		return headers;
 	}
@@ -81,4 +88,26 @@ public class Table extends AbstractElement {
 		return elements;
 	}
 
+	public TableRow getRowForHeaderValue(String headerName, String value) {
+
+		TableRow row = null;
+
+		List<String> columnValues = getValuesForHeader(headerName);
+
+		int column = -1;
+		int i = 0;
+		while (i < columnValues.size() && column == -1) {
+			String columValue = columnValues.get(i);
+			if (columValue.equals(value)) {
+				column = i;
+			} else {
+				i++;
+			}
+		}
+		if (column != -1) {
+			row = rows.get(column);
+		}
+
+		return row;
+	}
 }
