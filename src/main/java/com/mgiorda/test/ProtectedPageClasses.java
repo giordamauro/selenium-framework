@@ -14,6 +14,8 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -74,6 +76,13 @@ abstract class ProtectedPageClasses {
 			element.clear();
 		}
 
+		public void moveOver() {
+			this.logAction("Moving over");
+
+			Actions action = new Actions(getDriver());
+			action.moveToElement(element).build().perform();
+		}
+
 		public String getTagName() {
 			return element.getTagName();
 		}
@@ -125,6 +134,13 @@ abstract class ProtectedPageClasses {
 			} else {
 				logger.info(String.format("%s(%s) - %s", abstractElement.getClass(), element, action));
 			}
+		}
+
+		private WebDriver getDriver() {
+			WrapsDriver driverWrapper = (WrapsDriver) element;
+			WebDriver driver = driverWrapper.getWrappedDriver();
+
+			return driver;
 		}
 	}
 
