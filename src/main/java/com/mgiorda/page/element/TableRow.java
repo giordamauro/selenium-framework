@@ -30,10 +30,7 @@ public class TableRow extends AbstractElement {
 
 		PageElement element = dataColumns.get(column);
 
-		PageElementHandler subElementHandler = new PageElementHandler(elementHandler, element);
-		PageElement subElement = subElementHandler.getElement(Locator.byXpath("*"));
-
-		return subElement;
+		return element;
 	}
 
 	public <T> T getValueForHeaderAs(String headerName, Class<T> expectedClass) {
