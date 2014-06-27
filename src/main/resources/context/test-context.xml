@@ -17,6 +17,8 @@
 						http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
 	<context:annotation-config />
+	
+	<context:property-placeholder />	
 
 	<util:properties id="defaultSuiteProperties" location="classpath:/properties/default.properties">
 		<prop key="suite.file">default</prop>

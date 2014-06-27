@@ -81,13 +81,12 @@ public abstract class AbstractTest {
 
 		testAppContext = new GenericXmlApplicationContext(new String[] { "classpath:/context/test-context.xml" });
 		setSuiteProperties();
+		addTestProperties();
 
 		String[] contextLocations = getContextLocations();
 		if (contextLocations.length != 0) {
 			testAppContext = new ClassPathXmlApplicationContext(contextLocations, testAppContext);
 		}
-
-		addTestProperties();
 
 		TestThreadPoolManager.registerTestInstance(this);
 		SpringUtil.autowireBean(testAppContext, this);

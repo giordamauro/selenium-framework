@@ -43,7 +43,7 @@ public class TableHeaders extends AbstractElement {
 			}
 		}
 		if (headerColumn == -1) {
-			throw new IllegalStateException(String.format("Couln't find table header named '%s'", headerColumn));
+			throw new IllegalStateException(String.format("Couln't find table header named '%s'", headerName));
 		}
 
 		return i;
