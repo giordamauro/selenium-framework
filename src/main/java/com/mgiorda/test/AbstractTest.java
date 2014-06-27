@@ -92,8 +92,10 @@ public abstract class AbstractTest {
 		SpringUtil.autowireBean(testAppContext, this);
 	}
 
-	@AfterClass
+	@AfterClass(alwaysRun = true)
 	public void $logAfterClass() {
+
+		TestThreadPoolManager.finishTestPages();
 
 		staticLogger.info(String.format("Finishing test Class '%s'", this.getClass().getSimpleName()));
 	}

@@ -82,6 +82,8 @@ final class TestThreadPoolManager {
 				page.onTestFinish();
 			}
 		}
+		Thread thread = Thread.currentThread();
+		threadTests.remove(thread);
 	}
 
 	public static void finishTestPages() {

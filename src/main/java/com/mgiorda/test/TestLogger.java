@@ -64,8 +64,6 @@ public class TestLogger implements ITestListener {
 	@Override
 	public void onFinish(ITestContext context) {
 
-		TestThreadPoolManager.finishTestPages();
-
 		logger.info(String.format("Finished test named: '%s'", context.getName()));
 	}
 
