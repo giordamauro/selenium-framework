@@ -59,13 +59,13 @@ final class TestThreadPoolManager {
 		} else {
 			AbstractTest testInstance = threadTestInstances.get(thread);
 
-			List<AbstractPage> pages = testInstancePages.get(testResult);
-			if (pages == null) {
-				pages = new ArrayList<>();
-				testInstancePages.put(testInstance, pages);
+			List<AbstractPage> instancePages = testInstancePages.get(testResult);
+			if (instancePages == null) {
+				instancePages = new ArrayList<>();
+				testInstancePages.put(testInstance, instancePages);
 			}
 
-			pages.add(page);
+			instancePages.add(page);
 		}
 	}
 
@@ -84,7 +84,10 @@ final class TestThreadPoolManager {
 		}
 	}
 
-	public static void finishPages(AbstractTest test) {
+	public static void finishTestPages() {
+
+		Thread thread = Thread.currentThread();
+		AbstractTest test = threadTestInstances.get(thread);
 
 		List<AbstractPage> pages = testInstancePages.get(test);
 		if (pages != null) {
@@ -106,8 +109,8 @@ final class TestThreadPoolManager {
 		AbstractTest instanceTest = (AbstractTest) test.getInstance();
 		List<AbstractPage> instancePages = testInstancePages.get(instanceTest);
 		if (instancePages != null) {
-			for (AbstractPage page : instancePages) {
-				page.onTestFail();
+			for (AbstractPage instancePage : instancePages) {
+				instancePage.onTestFail();
 			}
 		}
 	}

@@ -42,6 +42,7 @@ public class TestLogger implements ITestListener {
 		logger.warn(String.format("Skipped test method '%s.%s(..)' - SKIPPED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(), getTotalTime(result)),
 				result.getThrowable());
 
+		TestThreadPoolManager.failPages(result);
 		TestThreadPoolManager.finishPages(result);
 	}
 
@@ -62,6 +63,8 @@ public class TestLogger implements ITestListener {
 
 	@Override
 	public void onFinish(ITestContext context) {
+
+		TestThreadPoolManager.finishTestPages();
 
 		logger.info(String.format("Finished test named: '%s'", context.getName()));
 	}

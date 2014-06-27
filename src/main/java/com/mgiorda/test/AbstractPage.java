@@ -77,10 +77,10 @@ public abstract class AbstractPage extends ProtectedPageClasses {
 
 		this.driverHandler = new DriverActionHandler(driverWait, driver);
 
+		TestThreadPoolManager.registerPage(this);
+
 		driverHandler.goToUrl(this, pageUrl);
 		AnnotationsSupport.initLocators(this);
-
-		TestThreadPoolManager.registerPage(this);
 	}
 
 	protected AbstractPage() {

@@ -89,15 +89,12 @@ public abstract class AbstractTest {
 		setSuiteProperties();
 		addTestProperties();
 
-		SpringUtil.autowireBean(testAppContext, this);
-
 		TestThreadPoolManager.registerTestInstance(this);
+		SpringUtil.autowireBean(testAppContext, this);
 	}
 
 	@AfterClass
 	public void $logAfterClass() {
-
-		TestThreadPoolManager.finishPages(this);
 
 		staticLogger.info(String.format("Finishing test Class '%s'", this.getClass().getSimpleName()));
 	}
