@@ -208,7 +208,7 @@ abstract class ProtectedPageClasses {
 			this.rootElement = null;
 		}
 
-		PageElementHandler(PageElementHandler elementHandler, PageElement rootElement) {
+		public PageElementHandler(PageElementHandler elementHandler, PageElement rootElement) {
 
 			this.driver = elementHandler.driver;
 			this.driverWait = elementHandler.driverWait;

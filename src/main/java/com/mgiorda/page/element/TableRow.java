@@ -27,7 +27,13 @@ public class TableRow extends AbstractElement {
 	}
 
 	protected PageElement getColumn(int column) {
-		return dataColumns.get(column);
+
+		PageElement element = dataColumns.get(column);
+
+		PageElementHandler subElementHandler = new PageElementHandler(elementHandler, element);
+		PageElement subElement = subElementHandler.getElement(Locator.byXpath("*"));
+
+		return subElement;
 	}
 
 	public <T> T getValueForHeaderAs(String headerName, Class<T> expectedClass) {
