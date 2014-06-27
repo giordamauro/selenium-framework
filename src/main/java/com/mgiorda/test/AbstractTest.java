@@ -5,10 +5,10 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -79,14 +79,14 @@ public abstract class AbstractTest {
 	public void $beforeClass() {
 		staticLogger.info(String.format("Initiating test Class '%s'", this.getClass().getSimpleName()));
 
-		String[] locations = { "classpath:/context/test-context.xml" };
+		testAppContext = new GenericXmlApplicationContext(new String[] { "classpath:/context/test-context.xml" });
+		setSuiteProperties();
 
 		String[] contextLocations = getContextLocations();
-		locations = ArrayUtils.addAll(locations, contextLocations);
+		if (contextLocations.length != 0) {
+			testAppContext = new ClassPathXmlApplicationContext(contextLocations, testAppContext);
+		}
 
-		testAppContext = new GenericXmlApplicationContext(locations);
-
-		setSuiteProperties();
 		addTestProperties();
 
 		TestThreadPoolManager.registerTestInstance(this);
