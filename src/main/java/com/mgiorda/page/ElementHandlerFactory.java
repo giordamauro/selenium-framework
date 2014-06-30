@@ -4,5 +4,5 @@ public interface ElementHandlerFactory {
 
 	PageElementHandler getRootElementHandler();
 
-	PageElementHandler getSubElementHandler(AbstractElementHandler elementHandler, PageElement parentElement);
+	PageElementHandler getSubElementHandler(PageElementHandler elementHandler, PageElement parentElement);
 }

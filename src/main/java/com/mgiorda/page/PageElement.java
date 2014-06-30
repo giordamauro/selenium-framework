@@ -9,7 +9,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsDriver;
 
-class PageElement {
+public class PageElement {
 
 	private static final Log logger = LogFactory.getLog(PageElement.class);
 	private static final long DEFAULT_AFTER_ACTION_MILLIS = 500;
@@ -20,7 +20,7 @@ class PageElement {
 		this.element = element;
 	}
 
-	WebElement getWebElement() {
+	public WebElement getWebElement() {
 		return element;
 	}
 
