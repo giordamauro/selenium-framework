@@ -11,7 +11,7 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler {
 
 	protected final BasicAbstractElementHandler basicElementHandler;
 
-	public AbstractElementHandlerImpl(BasicElementHandlerFactory basicElementHandler) {
+	public AbstractElementHandlerImpl(BasicAbstractElementHandler basicElementHandler) {
 		this.basicElementHandler = basicElementHandler;
 	}
 
@@ -29,9 +29,9 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler {
 	public <T extends AbstractElement> T getElementAs(Class<T> elementClass, Locator... locators) throws ElementTimeoutException {
 
 		PageElement element = basicElementHandler.getElement(locators);
-		BasicAbstractElementHandler basicHandler = basicElementHandler(basicElementHandler, element);
+		T abstractElement = newAbstractElement(elementClass, element);
 
-		return null;
+		return abstractElement;
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler {
 		List<PageElement> elements = basicElementHandler.getElements(locators);
 		for (PageElement pageElement : elements) {
 
-			T element = null;
+			T element = newAbstractElement(elementClass, pageElement);
 			list.add(element);
 		}
 		return list;
@@ -70,7 +70,17 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler {
 		return list;
 	}
 
-	public <T extends AbstractElement> T newAbstractElement(Class<T> elementClass, AbstractElementHandler elementHandler, PageElement pageElement) {
+	private <T extends AbstractElement> T newAbstractElement(Class<T> elementClass, PageElement pageElement) {
+
+		BasicAbstractElementHandler basicHandler = new BasicAbstractElementHandler(basicElementHandler, pageElement);
+		AbstractElementHandler elementHandler = new AbstractElementHandlerImpl(basicHandler);
+
+		T abstractElement = newAbstractElement(elementClass, elementHandler, pageElement);
+
+		return abstractElement;
+	}
+
+	private <T extends AbstractElement> T newAbstractElement(Class<T> elementClass, AbstractElementHandler elementHandler, PageElement pageElement) {
 		try {
 			Constructor<T> constructor = elementClass.getConstructor(AbstractElementHandler.class, PageElement.class);
 			boolean accessible = constructor.isAccessible();
