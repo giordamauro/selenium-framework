@@ -1,4 +1,4 @@
-package com.mgiorda.test;
+package com.mgiorda.page;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,18 +16,21 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Predicate;
 
-public class DriverActionHandler implements DriverAction {
+public class DriverActionHandlerImpl implements DriverActionHandler {
 
-	private static final Log staticLogger = LogFactory.getLog(AbstractPage.class);
-
-	private final WebDriverWait driverWait;
+	private static final Log logger = LogFactory.getLog(AbstractPage.class);
 
 	private final WebDriver driver;
+	private final WebDriverWait driverWait;
 
-	public DriverActionHandler(WebDriverWait webDriverWait, WebDriver driver) {
+	public DriverActionHandlerImpl(WebDriver driver, WebDriverWait webDriverWait) {
 
-		this.driverWait = webDriverWait;
+		if (driver == null) {
+			throw new IllegalArgumentException("Driver cannot be null");
+		}
+
 		this.driver = driver;
+		this.driverWait = webDriverWait;
 	}
 
 	public String getTitle() {
@@ -42,21 +45,23 @@ public class DriverActionHandler implements DriverAction {
 
 		if (!driver.toString().contains("(null)")) {
 
-			staticLogger.info(String.format("Quitting driver '%s'", driver));
+			logger.info(String.format("Quitting driver '%s'", driver));
 			driver.quit();
 		}
 	}
 
-	public void goToUrl(AbstractPage page, String url) {
+	public void goToUrl(String url) {
 
 		driver.navigate().to(url);
 
-		this.waitForPageToLoad(page);
+		if (driverWait != null) {
+			waitForPageToLoad();
+		}
 
-		staticLogger.info(String.format("Navigated form page '%s' to url '%s'", page.getClass(), url));
+		logger.info(String.format("Browsed '%s' to url '%s'", driver, url));
 	}
 
-	void waitForPageToLoad(AbstractPage page) throws TimeoutException {
+	public void waitForPageToLoad() throws TimeoutException {
 
 		long start = new Date().getTime();
 
@@ -85,7 +90,7 @@ public class DriverActionHandler implements DriverAction {
 		long end = new Date().getTime();
 		long waitTime = end - start;
 
-		staticLogger.info(String.format("Waited for page '%s' to laod - Waited %s milliseconds", page.getClass(), waitTime));
+		logger.info(String.format("Waited for page to laod %s milliseconds", waitTime));
 	}
 
 	public void takeScreenShot(String filePath) {
@@ -94,14 +99,14 @@ public class DriverActionHandler implements DriverAction {
 		try {
 			screenShotDriver = (TakesScreenshot) driver;
 		} catch (Exception e) {
-			staticLogger.warn(String.format("Driver '%s' cannot take screenshots", driver));
+			logger.warn(String.format("Driver '%s' cannot take screenshots", driver));
 		}
 
 		if (screenShotDriver != null) {
 			File screenShot = screenShotDriver.getScreenshotAs(OutputType.FILE);
 
 			try {
-				staticLogger.info(String.format("Saving screenshot to file '%s'", filePath));
+				logger.info(String.format("Saving screenshot to file '%s'", filePath));
 
 				FileUtils.copyFile(screenShot, new File(filePath));
 			} catch (IOException e) {

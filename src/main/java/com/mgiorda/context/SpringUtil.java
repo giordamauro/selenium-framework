@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -113,6 +114,73 @@ public final class SpringUtil {
 		MutablePropertySources sources = env.getPropertySources();
 		sources.addLast(new PropertiesPropertySource("test-property-" + sources.size(), properties));
 
+	}
+
+	public static String[] getContextLocations(Class<?> targetClass) {
+
+		String[] contextLocations = {};
+
+		Context annotation = targetClass.getAnnotation(Context.class);
+		if (annotation != null) {
+			contextLocations = annotation.value();
+
+			if (contextLocations.length == 0) {
+
+				String path = targetClass.getName().replaceAll("\\.", "/");
+				String contextFile = "classpath*:" + path + "-context.xml";
+
+				contextLocations = new String[] { contextFile };
+			}
+		}
+
+		return contextLocations;
+	}
+
+	public static Properties getDefaultProperties(Class<?> targetClass) {
+
+		Properties properties = null;
+
+		InputStream resource = targetClass.getResourceAsStream(targetClass.getSimpleName() + ".properties");
+		if (resource != null) {
+			properties = new Properties();
+			try {
+				properties.load(resource);
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+
+		return properties;
+	}
+
+	public static void addPropertiesFromAnnotation(Class<?> targetClass, ApplicationContext applicationContext) {
+
+		com.mgiorda.context.Properties annotation = targetClass.getAnnotation(com.mgiorda.context.Properties.class);
+		if (annotation != null) {
+
+			String[] values = annotation.value();
+
+			for (String propertySource : values) {
+				SpringUtil.addPropertiesFile(applicationContext, propertySource);
+			}
+		}
+	}
+
+	public static <T> T getPropertyPlaceholder(ApplicationContext applicationContext, String property, Class<T> propertyClass) {
+
+		String propertyValue = applicationContext.getEnvironment().resolvePlaceholders(property);
+
+		try {
+			Method method = propertyClass.getMethod("valueOf", String.class);
+
+			@SuppressWarnings("unchecked")
+			T returnValue = (T) method.invoke(null, propertyValue);
+
+			return returnValue;
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 }
