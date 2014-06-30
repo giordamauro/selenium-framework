@@ -1,23 +1,20 @@
-package com.mgiorda.common;
+package com.mgiorda.log4j;
 
-import java.io.IOException;
-
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Layout;
-import org.apache.log4j.RollingFileAppender;
 import org.apache.log4j.spi.LoggingEvent;
 
-public class ThreadIdRollingFileAppender extends RollingFileAppender {
+public class ThreadIdConsoleAppender extends ConsoleAppender {
 
-	public ThreadIdRollingFileAppender() {
-
+	public ThreadIdConsoleAppender() {
 	}
 
-	public ThreadIdRollingFileAppender(Layout layout, String filename) throws IOException {
-		super(layout, filename);
+	public ThreadIdConsoleAppender(Layout layout) {
+		super(layout);
 	}
 
-	public ThreadIdRollingFileAppender(Layout layout, String filename, boolean append) throws IOException {
-		super(layout, filename, append);
+	public ThreadIdConsoleAppender(Layout layout, String target) {
+		super(layout, target);
 	}
 
 	@Override

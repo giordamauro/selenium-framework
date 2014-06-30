@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-4.0.xsd
+						http://www.springframework.org/schema/util 
+						http://www.springframework.org/schema/util/spring-util-4.0.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx.xsd
+						http://www.springframework.org/schema/jee 
+						http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
+						http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+	<context:annotation-config />
+
+	<util:list id="suites">
+		<ref bean="suite1" />
+		<ref bean="suite2" />
+	</util:list>
+
+	<bean id="runInParrallel" class="java.lang.Boolean">
+		<constructor-arg value="false"/>
+	</bean>
+
+	<bean id="suite1" class="com.mgiorda.context.run.SuiteConfiguration">
+		<constructor-arg value="suites/suite.xml" />
+		<property name="properties">
+			<util:properties>
+				<prop key="env">qa</prop>
+			</util:properties>
+		</property>
+	</bean>
+
+	<bean id="suite2" class="com.mgiorda.context.run.SuiteConfiguration">
+		<constructor-arg value="suites/suite.xml" />
+		<property name="properties">
+			<util:properties>
+				<prop key="env">dev</prop>
+			</util:properties>
+		</property>
+	</bean>
+
+	<bean id="multipleSuiteRunner" class="com.mgiorda.testng.run.MultipleSuiteRunner">
+		<constructor-arg type="com.mgiorda.testng.run.SuiteRunner">
+			<bean id="contextSuiteRunner" class="com.mgiorda.context.run.ContextSuiteRunner" />
+		</constructor-arg>	
+	</bean>
+
+	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="multipleSuiteRunner"/>
+		<property name="targetMethod" value="run" />
+		<property name="arguments">
+			<list>
+				<ref bean="suites" />
+				<ref bean="runInParrallel" />
+			</list>
+		</property>
+	</bean>
+
+</beans>

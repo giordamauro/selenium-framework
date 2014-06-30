@@ -13,7 +13,7 @@ import org.testng.TestNG;
 import org.testng.xml.Parser;
 import org.testng.xml.XmlSuite;
 
-import com.mgiorda.common.SpringUtil;
+import com.mgiorda.context.SpringUtil;
 
 public class TestRunner {
 

@@ -1,4 +1,4 @@
-package com.mgiorda.common;
+package com.mgiorda.context;
 
 import java.io.File;
 import java.io.FileOutputStream;

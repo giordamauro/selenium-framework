@@ -14,9 +14,8 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 
-import com.mgiorda.annotation.TestContext;
-import com.mgiorda.annotation.TestProperties;
-import com.mgiorda.common.SpringUtil;
+import com.mgiorda.context.Context;
+import com.mgiorda.context.SpringUtil;
 
 @Listeners({ SuiteLogger.class, TestLogger.class })
 public abstract class AbstractTest {
@@ -69,7 +68,7 @@ public abstract class AbstractTest {
 		}
 	}
 
-	private static final Log staticLogger = LogFactory.getLog(AbstractPage.class);
+	private static final Log staticLogger = LogFactory.getLog(AbstractTest.class);
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
@@ -117,7 +116,7 @@ public abstract class AbstractTest {
 		String[] contextLocations = {};
 
 		Class<?> testClass = this.getClass();
-		TestContext annotation = testClass.getAnnotation(TestContext.class);
+		Context annotation = testClass.getAnnotation(Context.class);
 		if (annotation != null) {
 			contextLocations = annotation.value();
 
@@ -148,7 +147,7 @@ public abstract class AbstractTest {
 			SpringUtil.addProperties(testAppContext, properties);
 		}
 
-		TestProperties annotation = testClass.getAnnotation(TestProperties.class);
+		com.mgiorda.context.Properties annotation = testClass.getAnnotation(com.mgiorda.context.Properties.class);
 		if (annotation != null) {
 
 			String[] values = annotation.value();

@@ -1,4 +1,4 @@
-package com.mgiorda.annotation;
+package com.mgiorda.context;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TestContext {
+public @interface Properties {
 
-	String[] value() default {};
+	String[] value();
 }

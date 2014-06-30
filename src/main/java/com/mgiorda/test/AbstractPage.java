@@ -19,7 +19,7 @@ import org.testng.ISuite;
 import com.mgiorda.annotation.PageContext;
 import com.mgiorda.annotation.PageProperties;
 import com.mgiorda.annotation.PageURL;
-import com.mgiorda.common.SpringUtil;
+import com.mgiorda.context.SpringUtil;
 import com.mgiorda.page.Browser;
 import com.mgiorda.page.WebDriverFactory;
 
