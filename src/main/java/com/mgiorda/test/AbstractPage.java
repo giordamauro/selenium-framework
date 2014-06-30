@@ -20,8 +20,8 @@ import com.mgiorda.annotation.PageContext;
 import com.mgiorda.annotation.PageProperties;
 import com.mgiorda.annotation.PageURL;
 import com.mgiorda.context.SpringUtil;
-import com.mgiorda.page.Browser;
-import com.mgiorda.page.WebDriverFactory;
+import com.mgiorda.page.browser.Browser;
+import com.mgiorda.page.browser.WebDriverFactory;
 
 public abstract class AbstractPage extends ProtectedPageClasses {
 

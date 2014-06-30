@@ -10,7 +10,6 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.mgiorda.context.SpringUtil;
-import com.mgiorda.page.BrowserFactory;
 
 public class InternetExplorerFactory implements BrowserFactory {
 

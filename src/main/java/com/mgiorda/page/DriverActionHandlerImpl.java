@@ -7,11 +7,13 @@ import java.util.Date;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Predicate;
@@ -37,7 +39,7 @@ public class DriverActionHandlerImpl implements DriverActionHandler {
 		return driver.getTitle();
 	}
 
-	public String getUrl() {
+	public String getCurrentUrl() {
 		return driver.getCurrentUrl();
 	}
 
@@ -122,5 +124,14 @@ public class DriverActionHandlerImpl implements DriverActionHandler {
 
 	WebDriverWait getDriverWait() {
 		return driverWait;
+	}
+
+	@Override
+	public String getDriverName() {
+
+		Capabilities capabilities = ((RemoteWebDriver) driver).getCapabilities();
+		String driverName = capabilities.getBrowserName();
+
+		return driverName;
 	}
 }

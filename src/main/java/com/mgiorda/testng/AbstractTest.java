@@ -6,17 +6,20 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 
-@Listeners({ TestRegister.class, TestLogger.class })
+@Listeners({ TestRegister.class, TestEventDispatcher.class, TestLogger.class })
 public abstract class AbstractTest {
 
 	private static final Log staticLogger = LogFactory.getLog(AbstractTest.class);
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
+	public AbstractTest() {
+		CurrentTestRun.registerTestInstance(this);
+	}
+
 	@BeforeClass
 	public void $beforeClassRegisterAndLog() {
 
-		CurrentTestRun.registerTestInstance(this);
 		staticLogger.info(String.format("Initiating test Class '%s'", this.getClass().getSimpleName()));
 	}
 

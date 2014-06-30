@@ -5,6 +5,8 @@ import org.springframework.context.support.GenericXmlApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.xml.XmlSuite;
 
+import com.mgiorda.testng.CurrentTestRun;
+
 public abstract class AbstractTest extends com.mgiorda.testng.AbstractTest {
 
 	private ApplicationContext applicationContext;
@@ -12,7 +14,7 @@ public abstract class AbstractTest extends com.mgiorda.testng.AbstractTest {
 	@BeforeClass
 	public void $beforeClassAutowireSpring() {
 
-		XmlSuite xmlSuite = ContextUtil.getCurrentXmlSuite();
+		XmlSuite xmlSuite = CurrentTestRun.getXmlSuite();
 		if (xmlSuite != null) {
 			applicationContext = SuiteContexts.getContextForSuite(xmlSuite);
 		} else {

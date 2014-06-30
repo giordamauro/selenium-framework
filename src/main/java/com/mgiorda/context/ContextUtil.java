@@ -6,25 +6,11 @@ import java.util.Properties;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.ISuite;
-import org.testng.xml.XmlSuite;
-
-import com.mgiorda.testng.CurrentTestRun;
 
 public final class ContextUtil {
 
 	private ContextUtil() {
 
-	}
-
-	public static XmlSuite getCurrentXmlSuite() {
-
-		XmlSuite xmlSuite = null;
-
-		ISuite suite = CurrentTestRun.getSuite();
-		xmlSuite = suite.getXmlSuite();
-
-		return xmlSuite;
 	}
 
 	public static void initContext(ApplicationContext applicationContext, Object target) {

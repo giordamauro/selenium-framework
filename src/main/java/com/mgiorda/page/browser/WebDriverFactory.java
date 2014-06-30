@@ -1,4 +1,4 @@
-package com.mgiorda.page;
+package com.mgiorda.page.browser;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;

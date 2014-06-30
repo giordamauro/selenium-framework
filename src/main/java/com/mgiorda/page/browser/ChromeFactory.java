@@ -8,7 +8,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.mgiorda.context.SpringUtil;
-import com.mgiorda.page.BrowserFactory;
 
 public class ChromeFactory implements BrowserFactory {
 

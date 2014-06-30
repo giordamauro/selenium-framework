@@ -4,7 +4,9 @@ public interface DriverActionHandler {
 
 	String getTitle();
 
-	String getUrl();
+	String getCurrentUrl();
+
+	String getDriverName();
 
 	void quit();
 

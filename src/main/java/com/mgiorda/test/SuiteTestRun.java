@@ -3,7 +3,7 @@ package com.mgiorda.test;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import com.mgiorda.page.Browser;
+import com.mgiorda.page.browser.Browser;
 
 public class SuiteTestRun {
 

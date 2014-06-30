@@ -6,6 +6,7 @@ import java.util.Map;
 import org.testng.ISuite;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
+import org.testng.xml.XmlSuite;
 
 public final class CurrentTestRun {
 
@@ -14,6 +15,18 @@ public final class CurrentTestRun {
 	private static final Map<Thread, ITestContext> testContexts = new HashMap<>();
 
 	private CurrentTestRun() {
+	}
+
+	public static XmlSuite getXmlSuite() {
+
+		XmlSuite xmlSuite = null;
+
+		ISuite suite = CurrentTestRun.getSuite();
+		if (suite != null) {
+			xmlSuite = suite.getXmlSuite();
+		}
+
+		return xmlSuite;
 	}
 
 	public static ISuite getSuite() {
