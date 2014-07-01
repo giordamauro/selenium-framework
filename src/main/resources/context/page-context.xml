@@ -23,8 +23,8 @@
 	<bean id="chromeFactory" class="com.mgiorda.page.browser.ChromeFactory">
 		<constructor-arg type="java.util.Map">
 			<util:map>
-				<entry key="WINDOWS" value="${chrome.driver.windows}"/>
-				<entry key="UNIX" value="${chrome.driver.unix}"/>
+				<entry key="WINDOWS" value="drivers/chromedriver.exe"/>
+				<entry key="UNIX" value="drivers/chromedriver"/>
 			</util:map>
 		</constructor-arg>
 	</bean>

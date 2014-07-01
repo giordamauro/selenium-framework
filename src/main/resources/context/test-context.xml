@@ -20,13 +20,13 @@
 	
 	<context:property-placeholder />	
 
-	<util:properties id="defaultSuiteProperties" location="classpath:/properties/default.properties">
-		<prop key="suite.file">default</prop>
-		<prop key="suite.browser">CHROME</prop>
-		<prop key="suite.waitTimeOut">60</prop>
-		<prop key="suite.afterActionTime">500</prop>
-		<prop key="suite.context">context/page-context.xml</prop>
-		<prop key="suite.outputDirectory">default</prop>
-	</util:properties>
+	<bean id="chromeFactory" class="com.mgiorda.page.browser.ChromeFactory">
+		<constructor-arg type="java.util.Map">
+			<util:map>
+				<entry key="WINDOWS" value="${chrome.driver.windows}"/>
+				<entry key="UNIX" value="${chrome.driver.unix}"/>
+			</util:map>
+		</constructor-arg>
+	</bean>
 
 </beans>

@@ -6,10 +6,11 @@ import java.util.Map;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.springframework.beans.factory.FactoryBean;
 
 import com.mgiorda.context.SpringUtil;
 
-public class ChromeFactory implements BrowserFactory {
+public class ChromeFactory implements FactoryBean<WebDriver> {
 
 	public ChromeFactory(Map<OperativeSystem, String> driverPropertiesByOS) {
 
@@ -30,11 +31,22 @@ public class ChromeFactory implements BrowserFactory {
 	}
 
 	@Override
-	public WebDriver newDriver() {
+	public WebDriver getObject() throws Exception {
+
 		DesiredCapabilities chromeCapabilities = DesiredCapabilities.chrome();
 		WebDriver driver = new ChromeDriver(chromeCapabilities);
 
 		return driver;
+	}
+
+	@Override
+	public Class<?> getObjectType() {
+		return WebDriver.class;
+	}
+
+	@Override
+	public boolean isSingleton() {
+		return false;
 	}
 
 }

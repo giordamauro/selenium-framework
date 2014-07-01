@@ -17,11 +17,11 @@ public final class Locator {
 		this.value = value;
 	}
 
-	Class<? extends By> getByClass() {
+	public Class<? extends By> getByClass() {
 		return byClass;
 	}
 
-	String getValue() {
+	public String getValue() {
 		return value;
 	}
 

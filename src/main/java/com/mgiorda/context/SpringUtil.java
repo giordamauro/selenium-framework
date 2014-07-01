@@ -95,7 +95,7 @@ public final class SpringUtil {
 
 		Properties properties = new Properties();
 
-		propertySource = applicationContext.getEnvironment().resolvePlaceholders(propertySource);
+		propertySource = getPropertyPlaceholder(applicationContext, propertySource);
 
 		try {
 			Resource resource = applicationContext.getResource("classpath:/" + propertySource);
@@ -166,9 +166,20 @@ public final class SpringUtil {
 		}
 	}
 
-	public static <T> T getPropertyPlaceholder(ApplicationContext applicationContext, String property, Class<T> propertyClass) {
+	public static String getPropertyPlaceholder(ApplicationContext applicationContext, String property) {
 
 		String propertyValue = applicationContext.getEnvironment().resolvePlaceholders(property);
+
+		if (propertyValue.matches(".*?\\$\\{(.*)\\}.*?")) {
+			throw new IllegalStateException(String.format("Unsatisfied property-holder for property '%s'", property));
+		}
+
+		return propertyValue;
+	}
+
+	public static <T> T getPropertyPlaceholder(ApplicationContext applicationContext, String property, Class<T> propertyClass) {
+
+		String propertyValue = getPropertyPlaceholder(applicationContext, property);
 
 		try {
 			Method method = propertyClass.getMethod("valueOf", String.class);

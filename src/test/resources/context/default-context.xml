@@ -22,4 +22,18 @@
 	
 	<util:properties id="defaultProperties" location="classpath:/properties/default.properties" />
 	
+	<bean id="chromeDriver" class="com.mgiorda.page.browser.ChromeFactory" >
+		<constructor-arg type="java.util.Map">
+			<util:map>
+				<entry key="WINDOWS" value="drivers/chromedriver.exe"/>
+				<entry key="UNIX" value="drivers/chromedriver"/>
+			</util:map>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="pageHandlerFactory" class="com.mgiorda.page.impl.PageHandlerFactoryImpl">
+		<constructor-arg type="org.openqa.selenium.WebDriver" ref="chromeDriver"/>
+		<constructor-arg type="long" value="60"/>	
+	</bean>
+	
 </beans>

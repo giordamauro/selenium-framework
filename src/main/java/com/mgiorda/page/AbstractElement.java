@@ -15,6 +15,10 @@ public abstract class AbstractElement {
 	protected PageElement pageElement;
 	protected AbstractElementHandler elementHandler;
 
+	public AbstractElement() {
+
+	}
+
 	void setAbstractElement(AbstractElementHandler elementHandler, PageElement pageElement) {
 
 		this.elementHandler = elementHandler;

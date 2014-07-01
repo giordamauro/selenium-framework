@@ -16,7 +16,7 @@ public class PageElement {
 
 	private final WebElement element;
 
-	PageElement(WebElement element) {
+	public PageElement(WebElement element) {
 		this.element = element;
 	}
 

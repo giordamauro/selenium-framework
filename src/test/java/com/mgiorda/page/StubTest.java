@@ -16,7 +16,8 @@ public class StubTest extends AbstractTest {
 	@Value("${${suite.env}.host}")
 	private String host;
 
-	@Test(invocationCount = 3, threadPoolSize = 2)
+	@Test
+	// (invocationCount = 3, threadPoolSize = 2)
 	public void test() {
 
 		SampleGooglePage page = new SampleGooglePage();

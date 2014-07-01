@@ -7,12 +7,12 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.xml.XmlSuite;
 
 import com.mgiorda.context.ContextUtil;
+import com.mgiorda.context.SpringUtil;
 import com.mgiorda.context.SuiteContexts;
 import com.mgiorda.page.annotations.Locate;
 import com.mgiorda.page.annotations.PageURL;
@@ -26,10 +26,11 @@ public class AbstractPage implements TestSubscriber {
 
 	private ApplicationContext applicationContext;
 
-	protected final DriverActionHandler actionHandler;
-	private final ElementHandlerFactory elementHandlerFactory;
+	private final PageHandlerFactory pageHandlerFactory;
 
 	private final String pageUrl;
+
+	private final DriverActionHandler actionHandler;
 	private final PageElementHandler elementHandler;
 
 	protected AbstractPage(String url) {
@@ -38,16 +39,13 @@ public class AbstractPage implements TestSubscriber {
 		if (xmlSuite != null) {
 			applicationContext = SuiteContexts.getContextForSuite(xmlSuite);
 		}
-		if (applicationContext == null) {
-			String defaultContext = "classpath:/context/default-context.xml";
-			applicationContext = new GenericXmlApplicationContext(defaultContext);
-		}
+		ContextUtil.initContext(applicationContext, this);
 
-		this.actionHandler = applicationContext.getBean("driverActionHandler", DriverActionHandler.class);
-		this.elementHandlerFactory = applicationContext.getBean("elementHandlerFactory", ElementHandlerFactory.class);
+		this.pageHandlerFactory = applicationContext.getBean("pageHandlerFactory", PageHandlerFactory.class);
 
+		this.actionHandler = pageHandlerFactory.getActionHandler();
+		this.elementHandler = pageHandlerFactory.getElementHandler(this);
 		this.pageUrl = getPageUrl(url);
-		this.elementHandler = elementHandlerFactory.getElementHandler();
 
 		actionHandler.goToUrl(pageUrl);
 		autowireLocators();
@@ -66,10 +64,10 @@ public class AbstractPage implements TestSubscriber {
 		ContextUtil.initContext(applicationContext, this);
 
 		this.actionHandler = parentPage.actionHandler;
-		this.elementHandlerFactory = parentPage.elementHandlerFactory;
+		this.pageHandlerFactory = parentPage.pageHandlerFactory;
 
 		this.pageUrl = getPageUrl(url);
-		this.elementHandler = elementHandlerFactory.getElementHandler();
+		this.elementHandler = pageHandlerFactory.getElementHandler(this);
 
 		String currentUrl = actionHandler.getCurrentUrl();
 		if (!pageUrl.equals(currentUrl)) {
@@ -87,7 +85,7 @@ public class AbstractPage implements TestSubscriber {
 	AbstractPage(AbstractPage parentPage, PageElementHandler elementHandler) {
 
 		this.actionHandler = parentPage.actionHandler;
-		this.elementHandlerFactory = parentPage.elementHandlerFactory;
+		this.pageHandlerFactory = parentPage.pageHandlerFactory;
 		this.pageUrl = parentPage.pageUrl;
 
 		this.elementHandler = elementHandler;
@@ -130,7 +128,7 @@ public class AbstractPage implements TestSubscriber {
 		return pageUrl;
 	}
 
-	protected ApplicationContext getApplicationContext() {
+	public ApplicationContext getApplicationContext() {
 		return applicationContext;
 	}
 
@@ -149,7 +147,7 @@ public class AbstractPage implements TestSubscriber {
 			pageUrl = annotation.value();
 		}
 
-		pageUrl = applicationContext.getEnvironment().resolvePlaceholders(pageUrl);
+		pageUrl = SpringUtil.getPropertyPlaceholder(applicationContext, pageUrl);
 
 		return pageUrl;
 	}
