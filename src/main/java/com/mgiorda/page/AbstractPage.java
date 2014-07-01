@@ -1,7 +1,6 @@
 package com.mgiorda.page;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.Date;
 
 import org.apache.commons.logging.Log;
@@ -13,8 +12,9 @@ import org.testng.xml.XmlSuite;
 import com.mgiorda.context.ContextUtil;
 import com.mgiorda.context.SpringUtil;
 import com.mgiorda.context.SuiteContexts;
-import com.mgiorda.page.annotations.Locate;
 import com.mgiorda.page.annotations.PageURL;
+import com.mgiorda.page.support.PageValueRetriever;
+import com.mgiorda.page.support.ValueRetriever;
 import com.mgiorda.testng.AbstractTest;
 import com.mgiorda.testng.CurrentTestRun;
 import com.mgiorda.testng.TestEventDispatcher;
@@ -31,7 +31,7 @@ public class AbstractPage implements TestSubscriber {
 	private final String pageUrl;
 
 	private final DriverActionHandler actionHandler;
-	private final PageElementHandler elementHandler;
+	protected final PageElementHandler pageHandler;
 
 	protected AbstractPage(String url) {
 
@@ -39,16 +39,21 @@ public class AbstractPage implements TestSubscriber {
 		if (xmlSuite != null) {
 			applicationContext = SuiteContexts.getContextForSuite(xmlSuite);
 		}
+		if (applicationContext == null) {
+			throw new IllegalStateException("Missing applicationContext - Not running under test class?");
+		}
 		ContextUtil.initContext(applicationContext, this);
 
 		this.pageHandlerFactory = applicationContext.getBean("pageHandlerFactory", PageHandlerFactory.class);
 
 		this.actionHandler = pageHandlerFactory.getActionHandler();
-		this.elementHandler = pageHandlerFactory.getElementHandler(this);
+		this.pageHandler = pageHandlerFactory.getElementHandler(this);
 		this.pageUrl = getPageUrl(url);
 
 		actionHandler.goToUrl(pageUrl);
-		autowireLocators();
+
+		ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
+		ElementInjector.autowireLocators(pageValueRetriever, this);
 
 		TestEventDispatcher testEventDispatcher = TestEventDispatcher.getEventDispatcher();
 		testEventDispatcher.subscribe(this);
@@ -67,7 +72,7 @@ public class AbstractPage implements TestSubscriber {
 		this.pageHandlerFactory = parentPage.pageHandlerFactory;
 
 		this.pageUrl = getPageUrl(url);
-		this.elementHandler = pageHandlerFactory.getElementHandler(this);
+		this.pageHandler = pageHandlerFactory.getElementHandler(this);
 
 		String currentUrl = actionHandler.getCurrentUrl();
 		if (!pageUrl.equals(currentUrl)) {
@@ -75,7 +80,12 @@ public class AbstractPage implements TestSubscriber {
 		} else {
 			actionHandler.waitForPageToLoad();
 		}
-		autowireLocators();
+
+		ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
+		ElementInjector.autowireLocators(pageValueRetriever, this);
+
+		TestEventDispatcher testEventDispatcher = TestEventDispatcher.getEventDispatcher();
+		testEventDispatcher.subscribe(this);
 	}
 
 	protected AbstractPage(AbstractPage parentPage) {
@@ -88,12 +98,13 @@ public class AbstractPage implements TestSubscriber {
 		this.pageHandlerFactory = parentPage.pageHandlerFactory;
 		this.pageUrl = parentPage.pageUrl;
 
-		this.elementHandler = elementHandler;
+		this.pageHandler = elementHandler;
 
 		this.applicationContext = parentPage.applicationContext;
 		ContextUtil.initContext(applicationContext, this);
 
-		autowireLocators();
+		ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
+		ElementInjector.autowireLocators(pageValueRetriever, this);
 	}
 
 	@Override
@@ -150,52 +161,6 @@ public class AbstractPage implements TestSubscriber {
 		pageUrl = SpringUtil.getPropertyPlaceholder(applicationContext, pageUrl);
 
 		return pageUrl;
-	}
-
-	private void autowireLocators() {
-
-		Class<?> pageClass = this.getClass();
-
-		Field[] declaredFields = pageClass.getDeclaredFields();
-		for (Field field : declaredFields) {
-
-			Locate annotation = field.getAnnotation(Locate.class);
-			if (annotation != null) {
-
-				Locator[] locators = AnnotationsUtil.getLocatorsFromAnnotation(annotation);
-				if (locators.length == 0) {
-					throw new IllegalStateException(String.format("Couldn't find an element locator for field '%s' in page class '%s'", field.getName(), pageClass.getSimpleName()));
-				}
-
-				Object value = getPageForField(field, locators);
-				if (value == null) {
-					value = AnnotationsUtil.getLocatorElementForHandler(field, elementHandler, locators);
-				}
-
-				if (value == null) {
-					throw new IllegalStateException(String.format("Cannot autowire field '%s' of type '%s' in page '%s'", field.getName(), field.getType(), pageClass));
-				}
-
-				AnnotationsUtil.setField(this, field, value);
-			}
-		}
-	}
-
-	private AbstractPage getPageForField(Field field, Locator[] locators) {
-
-		AbstractPage page = null;
-
-		Class<?> fieldType = field.getType();
-
-		if (AbstractPage.class.isAssignableFrom(fieldType)) {
-
-			@SuppressWarnings("unchecked")
-			Class<? extends AbstractPage> pageClass = (Class<? extends AbstractPage>) fieldType;
-
-			page = elementHandler.getPageAs(pageClass, locators);
-		}
-
-		return page;
 	}
 
 	private void takeScreenShot(String outputDirectory) {

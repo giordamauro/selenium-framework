@@ -1,7 +1,6 @@
 package com.mgiorda.page;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,16 +10,43 @@ import org.apache.commons.logging.LogFactory;
 import com.mgiorda.page.annotations.By;
 import com.mgiorda.page.annotations.Locate;
 import com.mgiorda.page.element.Label;
+import com.mgiorda.page.support.ValueRetriever;
 
-class AnnotationsUtil {
+class ElementInjector {
 
-	private static final Log logger = LogFactory.getLog(AnnotationsUtil.class);
+	private static final Log logger = LogFactory.getLog(ElementInjector.class);
 
-	private AnnotationsUtil() {
+	private ElementInjector() {
 
 	}
 
-	public static Locator[] getLocatorsFromAnnotation(Locate annotation) {
+	public static void autowireLocators(ValueRetriever valueRetriever, Object target) {
+
+		Class<?> objClass = target.getClass();
+
+		Field[] declaredFields = objClass.getDeclaredFields();
+		for (Field field : declaredFields) {
+
+			Locate annotation = field.getAnnotation(Locate.class);
+			if (annotation != null) {
+
+				Locator[] locators = ElementInjector.getLocatorsFromAnnotation(annotation);
+				if (locators.length == 0) {
+					throw new IllegalStateException(String.format("Couldn't find an element locator for field '%s' in page class '%s'", field.getName(), objClass.getSimpleName()));
+				}
+
+				Object value = valueRetriever.getValueForLocators(field, locators);
+
+				if (value == null) {
+					throw new IllegalStateException(String.format("Cannot autowire field '%s' of type '%s' in '%s'", field.getName(), field.getType(), objClass));
+				}
+
+				ElementInjector.setField(target, field, value);
+			}
+		}
+	}
+
+	private static Locator[] getLocatorsFromAnnotation(Locate annotation) {
 
 		List<Locator> locators = new ArrayList<Locator>();
 		By[] multipleLocators = annotation.value();
@@ -71,47 +97,7 @@ class AnnotationsUtil {
 		return elementLocator;
 	}
 
-	public static Object getLocatorElementForHandler(Field field, AbstractElementHandler elementHandler, Locator[] locators) {
-
-		Object value = null;
-
-		Class<?> fieldClass = field.getType();
-
-		if (Boolean.class.isAssignableFrom(fieldClass) || fieldClass.equals(boolean.class)) {
-			value = elementHandler.existsElement(locators);
-
-		} else if (Integer.class.isAssignableFrom(fieldClass) || fieldClass.equals(int.class)) {
-			value = elementHandler.getElementCount(locators);
-
-		} else if (String.class.isAssignableFrom(fieldClass)) {
-			value = elementHandler.getElementAs(Label.class, locators);
-
-		} else if (List.class.isAssignableFrom(fieldClass)) {
-
-			ParameterizedType fieldType = (ParameterizedType) field.getGenericType();
-			Class<?> listClass = (Class<?>) fieldType.getActualTypeArguments()[0];
-
-			if (String.class.isAssignableFrom(listClass)) {
-				value = elementHandler.getElementsAs(Label.class, locators);
-
-			} else if (AbstractElement.class.isAssignableFrom(listClass)) {
-
-				@SuppressWarnings("unchecked")
-				Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) listClass;
-				value = elementHandler.getElementsAs(elementClass, locators);
-			}
-
-		} else if (AbstractElement.class.isAssignableFrom(fieldClass)) {
-
-			@SuppressWarnings("unchecked")
-			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) fieldClass;
-			value = elementHandler.getElementAs(elementClass, locators);
-		}
-
-		return value;
-	}
-
-	public static void setField(Object target, Field field, Object value) {
+	private static void setField(Object target, Field field, Object value) {
 
 		Class<?> fieldClass = field.getType();
 		Class<?> valueClass = value.getClass();
