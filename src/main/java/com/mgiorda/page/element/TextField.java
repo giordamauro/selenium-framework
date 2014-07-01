@@ -1,12 +1,8 @@
 package com.mgiorda.page.element;
 
-import com.mgiorda.test.AbstractElement;
+import com.mgiorda.page.AbstractElement;
 
 public class TextField extends AbstractElement {
-
-	public TextField(PageElement pageElement) {
-		super(pageElement);
-	}
 
 	public void sendKeys(CharSequence... keysToSend) {
 		pageElement.sendKeys(keysToSend);

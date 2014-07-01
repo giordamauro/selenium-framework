@@ -12,10 +12,10 @@ import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.xml.XmlSuite;
 
-import com.mgiorda.annotation.Locate;
-import com.mgiorda.annotation.PageURL;
 import com.mgiorda.context.ContextUtil;
 import com.mgiorda.context.SuiteContexts;
+import com.mgiorda.page.annotations.Locate;
+import com.mgiorda.page.annotations.PageURL;
 import com.mgiorda.testng.CurrentTestRun;
 import com.mgiorda.testng.TestEventDispatcher;
 import com.mgiorda.testng.TestSubscriber;
@@ -120,6 +120,10 @@ public class AbstractPage implements TestSubscriber {
 	@Override
 	public void onClassFinish(ITestContext testContext) {
 		actionHandler.quit();
+	}
+
+	public String getTitle() {
+		return actionHandler.getTitle();
 	}
 
 	public String getPageUrl() {

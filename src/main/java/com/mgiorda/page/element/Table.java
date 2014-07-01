@@ -3,9 +3,10 @@ package com.mgiorda.page.element;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mgiorda.annotation.By;
-import com.mgiorda.annotation.Locate;
-import com.mgiorda.test.AbstractElement;
+import com.mgiorda.page.AbstractElement;
+import com.mgiorda.page.PageElement;
+import com.mgiorda.page.annotations.By;
+import com.mgiorda.page.annotations.Locate;
 
 public class Table extends AbstractElement {
 
@@ -14,10 +15,6 @@ public class Table extends AbstractElement {
 
 	@Locate(@By(xpath = "(tr[td]) | (tbody/tr[td])"))
 	private List<TableRow> rows;
-
-	public Table(PageElement pageElement) {
-		super(pageElement);
-	}
 
 	void afterPropertiesSet() {
 

@@ -1,11 +1,10 @@
 package com.mgiorda.page;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.mgiorda.page.element.Label;
-import com.mgiorda.test.AbstractElement;
 
 public class AbstractElementHandlerImpl implements AbstractElementHandler {
 
@@ -82,12 +81,10 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler {
 
 	private <T extends AbstractElement> T newAbstractElement(Class<T> elementClass, AbstractElementHandler elementHandler, PageElement pageElement) {
 		try {
-			Constructor<T> constructor = elementClass.getConstructor(AbstractElementHandler.class, PageElement.class);
-			boolean accessible = constructor.isAccessible();
+			T newInstance = elementClass.newInstance();
+			Method method = elementClass.getDeclaredMethod("setAbstractElement", AbstractElementHandler.class, PageElement.class);
 
-			constructor.setAccessible(true);
-			T newInstance = constructor.newInstance(elementHandler, pageElement);
-			constructor.setAccessible(accessible);
+			method.invoke(newInstance, elementHandler, pageElement);
 
 			return newInstance;
 

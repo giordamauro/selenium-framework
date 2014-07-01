@@ -2,8 +2,6 @@ package com.mgiorda.page;
 
 import java.util.List;
 
-import com.mgiorda.test.AbstractElement;
-
 public interface AbstractElementHandler {
 
 	boolean existsElement(Locator... locators);

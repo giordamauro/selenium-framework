@@ -3,23 +3,20 @@ package com.mgiorda.page.element;
 import java.util.Collections;
 import java.util.List;
 
-import com.mgiorda.annotation.By;
-import com.mgiorda.annotation.Locate;
-import com.mgiorda.test.AbstractElement;
+import com.mgiorda.page.AbstractElement;
+import com.mgiorda.page.PageElement;
+import com.mgiorda.page.annotations.By;
+import com.mgiorda.page.annotations.Locate;
 
 public class TableHeaders extends AbstractElement {
 
 	@Locate(@By(tagName = "th"))
 	private List<PageElement> headers;
 
-	public TableHeaders(PageElement pageElement) {
-		super(pageElement);
-	}
-
 	public <T extends AbstractElement> T getColumnAs(int column, Class<T> elementClass) {
 
 		PageElement pageElement = getElementForColumn(column);
-		T abstractElement = AbstractElement.factory(elementClass, elementHandler, pageElement);
+		T abstractElement = elementHandler.getElementAs(elementClass, pageElement);
 
 		return abstractElement;
 	}

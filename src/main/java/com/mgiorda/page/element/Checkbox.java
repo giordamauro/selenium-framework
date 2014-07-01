@@ -1,12 +1,8 @@
 package com.mgiorda.page.element;
 
-import com.mgiorda.test.AbstractElement;
+import com.mgiorda.page.AbstractElement;
 
 public class Checkbox extends AbstractElement {
-
-	public Checkbox(PageElement pageElement) {
-		super(pageElement);
-	}
 
 	public void setSelected(boolean value) {
 

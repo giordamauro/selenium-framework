@@ -6,16 +6,16 @@ import java.lang.reflect.Method;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.mgiorda.annotation.Locate;
+import com.mgiorda.page.annotations.Locate;
 
 public abstract class AbstractElement {
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
-	protected final PageElement pageElement;
-	protected final AbstractElementHandler elementHandler;
+	protected PageElement pageElement;
+	protected AbstractElementHandler elementHandler;
 
-	public AbstractElement(AbstractElementHandler elementHandler, PageElement pageElement) {
+	void setAbstractElement(AbstractElementHandler elementHandler, PageElement pageElement) {
 
 		this.elementHandler = elementHandler;
 		this.pageElement = pageElement;
