@@ -24,7 +24,7 @@ public class AbstractPage implements TestSubscriber {
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
-	private final ApplicationContext applicationContext;
+	private ApplicationContext applicationContext;
 
 	protected final DriverActionHandler actionHandler;
 	private final ElementHandlerFactory elementHandlerFactory;
@@ -37,11 +37,11 @@ public class AbstractPage implements TestSubscriber {
 		XmlSuite xmlSuite = CurrentTestRun.getXmlSuite();
 		if (xmlSuite != null) {
 			applicationContext = SuiteContexts.getContextForSuite(xmlSuite);
-		} else {
+		}
+		if (applicationContext == null) {
 			String defaultContext = "classpath:/context/default-context.xml";
 			applicationContext = new GenericXmlApplicationContext(defaultContext);
 		}
-		ContextUtil.initContext(applicationContext, this);
 
 		this.actionHandler = applicationContext.getBean("driverActionHandler", DriverActionHandler.class);
 		this.elementHandlerFactory = applicationContext.getBean("elementHandlerFactory", ElementHandlerFactory.class);
