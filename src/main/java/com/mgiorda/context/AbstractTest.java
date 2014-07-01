@@ -15,9 +15,8 @@ public abstract class AbstractTest extends com.mgiorda.testng.AbstractTest {
 	public void $beforeClassAutowireSpring() {
 
 		XmlSuite xmlSuite = CurrentTestRun.getXmlSuite();
-		if (xmlSuite != null) {
-			applicationContext = SuiteContexts.getContextForSuite(xmlSuite);
-		}
+		applicationContext = SuiteContexts.getContextForSuite(xmlSuite);
+
 		if (applicationContext == null) {
 
 			String defaultContext = "classpath:/context/default-context.xml";
@@ -25,6 +24,8 @@ public abstract class AbstractTest extends com.mgiorda.testng.AbstractTest {
 
 			java.util.Properties defaultProperties = applicationContext.getBean("defaultProperties", java.util.Properties.class);
 			SpringUtil.addProperties(applicationContext, defaultProperties);
+
+			SuiteContexts.registerSuiteContext(xmlSuite, applicationContext);
 		}
 
 		ContextUtil.initContext(applicationContext, this);
