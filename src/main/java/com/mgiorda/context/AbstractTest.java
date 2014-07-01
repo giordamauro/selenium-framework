@@ -19,8 +19,12 @@ public abstract class AbstractTest extends com.mgiorda.testng.AbstractTest {
 			applicationContext = SuiteContexts.getContextForSuite(xmlSuite);
 		}
 		if (applicationContext == null) {
+
 			String defaultContext = "classpath:/context/default-context.xml";
 			applicationContext = new GenericXmlApplicationContext(defaultContext);
+
+			java.util.Properties defaultProperties = applicationContext.getBean("defaultProperties", java.util.Properties.class);
+			SpringUtil.addProperties(applicationContext, defaultProperties);
 		}
 
 		ContextUtil.initContext(applicationContext, this);

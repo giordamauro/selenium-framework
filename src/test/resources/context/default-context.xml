@@ -18,6 +18,8 @@
 
 	<context:annotation-config />
 	
-	<context:property-placeholder location="classpath:/properties/default.properties"/>	
+	<context:property-placeholder />	
+	
+	<util:properties id="defaultProperties" location="classpath:/properties/default.properties" />
 	
 </beans>
