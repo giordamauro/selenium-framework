@@ -1,4 +1,4 @@
-package com.mgiorda.page.support;
+package com.mgiorda.page.injector;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

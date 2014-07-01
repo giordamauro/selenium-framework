@@ -1,6 +1,6 @@
 package com.mgiorda.page;
 
-import com.mgiorda.page.support.ValueRetriever;
+import com.mgiorda.page.injector.ValueRetriever;
 
 public interface ElementInjector {
 

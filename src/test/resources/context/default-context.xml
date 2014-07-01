@@ -36,6 +36,6 @@
 		<constructor-arg type="long" value="60"/>	
 	</bean>
 	
-	<bean id="elementInjector" class="com.mgiorda.page.support.ElementInjectorImpl" />
+	<bean id="elementInjector" class="com.mgiorda.page.injector.ElementInjectorImpl" />
 	
 </beans>

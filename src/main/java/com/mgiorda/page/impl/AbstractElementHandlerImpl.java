@@ -5,16 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mgiorda.page.AbstractElement;
+import com.mgiorda.page.AbstractElementFactory;
 import com.mgiorda.page.AbstractElementHandler;
 import com.mgiorda.page.ElementInjector;
 import com.mgiorda.page.ElementTimeoutException;
 import com.mgiorda.page.Locator;
 import com.mgiorda.page.PageElement;
 import com.mgiorda.page.element.Label;
-import com.mgiorda.page.support.ElementValueRetriever;
-import com.mgiorda.page.support.ValueRetriever;
+import com.mgiorda.page.injector.PageElementValueRetriever;
+import com.mgiorda.page.injector.ValueRetriever;
 
-public class AbstractElementHandlerImpl implements AbstractElementHandler {
+public class AbstractElementHandlerImpl implements AbstractElementHandler, AbstractElementFactory {
 
 	private final ElementInjector elementInjector;
 	protected final DriverElementHandler driverElementHandler;
@@ -38,7 +39,7 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler {
 	public <T extends AbstractElement> T getElementAs(Class<T> elementClass, Locator... locators) throws ElementTimeoutException {
 
 		PageElement element = driverElementHandler.getElement(locators);
-		T abstractElement = newAbstractElement(elementClass, element);
+		T abstractElement = getElementAs(elementClass, element);
 
 		return abstractElement;
 	}
@@ -51,7 +52,7 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler {
 		List<PageElement> elements = driverElementHandler.getElements(locators);
 		for (PageElement pageElement : elements) {
 
-			T element = newAbstractElement(elementClass, pageElement);
+			T element = getElementAs(elementClass, pageElement);
 			list.add(element);
 		}
 		return list;
@@ -79,7 +80,7 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler {
 		return list;
 	}
 
-	private <T extends AbstractElement> T newAbstractElement(Class<T> elementClass, PageElement pageElement) {
+	public <T extends AbstractElement> T getElementAs(Class<T> elementClass, PageElement pageElement) {
 
 		DriverElementHandler basicHandler = new DriverElementHandler(driverElementHandler, pageElement);
 		AbstractElementHandler elementHandler = new AbstractElementHandlerImpl(basicHandler, elementInjector);
@@ -101,13 +102,52 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler {
 			method.invoke(newInstance, elementHandler, pageElement);
 			method.setAccessible(isAccessible);
 
-			ValueRetriever elementValueRetriever = new ElementValueRetriever(elementHandler);
+			ValueRetriever elementValueRetriever = new PageElementValueRetriever(elementHandler);
 			elementInjector.autowireLocators(elementValueRetriever, newInstance);
+
+			callAfterPropertiesSet(newInstance);
 
 			return newInstance;
 
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
+	}
+
+	private <T extends AbstractElement> void callAfterPropertiesSet(T element) {
+
+		Class<? extends AbstractElement> elementClass = element.getClass();
+
+		try {
+			Method afterProperties = elementClass.getDeclaredMethod("afterPropertiesSet");
+			if (afterProperties != null) {
+				boolean methodAccessible = afterProperties.isAccessible();
+				afterProperties.setAccessible(true);
+
+				afterProperties.invoke(this);
+				afterProperties.setAccessible(methodAccessible);
+			}
+		} catch (NoSuchMethodException e) {
+			// method doesn't exist, nothing to do
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	@Override
+	public PageElement getPageElement(Locator... locators) throws ElementTimeoutException {
+
+		PageElement element = driverElementHandler.getElement(locators);
+
+		return element;
+	}
+
+	@Override
+	public List<PageElement> getPageElements(Locator... locators) throws ElementTimeoutException {
+
+		List<PageElement> elements = driverElementHandler.getElements(locators);
+
+		return elements;
 	}
 }

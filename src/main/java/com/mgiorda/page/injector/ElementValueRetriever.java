@@ -1,4 +1,4 @@
-package com.mgiorda.page.support;
+package com.mgiorda.page.injector;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -11,7 +11,7 @@ import com.mgiorda.page.element.Label;
 
 public class ElementValueRetriever implements ValueRetriever {
 
-	private final AbstractElementHandler elementHandler;
+	protected final AbstractElementHandler elementHandler;
 
 	public ElementValueRetriever(AbstractElementHandler elementHandler) {
 		this.elementHandler = elementHandler;
