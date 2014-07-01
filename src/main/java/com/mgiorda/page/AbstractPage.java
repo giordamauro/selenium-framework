@@ -27,6 +27,7 @@ public class AbstractPage implements TestSubscriber {
 	private ApplicationContext applicationContext;
 
 	private final PageHandlerFactory pageHandlerFactory;
+	private final ElementInjector elementInjector;
 
 	private final String pageUrl;
 
@@ -45,6 +46,7 @@ public class AbstractPage implements TestSubscriber {
 		ContextUtil.initContext(applicationContext, this);
 
 		this.pageHandlerFactory = applicationContext.getBean("pageHandlerFactory", PageHandlerFactory.class);
+		this.elementInjector = applicationContext.getBean("elementInjector", ElementInjector.class);
 
 		this.actionHandler = pageHandlerFactory.getActionHandler();
 		this.pageHandler = pageHandlerFactory.getElementHandler(this);
@@ -53,7 +55,7 @@ public class AbstractPage implements TestSubscriber {
 		actionHandler.goToUrl(pageUrl);
 
 		ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
-		ElementInjector.autowireLocators(pageValueRetriever, this);
+		elementInjector.autowireLocators(pageValueRetriever, this);
 
 		TestEventDispatcher testEventDispatcher = TestEventDispatcher.getEventDispatcher();
 		testEventDispatcher.subscribe(this);
@@ -70,6 +72,7 @@ public class AbstractPage implements TestSubscriber {
 
 		this.actionHandler = parentPage.actionHandler;
 		this.pageHandlerFactory = parentPage.pageHandlerFactory;
+		this.elementInjector = parentPage.elementInjector;
 
 		this.pageUrl = getPageUrl(url);
 		this.pageHandler = pageHandlerFactory.getElementHandler(this);
@@ -82,7 +85,7 @@ public class AbstractPage implements TestSubscriber {
 		}
 
 		ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
-		ElementInjector.autowireLocators(pageValueRetriever, this);
+		elementInjector.autowireLocators(pageValueRetriever, this);
 
 		TestEventDispatcher testEventDispatcher = TestEventDispatcher.getEventDispatcher();
 		testEventDispatcher.subscribe(this);
@@ -96,6 +99,7 @@ public class AbstractPage implements TestSubscriber {
 
 		this.actionHandler = parentPage.actionHandler;
 		this.pageHandlerFactory = parentPage.pageHandlerFactory;
+		this.elementInjector = parentPage.elementInjector;
 		this.pageUrl = parentPage.pageUrl;
 
 		this.pageHandler = elementHandler;
@@ -104,7 +108,7 @@ public class AbstractPage implements TestSubscriber {
 		ContextUtil.initContext(applicationContext, this);
 
 		ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
-		ElementInjector.autowireLocators(pageValueRetriever, this);
+		elementInjector.autowireLocators(pageValueRetriever, this);
 	}
 
 	@Override
@@ -141,6 +145,10 @@ public class AbstractPage implements TestSubscriber {
 
 	public ApplicationContext getApplicationContext() {
 		return applicationContext;
+	}
+
+	public ElementInjector getElementInjector() {
+		return elementInjector;
 	}
 
 	private String getPageUrl(String url) {

@@ -6,17 +6,22 @@ import java.util.List;
 
 import com.mgiorda.page.AbstractElement;
 import com.mgiorda.page.AbstractElementHandler;
+import com.mgiorda.page.ElementInjector;
 import com.mgiorda.page.ElementTimeoutException;
 import com.mgiorda.page.Locator;
 import com.mgiorda.page.PageElement;
 import com.mgiorda.page.element.Label;
+import com.mgiorda.page.support.ElementValueRetriever;
+import com.mgiorda.page.support.ValueRetriever;
 
 public class AbstractElementHandlerImpl implements AbstractElementHandler {
 
+	private final ElementInjector elementInjector;
 	protected final DriverElementHandler driverElementHandler;
 
-	public AbstractElementHandlerImpl(DriverElementHandler basicElementHandler) {
+	public AbstractElementHandlerImpl(DriverElementHandler basicElementHandler, ElementInjector elementInjector) {
 		this.driverElementHandler = basicElementHandler;
+		this.elementInjector = elementInjector;
 	}
 
 	@Override
@@ -77,7 +82,7 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler {
 	private <T extends AbstractElement> T newAbstractElement(Class<T> elementClass, PageElement pageElement) {
 
 		DriverElementHandler basicHandler = new DriverElementHandler(driverElementHandler, pageElement);
-		AbstractElementHandler elementHandler = new AbstractElementHandlerImpl(basicHandler);
+		AbstractElementHandler elementHandler = new AbstractElementHandlerImpl(basicHandler, elementInjector);
 
 		T abstractElement = newAbstractElement(elementClass, elementHandler, pageElement);
 
@@ -95,6 +100,9 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler {
 			method.setAccessible(true);
 			method.invoke(newInstance, elementHandler, pageElement);
 			method.setAccessible(isAccessible);
+
+			ValueRetriever elementValueRetriever = new ElementValueRetriever(elementHandler);
+			elementInjector.autowireLocators(elementValueRetriever, newInstance);
 
 			return newInstance;
 

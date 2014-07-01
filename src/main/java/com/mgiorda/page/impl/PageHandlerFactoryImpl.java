@@ -28,6 +28,7 @@ public class PageHandlerFactoryImpl implements PageHandlerFactory {
 	public PageElementHandler getElementHandler(AbstractPage page) {
 
 		ApplicationContext applicationContext = page.getApplicationContext();
+
 		DriverElementHandler driverElementHandler = new DriverElementHandler(driver, driverWait, applicationContext);
 		PageElementHandler pageElementHandler = new PageElementHandlerImpl(driverElementHandler, page);
 

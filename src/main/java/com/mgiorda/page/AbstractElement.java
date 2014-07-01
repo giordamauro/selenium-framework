@@ -5,9 +5,6 @@ import java.lang.reflect.Method;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.mgiorda.page.support.ElementValueRetriever;
-import com.mgiorda.page.support.ValueRetriever;
-
 public abstract class AbstractElement {
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
@@ -23,9 +20,6 @@ public abstract class AbstractElement {
 
 		this.elementHandler = elementHandler;
 		this.pageElement = pageElement;
-
-		ValueRetriever elementValueRetriever = new ElementValueRetriever(elementHandler);
-		ElementInjector.autowireLocators(elementValueRetriever, this);
 
 		callAfterPropertiesSet();
 	}

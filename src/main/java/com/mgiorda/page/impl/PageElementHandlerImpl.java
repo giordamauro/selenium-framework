@@ -3,6 +3,7 @@ package com.mgiorda.page.impl;
 import java.lang.reflect.Constructor;
 
 import com.mgiorda.page.AbstractPage;
+import com.mgiorda.page.ElementInjector;
 import com.mgiorda.page.ElementTimeoutException;
 import com.mgiorda.page.Locator;
 import com.mgiorda.page.PageElement;
@@ -13,13 +14,13 @@ public class PageElementHandlerImpl extends AbstractElementHandlerImpl implement
 	private AbstractPage page;
 
 	public PageElementHandlerImpl(DriverElementHandler driverElementHandler, AbstractPage page) {
-		super(driverElementHandler);
+		super(driverElementHandler, page.getElementInjector());
 
 		this.page = page;
 	}
 
-	private PageElementHandlerImpl(DriverElementHandler basicElementHandler) {
-		super(basicElementHandler);
+	private PageElementHandlerImpl(DriverElementHandler basicElementHandler, ElementInjector elementInjector) {
+		super(basicElementHandler, elementInjector);
 	}
 
 	@Override
@@ -28,7 +29,7 @@ public class PageElementHandlerImpl extends AbstractElementHandlerImpl implement
 		PageElement element = driverElementHandler.getElement(locators);
 
 		DriverElementHandler basicHandler = new DriverElementHandler(driverElementHandler, element);
-		PageElementHandlerImpl elementHandler = new PageElementHandlerImpl(basicHandler);
+		PageElementHandlerImpl elementHandler = new PageElementHandlerImpl(basicHandler, page.getElementInjector());
 
 		T subPage = newPage(pageClass, elementHandler);
 
