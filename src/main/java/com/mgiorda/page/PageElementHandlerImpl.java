@@ -2,11 +2,16 @@ package com.mgiorda.page;
 
 import java.lang.reflect.Constructor;
 
-import com.mgiorda.test.AbstractPage;
-
 public class PageElementHandlerImpl extends AbstractElementHandlerImpl implements PageElementHandler {
 
-	public PageElementHandlerImpl(BasicAbstractElementHandler basicElementHandler) {
+	private AbstractPage page;
+
+	public PageElementHandlerImpl(BasicAbstractElementHandler basicElementHandler, AbstractPage page) {
+		super(basicElementHandler);
+		this.page = page;
+	}
+
+	private PageElementHandlerImpl(BasicAbstractElementHandler basicElementHandler) {
 		super(basicElementHandler);
 	}
 
@@ -15,16 +20,24 @@ public class PageElementHandlerImpl extends AbstractElementHandlerImpl implement
 
 		PageElement element = basicElementHandler.getElement(locators);
 
+		BasicAbstractElementHandler basicHandler = new BasicAbstractElementHandler(basicElementHandler, element);
+		PageElementHandlerImpl elementHandler = new PageElementHandlerImpl(basicHandler);
+
+		T subPage = newPage(pageClass, elementHandler);
+
+		return subPage;
 	}
 
-	private <T extends AbstractPage> T newPage(Class<T> pageClass, AbstractPage page, PageElement pageElement) {
+	private <T extends AbstractPage> T newPage(Class<T> pageClass, PageElementHandlerImpl elementHandler) {
 		try {
-			Constructor<T> constructor = pageClass.getConstructor(AbstractPage.class, PageElement.class);
+			Constructor<T> constructor = pageClass.getConstructor(AbstractPage.class, PageElementHandler.class);
 			boolean accessible = constructor.isAccessible();
 
 			constructor.setAccessible(true);
-			T newInstance = constructor.newInstance(page, pageElement);
+			T newInstance = constructor.newInstance(page, elementHandler);
 			constructor.setAccessible(accessible);
+
+			elementHandler.page = newInstance;
 
 			return newInstance;
 
@@ -32,5 +45,4 @@ public class PageElementHandlerImpl extends AbstractElementHandlerImpl implement
 			throw new IllegalStateException(e);
 		}
 	}
-
 }

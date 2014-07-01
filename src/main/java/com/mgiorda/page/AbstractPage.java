@@ -47,7 +47,7 @@ public class AbstractPage implements TestSubscriber {
 		this.elementHandlerFactory = applicationContext.getBean("elementHandlerFactory", ElementHandlerFactory.class);
 
 		this.pageUrl = getPageUrl(url);
-		this.elementHandler = elementHandlerFactory.getRootElementHandler();
+		this.elementHandler = elementHandlerFactory.getElementHandler();
 
 		actionHandler.goToUrl(pageUrl);
 		autowireLocators();
@@ -69,7 +69,7 @@ public class AbstractPage implements TestSubscriber {
 		this.elementHandlerFactory = parentPage.elementHandlerFactory;
 
 		this.pageUrl = getPageUrl(url);
-		this.elementHandler = elementHandlerFactory.getRootElementHandler();
+		this.elementHandler = elementHandlerFactory.getElementHandler();
 
 		String currentUrl = actionHandler.getCurrentUrl();
 		if (!pageUrl.equals(currentUrl)) {
@@ -81,7 +81,21 @@ public class AbstractPage implements TestSubscriber {
 	}
 
 	protected AbstractPage(AbstractPage parentPage) {
-		this(parentPage, null);
+		this(parentPage, (String) null);
+	}
+
+	AbstractPage(AbstractPage parentPage, PageElementHandler elementHandler) {
+
+		this.actionHandler = parentPage.actionHandler;
+		this.elementHandlerFactory = parentPage.elementHandlerFactory;
+		this.pageUrl = parentPage.pageUrl;
+
+		this.elementHandler = elementHandler;
+
+		this.applicationContext = parentPage.applicationContext;
+		ContextUtil.initContext(applicationContext, this);
+
+		autowireLocators();
 	}
 
 	@Override
