@@ -39,12 +39,22 @@ public class TableRow extends AbstractElement {
 		return value;
 	}
 
-	public <T extends AbstractElement> T getColumnAs(int column, Class<T> expectedClass) {
+	@SuppressWarnings("unchecked")
+	public <T> T getColumnAs(int column, Class<T> expectedClass) {
 
 		PageElement pageElement = getColumn(column);
-
 		AbstractElementFactory elmentFactory = (AbstractElementFactory) elementHandler;
-		T value = elmentFactory.getElementAs(expectedClass, pageElement);
+
+		T value = null;
+
+		if (String.class.isAssignableFrom(expectedClass)) {
+
+			Label label = elmentFactory.getElementAs(Label.class, pageElement);
+			value = (T) label.getText();
+		} else {
+			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) expectedClass;
+			value = (T) elmentFactory.getElementAs(elementClass, pageElement);
+		}
 
 		return value;
 	}

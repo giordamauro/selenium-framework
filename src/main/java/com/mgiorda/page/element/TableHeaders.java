@@ -16,6 +16,7 @@ public class TableHeaders extends AbstractElement {
 	public <T extends AbstractElement> T getColumnAs(int column, Class<T> elementClass) {
 
 		PageElement pageElement = getElementForColumn(column);
+
 		T abstractElement = elementHandler.getElementAs(elementClass, pageElement);
 
 		return abstractElement;
