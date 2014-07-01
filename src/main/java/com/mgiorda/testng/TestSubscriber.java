@@ -1,16 +1,15 @@
 package com.mgiorda.testng;
 
-import org.testng.ITestContext;
 import org.testng.ITestResult;
 
 public interface TestSubscriber {
 
-	void onClassStart(ITestContext testContext);
+	void onClassStart(AbstractTest test);
 
 	void onTestStart(ITestResult testResult);
 
 	void onTestFinish(ITestResult testResult);
 
-	void onClassFinish(ITestContext testContext);
+	void onClassFinish(AbstractTest test);
 
 }

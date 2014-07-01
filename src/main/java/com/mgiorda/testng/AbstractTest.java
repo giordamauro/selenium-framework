@@ -14,7 +14,11 @@ public abstract class AbstractTest {
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
 	public AbstractTest() {
+
 		CurrentTestRun.registerTestInstance(this);
+
+		TestEventDispatcher eventDispatcher = TestEventDispatcher.getEventDispatcher();
+		eventDispatcher.onClassStart(this);
 	}
 
 	@BeforeClass
@@ -25,6 +29,9 @@ public abstract class AbstractTest {
 
 	@AfterClass(alwaysRun = true)
 	public void $afterClassUnregisterAndLog() {
+
+		TestEventDispatcher eventDispatcher = TestEventDispatcher.getEventDispatcher();
+		eventDispatcher.onClassFinish(this);
 
 		CurrentTestRun.unRegisterTestInstance(this);
 		staticLogger.info(String.format("Finishing test Class '%s'", this.getClass().getSimpleName()));

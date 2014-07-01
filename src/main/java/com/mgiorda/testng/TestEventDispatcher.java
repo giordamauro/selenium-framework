@@ -45,10 +45,6 @@ public class TestEventDispatcher implements ITestListener {
 
 	@Override
 	public void onStart(ITestContext context) {
-
-		for (TestSubscriber subscriber : instanceSubscribers) {
-			subscriber.onClassStart(context);
-		}
 	}
 
 	@Override
@@ -82,17 +78,29 @@ public class TestEventDispatcher implements ITestListener {
 	@Override
 	public void onFinish(ITestContext context) {
 
+	}
+
+	void onClassStart(AbstractTest test) {
+
 		for (TestSubscriber subscriber : instanceSubscribers) {
-			subscriber.onClassFinish(context);
+			subscriber.onClassStart(test);
+		}
+	}
+
+	void onClassFinish(AbstractTest test) {
+
+		for (TestSubscriber subscriber : instanceSubscribers) {
+			subscriber.onClassFinish(test);
 		}
 
-		AbstractTest testInstance = CurrentTestRun.getTestInstance();
-		eventDispatchers.remove(testInstance);
+		eventDispatchers.remove(test);
 	}
 
 	private void onTestFinish(ITestResult result) {
 
-		for (TestSubscriber subscriber : resultSubscribers) {
+		TestEventDispatcher eventDispatcher = getEventDispatcher();
+
+		for (TestSubscriber subscriber : eventDispatcher.resultSubscribers) {
 			subscriber.onTestFinish(result);
 		}
 	}

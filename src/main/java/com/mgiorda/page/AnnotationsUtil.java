@@ -126,7 +126,7 @@ class AnnotationsUtil {
 		field.setAccessible(true);
 		try {
 
-			logger.info(String.format("Setting annotated field '%s' in class '%s' with value '%s'", field.getName(), target.getClass().getSimpleName(), value));
+			logger.info(String.format("Setting '%s' field in '%s' class - Value: %s", field.getName(), target.getClass().getSimpleName(), value));
 			field.set(target, value);
 
 		} catch (IllegalArgumentException | IllegalAccessException e) {

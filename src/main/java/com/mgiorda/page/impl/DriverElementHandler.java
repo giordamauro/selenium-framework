@@ -251,7 +251,7 @@ public class DriverElementHandler {
 		long end = new Date().getTime();
 		long waitTime = end - start;
 
-		staticLogger.info(String.format("Found nested page element '%s' - Waited %s milliseconds", by, waitTime));
+		staticLogger.trace(String.format("Found nested page element '%s' - Waited %s milliseconds", by, waitTime));
 	}
 
 	private By getLocatorByPlaceholder(Locator elementLocator) {

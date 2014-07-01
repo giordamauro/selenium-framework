@@ -7,7 +7,6 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
-import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.xml.XmlSuite;
 
@@ -16,6 +15,7 @@ import com.mgiorda.context.SpringUtil;
 import com.mgiorda.context.SuiteContexts;
 import com.mgiorda.page.annotations.Locate;
 import com.mgiorda.page.annotations.PageURL;
+import com.mgiorda.testng.AbstractTest;
 import com.mgiorda.testng.CurrentTestRun;
 import com.mgiorda.testng.TestEventDispatcher;
 import com.mgiorda.testng.TestSubscriber;
@@ -97,7 +97,7 @@ public class AbstractPage implements TestSubscriber {
 	}
 
 	@Override
-	public void onClassStart(ITestContext testContext) {
+	public void onClassStart(AbstractTest test) {
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public class AbstractPage implements TestSubscriber {
 	}
 
 	@Override
-	public void onClassFinish(ITestContext testContext) {
+	public void onClassFinish(AbstractTest test) {
 		actionHandler.quit();
 	}
 
