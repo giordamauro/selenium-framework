@@ -10,7 +10,7 @@ import org.springframework.beans.factory.FactoryBean;
 
 import com.mgiorda.context.SpringUtil;
 
-public class ChromeFactory implements FactoryBean<WebDriver> {
+public class ChromeFactory implements FactoryBean<WebDriver>, BrowserFactory {
 
 	public ChromeFactory(Map<OperativeSystem, String> driverPropertiesByOS) {
 
@@ -47,6 +47,15 @@ public class ChromeFactory implements FactoryBean<WebDriver> {
 	@Override
 	public boolean isSingleton() {
 		return false;
+	}
+
+	@Override
+	public WebDriver newDriver() {
+		try {
+			return getObject();
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 }
