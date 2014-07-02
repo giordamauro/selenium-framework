@@ -5,6 +5,9 @@ import com.mgiorda.page.AbstractElement;
 public class Link extends AbstractElement {
 
 	public void click() {
+
+		logger.info(String.format("Clicking on link - %s", this));
+
 		pageElement.click();
 	}
 

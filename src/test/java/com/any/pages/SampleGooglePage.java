@@ -16,8 +16,8 @@ public class SampleGooglePage extends AbstractPage {
 	@Locate(@By(name = "${locator.searchBox.name}"))
 	private TextField searchBox;
 
-	@Locate(@By(id = "hplogo"))
-	private GoogleDoodle doodle;
+	// @Locate(@By(id = "hplogo"))
+	// private GoogleDoodle doodle;
 
 	@Locate(@By(id = "fbar"))
 	private FooterBar footer;
@@ -31,7 +31,7 @@ public class SampleGooglePage extends AbstractPage {
 		searchBox.sendKeys(text);
 	}
 
-	public void clickOnDoodle() {
-		doodle.click();
-	}
+	// public void clickOnDoodle() {
+	// doodle.click();
+	// }
 }
