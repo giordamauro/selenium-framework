@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.mgiorda.page.AbstractElement;
+import com.mgiorda.page.AbstractElementFactory;
 import com.mgiorda.page.PageElement;
 import com.mgiorda.page.annotations.By;
 import com.mgiorda.page.annotations.Locate;
@@ -13,13 +14,24 @@ public class TableHeaders extends AbstractElement {
 	@Locate(@By(tagName = "th"))
 	private List<PageElement> headers;
 
-	public <T extends AbstractElement> T getColumnAs(int column, Class<T> elementClass) {
+	@SuppressWarnings("unchecked")
+	public <T> T getColumnAs(int column, Class<T> expectedClass) {
 
 		PageElement pageElement = getElementForColumn(column);
+		AbstractElementFactory elmentFactory = (AbstractElementFactory) elementHandler;
 
-		T abstractElement = elementHandler.getElementAs(elementClass, pageElement);
+		T value = null;
 
-		return abstractElement;
+		if (String.class.isAssignableFrom(expectedClass)) {
+
+			Label label = elmentFactory.getElementAs(Label.class, pageElement);
+			value = (T) label.getText();
+		} else {
+			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) expectedClass;
+			value = (T) elmentFactory.getElementAs(elementClass, pageElement);
+		}
+
+		return value;
 	}
 
 	public int getColumnsSize() {

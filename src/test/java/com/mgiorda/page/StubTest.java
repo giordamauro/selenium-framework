@@ -24,8 +24,7 @@ public class StubTest extends AbstractTest {
 		page = new SampleGooglePage();
 	}
 
-	@Test
-	// (invocationCount = 3, threadPoolSize = 2)
+	@Test(invocationCount = 3, threadPoolSize = 2)
 	public void test() {
 
 		logger.info("Created Google page");
