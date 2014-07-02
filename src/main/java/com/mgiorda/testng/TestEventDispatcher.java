@@ -14,13 +14,19 @@ public class TestEventDispatcher implements ITestListener {
 	private static final Map<AbstractTest, TestEventDispatcher> eventDispatchers = new HashMap<>();
 
 	private List<TestSubscriber> instanceSubscribers = new ArrayList<>();
-	private List<TestSubscriber> resultSubscribers = new ArrayList<>();
+	private Map<ITestResult, List<TestSubscriber>> resultSubscribers = new HashMap<>();
 
 	public synchronized void subscribe(TestSubscriber subscriber) {
 
 		ITestResult testResult = CurrentTestRun.getTestResult();
 		if (testResult != null) {
-			resultSubscribers.add(subscriber);
+
+			List<TestSubscriber> subscribers = resultSubscribers.get(testResult);
+			if (subscribers == null) {
+				subscribers = new ArrayList<>();
+				resultSubscribers.put(testResult, subscribers);
+			}
+			subscribers.add(subscriber);
 		} else {
 			instanceSubscribers.add(subscriber);
 		}
@@ -50,8 +56,14 @@ public class TestEventDispatcher implements ITestListener {
 	@Override
 	public void onTestStart(ITestResult result) {
 
-		for (TestSubscriber subscriber : resultSubscribers) {
-			subscriber.onTestStart(result);
+		TestEventDispatcher eventDispatcher = getEventDispatcher();
+
+		List<TestSubscriber> subscribers = eventDispatcher.resultSubscribers.get(result);
+
+		if (subscribers != null) {
+			for (TestSubscriber subscriber : subscribers) {
+				subscriber.onTestStart(result);
+			}
 		}
 	}
 
@@ -98,10 +110,17 @@ public class TestEventDispatcher implements ITestListener {
 
 	private void onTestFinish(ITestResult result) {
 
-		TestEventDispatcher eventDispatcher = getEventDispatcher();
+		AbstractTest testInstance = (AbstractTest) result.getInstance();
+		TestEventDispatcher eventDispatcher = eventDispatchers.get(testInstance);
 
-		for (TestSubscriber subscriber : eventDispatcher.resultSubscribers) {
-			subscriber.onTestFinish(result);
+		List<TestSubscriber> subscribers = eventDispatcher.resultSubscribers.get(result);
+
+		if (subscribers != null) {
+			for (TestSubscriber subscriber : subscribers) {
+				subscriber.onTestFinish(result);
+			}
 		}
+
+		eventDispatcher.resultSubscribers.remove(result);
 	}
 }

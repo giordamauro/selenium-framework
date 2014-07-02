@@ -25,6 +25,12 @@ public final class Locator {
 		return value;
 	}
 
+	public String toString() {
+		String toString = String.format("Locator '%s'", value);
+
+		return toString;
+	}
+
 	public static Locator byId(String id) {
 		return new Locator(By.ById.class, id);
 	}

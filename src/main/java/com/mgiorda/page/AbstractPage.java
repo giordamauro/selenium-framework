@@ -48,6 +48,9 @@ public class AbstractPage implements TestSubscriber {
 		this.pageHandlerFactory = applicationContext.getBean("pageHandlerFactory", PageHandlerFactory.class);
 		this.elementInjector = applicationContext.getBean("elementInjector", ElementInjector.class);
 
+		TestEventDispatcher testEventDispatcher = TestEventDispatcher.getEventDispatcher();
+		testEventDispatcher.subscribe(this);
+
 		this.actionHandler = pageHandlerFactory.getActionHandler();
 		this.pageHandler = pageHandlerFactory.getElementHandler(this);
 		this.pageUrl = getPageUrl(url);
@@ -56,9 +59,6 @@ public class AbstractPage implements TestSubscriber {
 
 		ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
 		elementInjector.autowireLocators(pageValueRetriever, this);
-
-		TestEventDispatcher testEventDispatcher = TestEventDispatcher.getEventDispatcher();
-		testEventDispatcher.subscribe(this);
 	}
 
 	protected AbstractPage() {

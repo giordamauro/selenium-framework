@@ -31,7 +31,7 @@
 		</constructor-arg>
 	</bean>
 	
-	<bean id="pageHandlerFactory" class="com.mgiorda.page.impl.PageHandlerFactoryImpl">
+	<bean id="pageHandlerFactory" class="com.mgiorda.page.impl.PageHandlerFactoryImpl" scope="prototype">
 		<constructor-arg type="org.openqa.selenium.WebDriver" ref="chromeDriver"/>
 		<constructor-arg type="long" value="60"/>	
 	</bean>
