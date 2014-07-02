@@ -124,7 +124,7 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler, Abstr
 				boolean methodAccessible = afterProperties.isAccessible();
 				afterProperties.setAccessible(true);
 
-				afterProperties.invoke(this);
+				afterProperties.invoke(element);
 				afterProperties.setAccessible(methodAccessible);
 			}
 		} catch (NoSuchMethodException e) {

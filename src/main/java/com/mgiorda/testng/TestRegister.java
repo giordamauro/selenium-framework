@@ -13,23 +13,19 @@ public class TestRegister implements ITestListener {
 
 	@Override
 	public void onTestSuccess(ITestResult result) {
-		CurrentTestRun.unRegisterTestResult(result);
 
 	}
 
 	@Override
 	public void onTestFailure(ITestResult result) {
-		CurrentTestRun.unRegisterTestResult(result);
 	}
 
 	@Override
 	public void onTestSkipped(ITestResult result) {
-		CurrentTestRun.unRegisterTestResult(result);
 	}
 
 	@Override
 	public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-		CurrentTestRun.unRegisterTestResult(result);
 	}
 
 	@Override
@@ -39,7 +35,6 @@ public class TestRegister implements ITestListener {
 
 	@Override
 	public void onFinish(ITestContext context) {
-		CurrentTestRun.unRegisterTestContext(context);
 	}
 
 }

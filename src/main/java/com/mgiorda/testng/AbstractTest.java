@@ -30,10 +30,9 @@ public abstract class AbstractTest {
 	@AfterClass(alwaysRun = true)
 	public void $afterClassUnregisterAndLog() {
 
-		TestEventDispatcher eventDispatcher = TestEventDispatcher.getEventDispatcher();
+		TestEventDispatcher eventDispatcher = TestEventDispatcher.getEventDispatcher(this);
 		eventDispatcher.onClassFinish(this);
 
-		CurrentTestRun.unRegisterTestInstance(this);
 		staticLogger.info(String.format("Finishing test Class '%s'", this.getClass().getSimpleName()));
 	}
 }

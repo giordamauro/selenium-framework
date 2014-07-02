@@ -53,7 +53,11 @@ public class AbstractPage implements TestSubscriber {
 
 		this.actionHandler = pageHandlerFactory.getActionHandler();
 		this.pageHandler = pageHandlerFactory.getElementHandler(this);
+
 		this.pageUrl = getPageUrl(url);
+		if (pageUrl == null) {
+			throw new IllegalStateException("Cannot instantiate Page whitout String url constructor parameter or @PageURL class annotation");
+		}
 
 		actionHandler.goToUrl(pageUrl);
 
@@ -78,7 +82,7 @@ public class AbstractPage implements TestSubscriber {
 		this.pageHandler = pageHandlerFactory.getElementHandler(this);
 
 		String currentUrl = actionHandler.getCurrentUrl();
-		if (!pageUrl.equals(currentUrl)) {
+		if (pageUrl != null && !pageUrl.equals(currentUrl)) {
 			actionHandler.goToUrl(pageUrl);
 		} else {
 			actionHandler.waitForPageToLoad();
@@ -86,9 +90,6 @@ public class AbstractPage implements TestSubscriber {
 
 		ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
 		elementInjector.autowireLocators(pageValueRetriever, this);
-
-		TestEventDispatcher testEventDispatcher = TestEventDispatcher.getEventDispatcher();
-		testEventDispatcher.subscribe(this);
 	}
 
 	protected AbstractPage(AbstractPage parentPage) {
@@ -159,15 +160,14 @@ public class AbstractPage implements TestSubscriber {
 
 			Class<?> pageClass = this.getClass();
 			PageURL annotation = pageClass.getAnnotation(PageURL.class);
-			if (annotation == null) {
-				throw new IllegalStateException("Cannot instantiate Page whitout String url constructor parameter or @PageURL class annotation");
+			if (annotation != null) {
+
+				pageUrl = annotation.value();
 			}
-
-			pageUrl = annotation.value();
 		}
-
-		pageUrl = SpringUtil.getPropertyPlaceholder(applicationContext, pageUrl);
-
+		if (pageUrl != null) {
+			pageUrl = SpringUtil.getPropertyPlaceholder(applicationContext, pageUrl);
+		}
 		return pageUrl;
 	}
 

@@ -99,40 +99,4 @@ public final class CurrentTestRun {
 		Thread thread = Thread.currentThread();
 		testContexts.put(thread, context);
 	}
-
-	static void unRegisterTestResult(ITestResult testResult) {
-
-		Thread thread = Thread.currentThread();
-		ITestResult savedTestResult = testResults.get(thread);
-
-		if (savedTestResult == null || !savedTestResult.equals(testResult)) {
-			throw new IllegalStateException(String.format("Exception unregistering testResult '%s' for thread '%s'", testResult, thread));
-		}
-
-		testResults.remove(thread);
-	}
-
-	static void unRegisterTestInstance(AbstractTest abstractTest) {
-
-		Thread thread = Thread.currentThread();
-		AbstractTest savedTestInstance = testInstances.get(thread);
-
-		if (savedTestInstance == null || !savedTestInstance.equals(abstractTest)) {
-			throw new IllegalStateException(String.format("Exception unregistering testInstance '%s' for thread '%s'", abstractTest, thread));
-		}
-
-		testInstances.remove(thread);
-	}
-
-	static void unRegisterTestContext(ITestContext context) {
-
-		Thread thread = Thread.currentThread();
-		ITestContext savedTestContext = testContexts.get(thread);
-
-		if (savedTestContext == null || !savedTestContext.equals(context)) {
-			throw new IllegalStateException(String.format("Exception unregistering testContext '%s' for thread '%s'", context, thread));
-		}
-
-		testContexts.remove(thread);
-	}
 }

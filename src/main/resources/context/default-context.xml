@@ -19,14 +19,23 @@
 	<context:annotation-config />
 	
 	<context:property-placeholder />	
-
-	<bean id="chromeFactory" class="com.mgiorda.page.browser.ChromeFactory">
+	
+	<util:properties id="defaultProperties" location="classpath:/properties/default.properties" />
+	
+	<bean id="chromeDriver" class="com.mgiorda.page.browser.ChromeFactory" >
 		<constructor-arg type="java.util.Map">
 			<util:map>
-				<entry key="WINDOWS" value="${chrome.driver.windows}"/>
-				<entry key="UNIX" value="${chrome.driver.unix}"/>
+				<entry key="WINDOWS" value="drivers/chromedriver.exe"/>
+				<entry key="UNIX" value="drivers/chromedriver"/>
 			</util:map>
 		</constructor-arg>
 	</bean>
-
+	
+	<bean id="pageHandlerFactory" class="com.mgiorda.page.impl.PageHandlerFactoryImpl" scope="prototype">
+		<constructor-arg type="org.openqa.selenium.WebDriver" ref="chromeDriver"/>
+		<constructor-arg type="long" value="60"/>	
+	</bean>
+	
+	<bean id="elementInjector" class="com.mgiorda.page.injector.ElementInjectorImpl" />
+	
 </beans>

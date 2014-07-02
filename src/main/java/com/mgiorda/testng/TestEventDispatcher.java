@@ -39,6 +39,13 @@ public class TestEventDispatcher implements ITestListener {
 			throw new IllegalStateException("Cannot get TestEventDispatcher - Not running under any AbstractTest instance");
 		}
 
+		TestEventDispatcher testEventDispatcher = getEventDispatcher(testInstance);
+
+		return testEventDispatcher;
+	}
+
+	public static TestEventDispatcher getEventDispatcher(AbstractTest testInstance) {
+
 		TestEventDispatcher testEventDispatcher = eventDispatchers.get(testInstance);
 		if (testEventDispatcher == null) {
 
