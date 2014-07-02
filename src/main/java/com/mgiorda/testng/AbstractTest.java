@@ -6,33 +6,30 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 
-@Listeners({ TestRegister.class, TestEventDispatcher.class, TestLogger.class })
+@Listeners({ TestRegister.class, TestLogger.class })
 public abstract class AbstractTest {
 
 	private static final Log staticLogger = LogFactory.getLog(AbstractTest.class);
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
-	public AbstractTest() {
-
-		CurrentTestRun.registerTestInstance(this);
-
-		TestEventDispatcher eventDispatcher = TestEventDispatcher.getEventDispatcher();
-		eventDispatcher.onClassStart(this);
-	}
-
 	@BeforeClass
 	public void $beforeClassRegisterAndLog() {
 
 		staticLogger.info(String.format("Initiating test Class '%s'", this.getClass().getSimpleName()));
+
+		CurrentTestRun.registerTestInstance(this);
+
+		TestEventDispatcher eventDispatcher = TestEventDispatcher.getEventDispatcher(this);
+		eventDispatcher.onClassStart(this);
 	}
 
 	@AfterClass(alwaysRun = true)
-	public void $afterClassUnregisterAndLog() {
+	public void $afterClassLog() {
+
+		staticLogger.info(String.format("Finishing test Class '%s'", this.getClass().getSimpleName()));
 
 		TestEventDispatcher eventDispatcher = TestEventDispatcher.getEventDispatcher(this);
 		eventDispatcher.onClassFinish(this);
-
-		staticLogger.info(String.format("Finishing test Class '%s'", this.getClass().getSimpleName()));
 	}
 }

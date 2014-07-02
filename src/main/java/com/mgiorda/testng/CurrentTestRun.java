@@ -88,6 +88,15 @@ public final class CurrentTestRun {
 		testResults.put(thread, testResult);
 	}
 
+	static synchronized void unregisterTestResult(ITestResult testResult) {
+
+		Thread thread = Thread.currentThread();
+
+		if (testResults.get(thread).equals(testResult)) {
+			testResults.remove(thread);
+		}
+	}
+
 	static synchronized void registerTestInstance(AbstractTest testInstance) {
 
 		Thread thread = Thread.currentThread();
@@ -98,5 +107,14 @@ public final class CurrentTestRun {
 
 		Thread thread = Thread.currentThread();
 		testContexts.put(thread, context);
+	}
+
+	static synchronized void unregisterTestContext(ITestContext testContext) {
+
+		Thread thread = Thread.currentThread();
+
+		if (testContexts.get(thread).equals(testContext)) {
+			testContexts.remove(thread);
+		}
 	}
 }

@@ -5,11 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.testng.ITestContext;
-import org.testng.ITestListener;
 import org.testng.ITestResult;
 
-public class TestEventDispatcher implements ITestListener {
+public class TestEventDispatcher {
 
 	private static final Map<AbstractTest, TestEventDispatcher> eventDispatchers = new HashMap<>();
 
@@ -29,6 +27,44 @@ public class TestEventDispatcher implements ITestListener {
 			subscribers.add(subscriber);
 		} else {
 			instanceSubscribers.add(subscriber);
+		}
+	}
+
+	void onClassStart(AbstractTest test) {
+
+		for (TestSubscriber subscriber : instanceSubscribers) {
+			subscriber.onClassStart(test);
+		}
+	}
+
+	void onTestStart(ITestResult result) {
+
+		List<TestSubscriber> subscribers = resultSubscribers.get(result);
+
+		if (subscribers != null) {
+			for (TestSubscriber subscriber : subscribers) {
+				subscriber.onTestStart(result);
+			}
+		}
+	}
+
+	void onTestFinish(ITestResult result) {
+
+		List<TestSubscriber> subscribers = resultSubscribers.get(result);
+
+		if (subscribers != null) {
+			for (TestSubscriber subscriber : subscribers) {
+				subscriber.onTestFinish(result);
+			}
+		}
+
+		resultSubscribers.remove(result);
+	}
+
+	void onClassFinish(AbstractTest test) {
+
+		for (TestSubscriber subscriber : instanceSubscribers) {
+			subscriber.onClassFinish(test);
 		}
 	}
 
@@ -54,80 +90,5 @@ public class TestEventDispatcher implements ITestListener {
 		}
 
 		return testEventDispatcher;
-	}
-
-	@Override
-	public void onStart(ITestContext context) {
-	}
-
-	@Override
-	public void onTestStart(ITestResult result) {
-
-		TestEventDispatcher eventDispatcher = getEventDispatcher();
-
-		List<TestSubscriber> subscribers = eventDispatcher.resultSubscribers.get(result);
-
-		if (subscribers != null) {
-			for (TestSubscriber subscriber : subscribers) {
-				subscriber.onTestStart(result);
-			}
-		}
-	}
-
-	@Override
-	public void onTestSuccess(ITestResult result) {
-		onTestFinish(result);
-	}
-
-	@Override
-	public void onTestFailure(ITestResult result) {
-		onTestFinish(result);
-	}
-
-	@Override
-	public void onTestSkipped(ITestResult result) {
-		onTestFinish(result);
-	}
-
-	@Override
-	public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-		onTestFinish(result);
-	}
-
-	@Override
-	public void onFinish(ITestContext context) {
-
-	}
-
-	void onClassStart(AbstractTest test) {
-
-		for (TestSubscriber subscriber : instanceSubscribers) {
-			subscriber.onClassStart(test);
-		}
-	}
-
-	void onClassFinish(AbstractTest test) {
-
-		for (TestSubscriber subscriber : instanceSubscribers) {
-			subscriber.onClassFinish(test);
-		}
-
-		eventDispatchers.remove(test);
-	}
-
-	private void onTestFinish(ITestResult result) {
-
-		AbstractTest testInstance = (AbstractTest) result.getInstance();
-		TestEventDispatcher eventDispatcher = eventDispatchers.get(testInstance);
-
-		List<TestSubscriber> subscribers = eventDispatcher.resultSubscribers.get(result);
-
-		if (subscribers != null) {
-			for (TestSubscriber subscriber : subscribers) {
-				subscriber.onTestFinish(result);
-			}
-		}
-
-		eventDispatcher.resultSubscribers.remove(result);
 	}
 }
