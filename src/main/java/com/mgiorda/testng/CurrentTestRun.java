@@ -91,8 +91,8 @@ public final class CurrentTestRun {
 	static synchronized void unregisterTestResult(ITestResult testResult) {
 
 		Thread thread = Thread.currentThread();
-
-		if (testResults.get(thread).equals(testResult)) {
+		ITestResult iTestResult = testResults.get(thread);
+		if (iTestResult != null && iTestResult.equals(testResult)) {
 			testResults.remove(thread);
 		}
 	}
@@ -113,7 +113,8 @@ public final class CurrentTestRun {
 
 		Thread thread = Thread.currentThread();
 
-		if (testContexts.get(thread).equals(testContext)) {
+		ITestContext iTestContext = testContexts.get(thread);
+		if (iTestContext != null && iTestContext.equals(testContext)) {
 			testContexts.remove(thread);
 		}
 	}
