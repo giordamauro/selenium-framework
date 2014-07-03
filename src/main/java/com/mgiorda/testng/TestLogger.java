@@ -22,45 +22,46 @@ public class TestLogger implements ITestListener, ISuiteListener {
 	@Override
 	public void onStart(ITestContext context) {
 
-		logger.info(String.format("Initiating test named: '%s'", context.getName()));
+		logger.info(String.format(">> Initiating test named: '%s'", context.getName()));
 	}
 
 	@Override
 	public void onTestStart(ITestResult result) {
 
-		logger.info(String.format("Starting test method '%s.%s(..)'", result.getTestClass().getName(), result.getMethod().getMethodName()));
+		logger.info(String.format(">-------------------- Starting test method '%s.%s(..)'", result.getTestClass().getName(), result.getMethod().getMethodName()));
 	}
 
 	@Override
 	public void onTestSuccess(ITestResult result) {
 
-		logger.info(String.format("Finished test method '%s.%s(..)' - PASSED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(), getTotalTime(result)));
+		logger.info(String.format("<-------------------- Finished test method '%s.%s(..)' - PASSED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(),
+				getTotalTime(result)));
 	}
 
 	@Override
 	public void onTestFailure(ITestResult result) {
 
-		logger.warn(String.format("Finished test method '%s.%s(..)' - FAILED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(), getTotalTime(result)),
-				result.getThrowable());
+		logger.warn(String.format("<-------------------- Finished test method '%s.%s(..)' - FAILED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(),
+				getTotalTime(result)), result.getThrowable());
 	}
 
 	@Override
 	public void onTestSkipped(ITestResult result) {
 
-		logger.warn(String.format("Skipped test method '%s.%s(..)' - SKIPPED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(), getTotalTime(result)),
-				result.getThrowable());
+		logger.warn(String.format("<-------------------- Skipped test method '%s.%s(..)' - SKIPPED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(),
+				getTotalTime(result)), result.getThrowable());
 	}
 
 	@Override
 	public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
 
-		logger.warn(String.format("Finished test method '%s.%s(..)' - FAILED", result.getTestClass().getName(), result.getMethod().getMethodName()), result.getThrowable());
+		logger.warn(String.format("<-------------------- Finished test method '%s.%s(..)' - FAILED", result.getTestClass().getName(), result.getMethod().getMethodName()), result.getThrowable());
 	}
 
 	@Override
 	public void onFinish(ITestContext context) {
 
-		logger.info(String.format("Finished test named: '%s'", context.getName()));
+		logger.info(String.format("<< Finished test named: '%s'", context.getName()));
 	}
 
 	@Override
