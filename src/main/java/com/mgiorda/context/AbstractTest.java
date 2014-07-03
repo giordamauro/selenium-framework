@@ -5,6 +5,7 @@ import org.springframework.context.support.GenericXmlApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.xml.XmlSuite;
 
+import com.mgiorda.context.run.SuiteConfiguration;
 import com.mgiorda.testng.CurrentTestRun;
 
 public abstract class AbstractTest extends com.mgiorda.testng.AbstractTest {
@@ -19,7 +20,7 @@ public abstract class AbstractTest extends com.mgiorda.testng.AbstractTest {
 
 		if (applicationContext == null) {
 
-			String defaultContext = "classpath:/context/default-context.xml";
+			String defaultContext = "classpath*:/" + SuiteConfiguration.DEFAULT_CONTEXT_LOCATION;
 			applicationContext = new GenericXmlApplicationContext(defaultContext);
 
 			java.util.Properties defaultProperties = applicationContext.getBean("defaultProperties", java.util.Properties.class);

@@ -4,7 +4,9 @@ import java.util.Properties;
 
 public class SuiteConfiguration extends com.mgiorda.testng.run.SuiteConfiguration {
 
-	private String context = "context/default-context.xml";
+	public static final String DEFAULT_CONTEXT_LOCATION = "contexts/default-context.xml";
+
+	private String context = DEFAULT_CONTEXT_LOCATION;
 
 	private Properties properties;
 
