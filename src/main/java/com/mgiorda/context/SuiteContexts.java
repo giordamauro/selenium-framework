@@ -1,6 +1,6 @@
 package com.mgiorda.context;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -12,7 +12,7 @@ public final class SuiteContexts {
 
 	private static final Log logger = LogFactory.getLog(SuiteContexts.class);
 
-	private static final Map<XmlSuite, ApplicationContext> suiteContexts = new HashMap<>();
+	private static final Map<XmlSuite, ApplicationContext> suiteContexts = new IdentityHashMap<>();
 
 	private SuiteContexts() {
 
