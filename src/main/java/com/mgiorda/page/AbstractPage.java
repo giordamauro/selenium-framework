@@ -128,7 +128,6 @@ public class AbstractPage implements TestSubscriber {
 			String outputDirectory = testResult.getTestContext().getOutputDirectory();
 			takeScreenShot(outputDirectory);
 		}
-		actionHandler.quit();
 	}
 
 	@Override

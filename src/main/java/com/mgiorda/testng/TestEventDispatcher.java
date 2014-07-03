@@ -25,9 +25,8 @@ public class TestEventDispatcher {
 				resultSubscribers.put(testResult, subscribers);
 			}
 			subscribers.add(subscriber);
-		} else {
-			instanceSubscribers.add(subscriber);
 		}
+		instanceSubscribers.add(subscriber);
 	}
 
 	void onClassStart(AbstractTest test) {
@@ -46,6 +45,10 @@ public class TestEventDispatcher {
 				subscriber.onTestStart(result);
 			}
 		}
+
+		for (TestSubscriber subscriber : instanceSubscribers) {
+			subscriber.onTestStart(result);
+		}
 	}
 
 	void onTestFinish(ITestResult result) {
@@ -59,6 +62,10 @@ public class TestEventDispatcher {
 		}
 
 		resultSubscribers.remove(result);
+
+		for (TestSubscriber subscriber : instanceSubscribers) {
+			subscriber.onTestFinish(result);
+		}
 	}
 
 	void onClassFinish(AbstractTest test) {
