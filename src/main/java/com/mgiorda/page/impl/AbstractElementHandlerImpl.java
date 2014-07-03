@@ -94,12 +94,12 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler, Abstr
 		try {
 			T newInstance = elementClass.newInstance();
 
-			Method method = AbstractElement.class.getDeclaredMethod("setAbstractElement", AbstractElementHandler.class, PageElement.class);
+			Method method = AbstractElement.class.getDeclaredMethod("setAbstractElement", AbstractElementHandler.class, ElementInjector.class, PageElement.class);
 
 			boolean isAccessible = method.isAccessible();
 
 			method.setAccessible(true);
-			method.invoke(newInstance, elementHandler, pageElement);
+			method.invoke(newInstance, elementHandler, elementInjector, pageElement);
 			method.setAccessible(isAccessible);
 
 			ValueRetriever elementValueRetriever = new PageElementValueRetriever(elementHandler);

@@ -25,7 +25,7 @@ public class ElementInjectorImpl implements ElementInjector {
 		for (Field field : declaredFields) {
 
 			Locate annotation = field.getAnnotation(Locate.class);
-			if (annotation != null) {
+			if (annotation != null && annotation.fetchOnInit()) {
 
 				Locator[] locators = getLocatorsFromAnnotation(annotation);
 				if (locators.length == 0) {
@@ -40,6 +40,37 @@ public class ElementInjectorImpl implements ElementInjector {
 
 				setField(target, field, value);
 			}
+		}
+	}
+
+	public void autowireField(ValueRetriever valueRetriever, Object target, String fieldName) {
+
+		Class<?> objClass = target.getClass();
+
+		try {
+
+			Field field = objClass.getDeclaredField(fieldName);
+
+			Locate annotation = field.getAnnotation(Locate.class);
+			if (annotation == null) {
+				throw new IllegalStateException(String.format("Couldn't find @Locate annotation for field '%s' in page class '%s'", field.getName(), objClass.getSimpleName()));
+			}
+
+			Locator[] locators = getLocatorsFromAnnotation(annotation);
+			if (locators.length == 0) {
+				throw new IllegalStateException(String.format("Couldn't find an element locator for field '%s' in page class '%s'", field.getName(), objClass.getSimpleName()));
+			}
+
+			Object value = valueRetriever.getValueForLocators(field, locators);
+
+			if (value == null) {
+				throw new IllegalStateException(String.format("Cannot autowire field '%s' of type '%s' in '%s'", field.getName(), field.getType(), objClass));
+			}
+
+			setField(target, field, value);
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
 		}
 	}
 

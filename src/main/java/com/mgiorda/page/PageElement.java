@@ -60,17 +60,24 @@ public class PageElement {
 		element.sendKeys(keysToSend);
 	}
 
-	public void clear() {
-		logger.trace(String.format("Clearing element '%s'", element));
+	public void moveOver(long afterActionMillis) {
 
-		element.clear();
-	}
-
-	public void moveOver() {
 		logger.trace(String.format("Moving mouse over element '%s'", element));
 
 		Actions action = new Actions(getDriver());
 		action.moveToElement(element).build().perform();
+
+		waitForActionTime(afterActionMillis);
+	}
+
+	public void moveOver() {
+		moveOver(DEFAULT_AFTER_ACTION_MILLIS);
+	}
+
+	public void clear() {
+		logger.trace(String.format("Clearing element '%s'", element));
+
+		element.clear();
 	}
 
 	public String getTagName() {

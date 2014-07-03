@@ -3,6 +3,7 @@ package com.mgiorda.page.impl;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
@@ -27,7 +28,7 @@ public class DriverActionHandlerImpl implements DriverActionHandler {
 	private final WebDriver driver;
 	private final WebDriverWait driverWait;
 
-	public DriverActionHandlerImpl(WebDriver driver, WebDriverWait driverWait) {
+	public DriverActionHandlerImpl(WebDriver driver, WebDriverWait driverWait, long timeOutInSeconds) {
 
 		if (driver == null) {
 			throw new IllegalArgumentException("Driver cannot be null");
@@ -35,6 +36,12 @@ public class DriverActionHandlerImpl implements DriverActionHandler {
 
 		this.driver = driver;
 		this.driverWait = driverWait;
+
+		driver.manage().timeouts().pageLoadTimeout(timeOutInSeconds, TimeUnit.SECONDS);
+		driver.manage().timeouts().setScriptTimeout(timeOutInSeconds, TimeUnit.SECONDS);
+
+		driver.manage().deleteAllCookies();
+		driver.manage().window().maximize();
 	}
 
 	public String getTitle() {

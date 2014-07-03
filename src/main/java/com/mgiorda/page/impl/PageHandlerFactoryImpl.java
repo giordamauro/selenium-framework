@@ -13,9 +13,11 @@ public class PageHandlerFactoryImpl implements PageHandlerFactory {
 
 	private final WebDriver driver;
 	private final WebDriverWait driverWait;
+	private final long timeOutInSeconds;
 
 	public PageHandlerFactoryImpl(WebDriver driver, long timeOutInSeconds) {
 		this.driver = driver;
+		this.timeOutInSeconds = timeOutInSeconds;
 
 		if (timeOutInSeconds != 0L) {
 			this.driverWait = new WebDriverWait(driver, timeOutInSeconds);
@@ -38,7 +40,7 @@ public class PageHandlerFactoryImpl implements PageHandlerFactory {
 	@Override
 	public DriverActionHandler getActionHandler() {
 
-		DriverActionHandler actionHandler = new DriverActionHandlerImpl(driver, driverWait);
+		DriverActionHandler actionHandler = new DriverActionHandlerImpl(driver, driverWait, timeOutInSeconds);
 
 		return actionHandler;
 	}
