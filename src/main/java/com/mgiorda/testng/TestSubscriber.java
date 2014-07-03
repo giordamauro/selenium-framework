@@ -11,5 +11,4 @@ public interface TestSubscriber {
 	void onTestFinish(ITestResult testResult);
 
 	void onClassFinish(AbstractTest test);
-
 }
