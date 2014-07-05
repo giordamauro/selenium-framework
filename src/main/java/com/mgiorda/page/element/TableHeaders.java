@@ -14,22 +14,20 @@ public class TableHeaders extends AbstractElement {
 	@Locate(@By(tagName = "th"))
 	private List<PageElement> headers;
 
-	@SuppressWarnings("unchecked")
-	public <T> T getColumnAs(int column, Class<T> expectedClass) {
+	public String getColumn(int column) {
 
-		PageElement pageElement = getElementForColumn(column);
-		AbstractElementFactory elmentFactory = (AbstractElementFactory) elementHandler;
+		PageElement element = getColumnPageElement(column);
+		String value = element.getText();
 
-		T value = null;
+		return value;
+	}
 
-		if (String.class.isAssignableFrom(expectedClass)) {
+	public <T extends AbstractElement> T getColumn(int column, Class<T> elementClass) {
 
-			Label label = elmentFactory.getElementAs(Label.class, pageElement);
-			value = (T) label.getText();
-		} else {
-			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) expectedClass;
-			value = (T) elmentFactory.getElementAs(elementClass, pageElement);
-		}
+		PageElement element = getColumnPageElement(column);
+		AbstractElementFactory elementFactory = (AbstractElementFactory) elementHandler;
+
+		T value = elementFactory.adaptPageElementAs(elementClass, element);
 
 		return value;
 	}
@@ -38,15 +36,15 @@ public class TableHeaders extends AbstractElement {
 		return headers.size();
 	}
 
-	int getColumnForHeader(String headerName) {
+	int getIndexNamed(String headerName) {
 
 		int headerColumn = -1;
 
 		int i = 0;
 		while (i < getColumnsSize() && headerColumn == -1) {
 
-			Label header = getColumnAs(i, Label.class);
-			if (headerName.equalsIgnoreCase(header.getText())) {
+			String header = getColumn(i);
+			if (headerName.equalsIgnoreCase(header)) {
 				headerColumn = i;
 			} else {
 				i++;
@@ -63,7 +61,7 @@ public class TableHeaders extends AbstractElement {
 		return Collections.unmodifiableList(headers);
 	}
 
-	protected PageElement getElementForColumn(int column) {
+	protected PageElement getColumnPageElement(int column) {
 		return headers.get(column);
 	}
 }

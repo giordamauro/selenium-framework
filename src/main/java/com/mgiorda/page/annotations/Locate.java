@@ -11,5 +11,7 @@ public @interface Locate {
 
 	By[] value();
 
+	boolean optional() default false;
+	
 	boolean fetchOnInit() default true;
 }

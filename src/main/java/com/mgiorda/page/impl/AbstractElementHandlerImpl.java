@@ -39,7 +39,7 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler, Abstr
 	public <T extends AbstractElement> T getElementAs(Class<T> elementClass, Locator... locators) throws ElementTimeoutException {
 
 		PageElement element = driverElementHandler.getElement(locators);
-		T abstractElement = getElementAs(elementClass, element);
+		T abstractElement = adaptPageElementAs(elementClass, element);
 
 		return abstractElement;
 	}
@@ -52,7 +52,7 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler, Abstr
 		List<PageElement> elements = driverElementHandler.getElements(locators);
 		for (PageElement pageElement : elements) {
 
-			T element = getElementAs(elementClass, pageElement);
+			T element = adaptPageElementAs(elementClass, pageElement);
 			list.add(element);
 		}
 		return list;
@@ -80,14 +80,27 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler, Abstr
 		return list;
 	}
 
-	public <T extends AbstractElement> T getElementAs(Class<T> elementClass, PageElement pageElement) {
+	public <T extends AbstractElement> T adaptPageElementAs(Class<T> elementClass, PageElement pageElement) {
 
-		DriverElementHandler basicHandler = new DriverElementHandler(driverElementHandler, pageElement);
-		AbstractElementHandler elementHandler = new AbstractElementHandlerImpl(basicHandler, elementInjector);
-
+		AbstractElementHandler elementHandler = newElementHandler(pageElement);
 		T abstractElement = newAbstractElement(elementClass, elementHandler, pageElement);
 
 		return abstractElement;
+	}
+
+	public AbstractElementFactory newElementFactory(PageElement pageElement) {
+
+		AbstractElementFactory elementFactory = (AbstractElementFactory) newElementHandler(pageElement);
+
+		return elementFactory;
+	}
+
+	private AbstractElementHandler newElementHandler(PageElement pageElement) {
+
+		DriverElementHandler basicHandler = new DriverElementHandler(driverElementHandler, pageElement);
+		AbstractElementHandlerImpl elementHandler = new AbstractElementHandlerImpl(basicHandler, elementInjector);
+
+		return elementHandler;
 	}
 
 	private <T extends AbstractElement> T newAbstractElement(Class<T> elementClass, AbstractElementHandler elementHandler, PageElement pageElement) {

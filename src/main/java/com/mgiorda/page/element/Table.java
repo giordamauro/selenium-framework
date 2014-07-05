@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mgiorda.page.AbstractElement;
-import com.mgiorda.page.PageElement;
 import com.mgiorda.page.annotations.By;
 import com.mgiorda.page.annotations.Locate;
 
@@ -18,8 +17,11 @@ public class Table extends AbstractElement {
 
 	void afterPropertiesSet() {
 
-		for (TableRow row : rows) {
-			row.setTableHeaders(headers);
+		if (headers != null) {
+
+			for (TableRow row : rows) {
+				row.setTableHeaders(headers);
+			}
 		}
 	}
 
@@ -31,65 +33,36 @@ public class Table extends AbstractElement {
 		return rows;
 	}
 
-	public List<String> getValuesForColumnAs(int column) {
+	public List<String> getColumnValues(int column) {
 
-		List<String> values = getValuesForColumnAs(column, String.class);
+		List<String> values = new ArrayList<>();
+
+		for (TableRow row : rows) {
+			String value = row.getValue(column);
+			values.add(value);
+		}
 
 		return values;
 	}
 
-	public <T> List<T> getValuesForColumnAs(int column, Class<T> elementClass) {
+	public List<String> getColumnValues(String columnName) {
 
-		List<T> elements = new ArrayList<>();
-
-		for (TableRow row : rows) {
-			T element = row.getColumnAs(column, elementClass);
-			elements.add(element);
+		if (headers == null) {
+			throw new IllegalStateException(String.format("Cannot get column values for columnName '%s': table headers are not defined", columnName));
 		}
 
-		return elements;
-	}
+		int column = headers.getIndexNamed(columnName);
 
-	public List<String> getValuesForHeader(String headerName) {
-
-		List<String> values = getValuesForHeaderAs(headerName, String.class);
+		List<String> values = this.getColumnValues(column);
 
 		return values;
 	}
 
-	public <T> List<T> getValuesForHeaderAs(String headerName, Class<T> elementClass) {
-
-		int headerColumn = headers.getColumnForHeader(headerName);
-		List<T> columnRows = getValuesForColumnAs(headerColumn, elementClass);
-
-		return columnRows;
-	}
-
-	protected List<PageElement> getRowsForHeader(String headerName) {
-
-		int headerColumn = headers.getColumnForHeader(headerName);
-		List<PageElement> columnRows = getColumnRows(headerColumn);
-
-		return columnRows;
-	}
-
-	protected List<PageElement> getColumnRows(int column) {
-
-		List<PageElement> elements = new ArrayList<>();
-
-		for (TableRow row : rows) {
-			PageElement element = row.getColumn(column);
-			elements.add(element);
-		}
-
-		return elements;
-	}
-
-	public TableRow getRowForHeaderValue(String headerName, String value) {
+	public TableRow getRow(String columnName, String value) {
 
 		TableRow row = null;
 
-		List<String> columnValues = getValuesForHeader(headerName);
+		List<String> columnValues = getColumnValues(columnName);
 
 		int column = -1;
 		int i = 0;

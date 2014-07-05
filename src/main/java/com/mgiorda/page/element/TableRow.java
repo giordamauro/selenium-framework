@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.mgiorda.page.AbstractElement;
 import com.mgiorda.page.AbstractElementFactory;
+import com.mgiorda.page.Locator;
 import com.mgiorda.page.PageElement;
 import com.mgiorda.page.annotations.By;
 import com.mgiorda.page.annotations.Locate;
@@ -16,6 +17,62 @@ public class TableRow extends AbstractElement {
 
 	private TableHeaders headers;
 
+	public String getValue(int column) {
+
+		PageElement element = getPageElement(column);
+		String value = element.getText();
+
+		return value;
+	}
+
+	public String getValue(String columnName) {
+
+		PageElement element = getPageElement(columnName);
+		String value = element.getText();
+
+		return value;
+	}
+
+	public <T extends AbstractElement> T getValue(int column, Class<T> elementClass) {
+
+		PageElement element = this.getPageElement(column);
+		AbstractElementFactory elmentFactory = (AbstractElementFactory) elementHandler;
+
+		T value = elmentFactory.adaptPageElementAs(elementClass, element);
+
+		return value;
+	}
+
+	public <T extends AbstractElement> T getValue(String columnName, Class<T> elementClass) {
+
+		PageElement element = getPageElement(columnName);
+		AbstractElementFactory elmentFactory = (AbstractElementFactory) elementHandler;
+
+		T value = elmentFactory.adaptPageElementAs(elementClass, element);
+
+		return value;
+	}
+
+	public Link getInnerLink(int column) {
+
+		PageElement element = this.getPageElement(column);
+		Link link = adaptInnerElement(element, Link.class, Locator.byTagName("a"));
+
+		return link;
+	}
+
+	public TextField getInnerTextField(int column) {
+
+		PageElement element = this.getPageElement(column);
+		TextField textField = adaptInnerElement(element, TextField.class, Locator.byXpath("input[@type = \"text\"]"));
+
+		return textField;
+	}
+
+	public int getColumnsSize() {
+		return dataColumns.size();
+	}
+
 	void setTableHeaders(TableHeaders headers) {
 		this.headers = headers;
 	}
@@ -24,42 +81,35 @@ public class TableRow extends AbstractElement {
 		return Collections.unmodifiableList(dataColumns);
 	}
 
-	protected PageElement getColumn(int column) {
+	protected PageElement getPageElement(int column) {
 
 		PageElement element = dataColumns.get(column);
 
 		return element;
 	}
 
-	public <T> T getValueForHeaderAs(String headerName, Class<T> expectedClass) {
+	protected PageElement getPageElement(String columnName) {
 
-		int column = headers.getColumnForHeader(headerName);
-		T value = getColumnAs(column, expectedClass);
-
-		return value;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> T getColumnAs(int column, Class<T> expectedClass) {
-
-		PageElement pageElement = getColumn(column);
-		AbstractElementFactory elmentFactory = (AbstractElementFactory) elementHandler;
-
-		T value = null;
-
-		if (String.class.isAssignableFrom(expectedClass)) {
-
-			Label label = elmentFactory.getElementAs(Label.class, pageElement);
-			value = (T) label.getText();
-		} else {
-			Class<? extends AbstractElement> elementClass = (Class<? extends AbstractElement>) expectedClass;
-			value = (T) elmentFactory.getElementAs(elementClass, pageElement);
+		if (headers == null) {
+			throw new IllegalStateException(String.format("Cannot get value for columnName '%s': table headers are not defined", columnName));
 		}
 
-		return value;
+		int column = headers.getIndexNamed(columnName);
+
+		PageElement element = this.getPageElement(column);
+
+		return element;
 	}
 
-	public int getColumnsSize() {
-		return dataColumns.size();
+	private <T extends AbstractElement> T adaptInnerElement(PageElement parentElement, Class<T> elementClass, Locator... locators) {
+
+		AbstractElementFactory elementFactory = (AbstractElementFactory) elementHandler;
+		AbstractElementFactory subElementFactory = elementFactory.newElementFactory(parentElement);
+
+		PageElement innerElement = subElementFactory.getPageElement(locators);
+		T inner = subElementFactory.adaptPageElementAs(elementClass, innerElement);
+
+		return inner;
 	}
+
 }
