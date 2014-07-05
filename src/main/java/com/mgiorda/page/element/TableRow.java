@@ -61,9 +61,25 @@ public class TableRow extends AbstractElement {
 		return link;
 	}
 
+	public Link getInnerLink(String columnName) {
+
+		PageElement element = getPageElement(columnName);
+		Link link = adaptInnerElement(element, Link.class, Locator.byTagName("a"));
+
+		return link;
+	}
+
 	public TextField getInnerTextField(int column) {
 
 		PageElement element = this.getPageElement(column);
+		TextField textField = adaptInnerElement(element, TextField.class, Locator.byXpath("input[@type = \"text\"]"));
+
+		return textField;
+	}
+
+	public TextField getInnerTextField(String columnName) {
+
+		PageElement element = getPageElement(columnName);
 		TextField textField = adaptInnerElement(element, TextField.class, Locator.byXpath("input[@type = \"text\"]"));
 
 		return textField;
