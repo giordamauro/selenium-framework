@@ -1,13 +1,14 @@
 package com.mgiorda.page.element;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.mgiorda.page.AbstractElement;
 import com.mgiorda.page.annotations.By;
 import com.mgiorda.page.annotations.Locate;
 
-public class Table extends AbstractElement {
+public class Table extends AbstractElement implements Iterable<TableRow> {
 
 	@Locate(@By(xpath = "(tr[th]) | (thead/tr[th])"))
 	private TableHeaders headers;
@@ -79,5 +80,9 @@ public class Table extends AbstractElement {
 		}
 
 		return row;
+	}
+
+	public Iterator<TableRow> iterator() {
+		return rows.iterator();
 	}
 }

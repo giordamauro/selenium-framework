@@ -1,5 +1,6 @@
 package com.mgiorda.page.element;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,6 +14,18 @@ public class TableHeaders extends AbstractElement {
 
 	@Locate(@By(tagName = "th"))
 	private List<PageElement> headers;
+
+	public List<String> getColumns() {
+
+		List<String> values = new ArrayList<>();
+		for (int i = 0; i < headers.size(); i++) {
+
+			String value = getColumn(i);
+			values.add(value);
+		}
+
+		return values;
+	}
 
 	public String getColumn(int column) {
 
