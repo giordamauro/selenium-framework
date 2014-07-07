@@ -11,7 +11,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.mgiorda.context.SpringUtil;
 
-public class InternetExplorerFactory implements BrowserFactory {
+public class InternetExplorerFactory extends AbstractBrowserFactory {
 
 	private static final Log logger = LogFactory.getLog(InternetExplorerFactory.class);
 
