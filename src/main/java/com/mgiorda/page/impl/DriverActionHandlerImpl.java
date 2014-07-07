@@ -40,7 +40,6 @@ public class DriverActionHandlerImpl implements DriverActionHandler {
 		driver.manage().timeouts().pageLoadTimeout(timeOutInSeconds, TimeUnit.SECONDS);
 		driver.manage().timeouts().setScriptTimeout(timeOutInSeconds, TimeUnit.SECONDS);
 
-		driver.manage().deleteAllCookies();
 		driver.manage().window().maximize();
 	}
 
@@ -101,7 +100,7 @@ public class DriverActionHandlerImpl implements DriverActionHandler {
 		long end = new Date().getTime();
 		long waitTime = end - start;
 
-		logger.trace(String.format("Load page after %s milliseconds", waitTime));
+		logger.debug(String.format("Load page after %s milliseconds", waitTime));
 	}
 
 	public void takeScreenShot(String filePath) {

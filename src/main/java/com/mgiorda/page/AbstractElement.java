@@ -18,6 +18,14 @@ public abstract class AbstractElement {
 
 	}
 
+	public void moveToElement() {
+		pageElement.moveToElement();
+	}
+
+	public void hover(long afterTimeMillis) {
+		pageElement.hover(afterTimeMillis);
+	}
+
 	void setAbstractElement(AbstractElementHandler elementHandler, ElementInjector elementInjector, PageElement pageElement) {
 
 		this.elementHandler = elementHandler;
