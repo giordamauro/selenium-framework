@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -217,23 +218,29 @@ public class DriverElementHandler {
 
 	private void waitForElement(By by) throws TimeoutException {
 
-		staticLogger.trace(String.format("Waiting for page element '%s'", by));
+		staticLogger.debug(String.format("Waiting for page element '%s'", by));
 
 		long start = new Date().getTime();
 
 		if (driverWait != null) {
-			driverWait.until(ExpectedConditions.presenceOfElementLocated(by));
+			try {
+				driverWait.until(ExpectedConditions.presenceOfElementLocated(by));
+			} catch (UnhandledAlertException e) {
+
+				staticLogger.warn(String.format("Unexpected alert open: '%s'", e.getAlertText()));
+				throw e;
+			}
 		}
 
 		long end = new Date().getTime();
 		long waitTime = end - start;
 
-		staticLogger.trace(String.format("Found page element %s - Waited %s milliseconds", by, waitTime));
+		staticLogger.debug(String.format("Found page element %s - Waited %s milliseconds", by, waitTime));
 	}
 
 	private void waitForSubElement(final WebElement element, final By by) throws TimeoutException {
 
-		staticLogger.trace(String.format("Waiting for nested page element '%s' under '%s'", by, element));
+		staticLogger.debug(String.format("Waiting for nested page element '%s' under '%s'", by, element));
 
 		long start = new Date().getTime();
 
@@ -245,13 +252,19 @@ public class DriverElementHandler {
 				}
 			};
 
-			driverWait.until(presenceOfSubElement);
+			try {
+				driverWait.until(presenceOfSubElement);
+			} catch (UnhandledAlertException e) {
+
+				staticLogger.warn(String.format("Unexpected alert open: '%s'", e.getAlertText()));
+				throw e;
+			}
 		}
 
 		long end = new Date().getTime();
 		long waitTime = end - start;
 
-		staticLogger.trace(String.format("Found nested page element '%s' - Waited %s milliseconds", by, waitTime));
+		staticLogger.debug(String.format("Found nested page element '%s' - Waited %s milliseconds", by, waitTime));
 	}
 
 	private By getLocatorByPlaceholder(Locator elementLocator) {

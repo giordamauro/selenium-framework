@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.testng.TestNG;
 import org.testng.xml.Parser;
 import org.testng.xml.XmlSuite;
@@ -14,6 +16,8 @@ import org.testng.xml.XmlSuite;
 import com.mgiorda.context.SpringUtil;
 
 public class FileSuiteRunner<E extends SuiteConfiguration> implements SuiteRunner<E> {
+
+	private static final String DEFAULT_OUTPUT_DIRECTORY = "logs/test-result/{suiteName}/{currentDate}";
 
 	@Override
 	public void runSuite(E suiteConfig) {
@@ -54,10 +58,14 @@ public class FileSuiteRunner<E extends SuiteConfiguration> implements SuiteRunne
 		TestNG testng = new TestNG();
 		testng.setXmlSuites(Collections.singletonList(suite));
 
-		if (outputDirectory != null) {
-			testng.setOutputDirectory(outputDirectory);
+		if (outputDirectory == null) {
+			FastDateFormat fastDateFormat = FastDateFormat.getInstance("MM-dd-yyyy HH.mm.ss");
+			String currentDate = fastDateFormat.format(new Date());
+
+			outputDirectory = DEFAULT_OUTPUT_DIRECTORY.replace("{suiteName}", suite.getName()).replace("{currentDate}", currentDate);
 		}
 
+		testng.setOutputDirectory(outputDirectory);
 		testng.run();
 	}
 }

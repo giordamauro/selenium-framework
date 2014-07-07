@@ -11,6 +11,13 @@ public class Link extends AbstractElement {
 		pageElement.click();
 	}
 
+	public void click(long afterTimeMillis) {
+
+		logger.info(String.format("Clicking on link - %s", this));
+
+		pageElement.click(afterTimeMillis);
+	}
+
 	public String getLinkText() {
 		String text = pageElement.getText();
 

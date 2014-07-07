@@ -30,6 +30,9 @@ public class ContextSuiteRunner extends FileSuiteRunner<SuiteConfiguration> {
 		String suiteFile = suiteConfig.getFile();
 		XmlSuite xmlSuite = getXmlSuite(suiteFile);
 
+		String suiteContextName = xmlSuite.getName() + String.format(" (%s)", contextFile.replaceAll("/", " "));
+		xmlSuite.setName(suiteContextName);
+
 		SuiteContexts.registerSuiteContext(xmlSuite, appContext);
 
 		String outputDirectory = suiteConfig.getOutputDirectory();

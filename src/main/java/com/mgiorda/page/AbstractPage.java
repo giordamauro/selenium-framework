@@ -1,8 +1,8 @@
 package com.mgiorda.page;
 
-import java.io.File;
 import java.util.Date;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -125,8 +125,10 @@ public class AbstractPage implements TestSubscriber {
 
 		if (!testResult.isSuccess()) {
 
+			String testName = testResult.getTestClass().getName() + " - " + testResult.getName();
 			String outputDirectory = testResult.getTestContext().getOutputDirectory();
-			takeScreenShot(outputDirectory);
+
+			takeScreenShot(outputDirectory, testName);
 		}
 	}
 
@@ -170,18 +172,18 @@ public class AbstractPage implements TestSubscriber {
 		return pageUrl;
 	}
 
-	private void takeScreenShot(String outputDirectory) {
+	private void takeScreenShot(String outputDirectory, String testName) {
 
-		Long currentTime = Long.valueOf(0);
+		FastDateFormat fastDateFormat = FastDateFormat.getInstance("MM-dd-yyyy HH.mm.ss");
+		String currentDate = null;
 		// So that never would be two photos with same time stamp
-		synchronized (currentTime) {
-			currentTime = new Date().getTime();
+		synchronized (this) {
+			currentDate = fastDateFormat.format(new Date());
 		}
 
 		String browserName = actionHandler.getDriverName();
-		String filePath = outputDirectory + File.separator + "fail-photos" + File.separator + browserName + File.separator + currentTime + ".png";
+		String filePath = outputDirectory + "/fail-photos/" + browserName + String.format("/%s - %s.png", currentDate, testName);
 
 		actionHandler.takeScreenShot(filePath);
 	}
-
 }

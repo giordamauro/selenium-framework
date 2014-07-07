@@ -140,7 +140,7 @@ public class ElementInjectorImpl implements ElementInjector {
 		field.setAccessible(true);
 		try {
 
-			logger.trace(String.format("Setting '%s' field in '%s' class - Value: %s", field.getName(), target.getClass().getSimpleName(), value));
+			logger.debug(String.format("Setting '%s' field in '%s' class - Value: %s", field.getName(), target.getClass().getSimpleName(), value));
 			field.set(target, value);
 
 		} catch (IllegalArgumentException | IllegalAccessException e) {

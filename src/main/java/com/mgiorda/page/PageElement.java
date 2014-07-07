@@ -3,6 +3,7 @@ package com.mgiorda.page;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -26,7 +27,7 @@ public class PageElement {
 
 	public void click(long afterActionMillis) {
 
-		logger.trace(String.format("Clicking element '%s'", element));
+		logger.debug(String.format("Clicking element '%s'", element));
 
 		element.click();
 		waitForActionTime(afterActionMillis);
@@ -38,7 +39,7 @@ public class PageElement {
 
 	public void submit(long afterActionMillis) {
 
-		logger.trace(String.format("Submitting element '%s'", element));
+		logger.debug(String.format("Submitting element '%s'", element));
 
 		element.submit();
 		waitForActionTime(afterActionMillis);
@@ -51,18 +52,36 @@ public class PageElement {
 
 	public void sendKeys(CharSequence... keysToSend) {
 
-		String keys = "";
-		for (CharSequence seq : keysToSend) {
-			keys += seq.toString();
+		if (logger.isDebugEnabled()) {
+			String keys = "";
+			for (CharSequence seq : keysToSend) {
+				keys += seq.toString();
+			}
+			logger.debug(String.format("Sending keys '%s' to element '%s'", keys, element));
 		}
-		logger.trace(String.format("Sending keys '%s' to element '%s'", keys, element));
 
 		element.sendKeys(keysToSend);
 	}
 
-	public void moveOver(long afterActionMillis) {
+	public void hover(long afterActionMillis) {
 
-		logger.trace(String.format("Moving mouse over element '%s'", element));
+		logger.debug(String.format("Hovering over element '%s'", element));
+
+		String code = "var fireOnThis = arguments[0]; var evObj = document.createEvent('MouseEvents'); evObj.initEvent( 'mouseover', true, true ); fireOnThis.dispatchEvent(evObj);";
+
+		JavascriptExecutor js = ((JavascriptExecutor) getDriver());
+		js.executeScript(code, element);
+
+		waitForActionTime(afterActionMillis);
+	}
+
+	public void hover() {
+		hover(0L);
+	}
+
+	public void moveToElement(long afterActionMillis) {
+
+		logger.debug(String.format("Moving to element '%s'", element));
 
 		Actions action = new Actions(getDriver());
 		action.moveToElement(element).build().perform();
@@ -70,12 +89,12 @@ public class PageElement {
 		waitForActionTime(afterActionMillis);
 	}
 
-	public void moveOver() {
-		moveOver(DEFAULT_AFTER_ACTION_MILLIS);
+	public void moveToElement() {
+		moveToElement(0L);
 	}
 
 	public void clear() {
-		logger.trace(String.format("Clearing element '%s'", element));
+		logger.debug(String.format("Clearing element '%s'", element));
 
 		element.clear();
 	}
