@@ -54,7 +54,7 @@ public class DriverActionHandlerImpl implements DriverActionHandler {
 
 		if (!driver.toString().contains("(null)")) {
 
-			logger.info(String.format("Quitting driver '%s'", driver));
+			logger.debug(String.format("Quitting driver '%s'", driver));
 			driver.quit();
 		}
 	}

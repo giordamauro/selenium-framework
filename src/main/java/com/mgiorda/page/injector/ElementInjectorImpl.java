@@ -1,12 +1,14 @@
 package com.mgiorda.page.injector;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.mgiorda.page.AbstractElement;
 import com.mgiorda.page.ElementInjector;
 import com.mgiorda.page.Locator;
 import com.mgiorda.page.annotations.By;
@@ -39,6 +41,12 @@ public class ElementInjectorImpl implements ElementInjector {
 				}
 
 				setField(target, field, value);
+
+				if (AbstractElement.class.isAssignableFrom(value.getClass())) {
+
+					AbstractElement element = (AbstractElement) value;
+					setAbstractElementFieldName(element, field.getName(), objClass);
+				}
 			}
 		}
 	}
@@ -68,6 +76,12 @@ public class ElementInjectorImpl implements ElementInjector {
 			}
 
 			setField(target, field, value);
+
+			if (AbstractElement.class.isAssignableFrom(value.getClass())) {
+
+				AbstractElement element = (AbstractElement) value;
+				setAbstractElementFieldName(element, field.getName(), objClass);
+			}
 
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
@@ -148,6 +162,23 @@ public class ElementInjectorImpl implements ElementInjector {
 			throw new IllegalStateException(e);
 		}
 		field.setAccessible(isFieldAccessible);
+	}
+
+	private void setAbstractElementFieldName(AbstractElement element, String fieldName, Class<?> objClass) {
+
+		try {
+			Method method = AbstractElement.class.getDeclaredMethod("setFieldName", Class.class, String.class);
+
+			boolean isAccessible = method.isAccessible();
+			method.setAccessible(true);
+
+			logger.debug(String.format("Setting '%s' elementName for '%s' class", fieldName, element.getClass()));
+			method.invoke(element, objClass, fieldName);
+
+			method.setAccessible(isAccessible);
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 }

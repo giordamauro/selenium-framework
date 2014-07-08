@@ -6,14 +6,14 @@ public class Link extends AbstractElement {
 
 	public void click() {
 
-		logger.info(String.format("Clicking on link - %s", this));
+		logger.info("Clicking on element" + getNameInfo());
 
 		pageElement.click();
 	}
 
 	public void click(long afterTimeMillis) {
 
-		logger.info(String.format("Clicking on link - %s", this));
+		logger.info("Clicking on element" + getNameInfo());
 
 		pageElement.click(afterTimeMillis);
 	}

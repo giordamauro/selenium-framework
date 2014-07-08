@@ -15,63 +15,63 @@ public class TestLogger implements ITestListener, ISuiteListener {
 	@Override
 	public void onStart(ISuite suite) {
 
-		logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-		logger.info(String.format("Starting test suite '%s'", suite.getName()));
+		logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		logger.info(String.format(">>>> Starting suite '%s'", suite.getName()));
 	}
 
 	@Override
 	public void onStart(ITestContext context) {
 
-		logger.info(String.format(">> Initiating test named: '%s'", context.getName()));
+		logger.info(String.format(">>>- Starting test '%s'", context.getName()));
 	}
 
 	@Override
 	public void onTestStart(ITestResult result) {
 
-		logger.info(String.format(">-------------------- Starting test method '%s.%s(..)'", result.getTestClass().getName(), result.getMethod().getMethodName()));
+		logger.info(String.format(">--- Starting test Method '%s' in %s", result.getMethod().getMethodName(), result.getTestClass().getName()));
 	}
 
 	@Override
 	public void onTestSuccess(ITestResult result) {
 
-		logger.info(String.format("<-------------------- Finished test method '%s.%s(..)' - PASSED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(),
-				getTotalTime(result)));
+		logger.info(String.format("<--- Finishing test Method '%s' in %s - PASSED after %s milliseconds", result.getMethod().getMethodName(), result.getTestClass().getName(), getTotalTime(result)));
 	}
 
 	@Override
 	public void onTestFailure(ITestResult result) {
 
-		logger.warn(String.format("<-------------------- Finished test method '%s.%s(..)' - FAILED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(),
-				getTotalTime(result)), result.getThrowable());
+		logger.warn(String.format("<--- Finishing test Method '%s' in %s - FAILED after %s milliseconds", result.getMethod().getMethodName(), result.getTestClass().getName(), getTotalTime(result)),
+				result.getThrowable());
 	}
 
 	@Override
 	public void onTestSkipped(ITestResult result) {
 
-		logger.warn(String.format("<-------------------- Skipped test method '%s.%s(..)' - SKIPPED after %s milliseconds", result.getTestClass().getName(), result.getMethod().getMethodName(),
-				getTotalTime(result)), result.getThrowable());
+		logger.warn(String.format("<--- Finishing test Method '%s' in %s - FAILED after %s milliseconds", result.getMethod().getMethodName(), result.getTestClass().getName(), getTotalTime(result)),
+				result.getThrowable());
 	}
 
 	@Override
 	public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
 
-		logger.warn(String.format("<-------------------- Finished test method '%s.%s(..)' - FAILED", result.getTestClass().getName(), result.getMethod().getMethodName()), result.getThrowable());
+		logger.warn(String.format("<--- Finishing test Method '%s' in %s - FAILED after %s milliseconds", result.getMethod().getMethodName(), result.getTestClass().getName(), getTotalTime(result)),
+				result.getThrowable());
 	}
 
 	@Override
 	public void onFinish(ITestContext context) {
 
-		logger.info(String.format("<< Finished test named: '%s'", context.getName()));
+		logger.info(String.format("<<<- Finishing test '%s'", context.getName()));
 	}
 
 	@Override
 	public void onFinish(ISuite suite) {
 
-		logger.info(String.format("Finished test suite '%s'", suite.getName()));
-
 		String outputDirectory = suite.getOutputDirectory();
-		logger.info(String.format("Logging '%s' suite test results to directory '%s'", suite.getName(), outputDirectory));
-		logger.info(String.format("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"));
+		logger.debug(String.format("Saving '%s' results in directory: '%s'", suite.getName(), outputDirectory));
+
+		logger.info(String.format("<<<< Finishing suite '%s'", suite.getName()));
+		logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 	}
 
 	private long getTotalTime(ITestResult result) {

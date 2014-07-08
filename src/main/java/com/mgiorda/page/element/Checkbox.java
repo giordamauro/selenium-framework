@@ -6,7 +6,7 @@ public class Checkbox extends AbstractElement {
 
 	public void setSelected(boolean value) {
 
-		logger.info(String.format("Setting checkbox selected: '%s' - %s", value, this));
+		logger.info(String.format("Setting selected: '%s' in element", value) + getNameInfo());
 
 		if ((value && !isSelected()) || (!value && isSelected())) {
 			pageElement.click();

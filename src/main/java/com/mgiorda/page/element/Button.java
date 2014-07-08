@@ -6,14 +6,14 @@ public class Button extends AbstractElement {
 
 	public void click() {
 
-		logger.info(String.format("Clicking button - %s", this));
+		logger.info("Clicking on element" + getNameInfo());
 
 		pageElement.click();
 	}
 
 	public void submit() {
 
-		logger.info("Submitting button");
+		logger.info("Submitting button element" + getNameInfo());
 
 		pageElement.submit();
 	}

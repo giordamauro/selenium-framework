@@ -11,12 +11,15 @@ public class TextField extends AbstractElement {
 			keys += seq.toString();
 		}
 
-		logger.info(String.format("Sending textField keys: '%s' - %s", keys, this));
+		logger.info(String.format("Sending keys: '%s' to element", keys) + getNameInfo());
 
 		pageElement.sendKeys(keysToSend);
 	}
 
 	public void submit() {
+
+		logger.info("Submitting on element" + getNameInfo());
+
 		pageElement.submit();
 	}
 }
