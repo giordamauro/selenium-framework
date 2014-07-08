@@ -18,7 +18,7 @@
 
 	<context:annotation-config />
 	
-	<context:property-placeholder />	
+	<context:property-placeholder location="classpath:/properties/default.properties"/>	
 	
 	<util:properties id="defaultProperties" location="classpath:/properties/default.properties" />
 	
@@ -33,7 +33,7 @@
 	
 	<bean id="pageHandlerFactory" class="com.mgiorda.page.impl.PageHandlerFactoryImpl" scope="prototype">
 		<constructor-arg type="org.openqa.selenium.WebDriver" ref="webDriver"/>
-		<constructor-arg type="long" value="60"/>	
+		<constructor-arg type="long" value="${waitTimeout}"/>	
 	</bean>
 	
 	<bean id="elementInjector" class="com.mgiorda.page.injector.ElementInjectorImpl" />

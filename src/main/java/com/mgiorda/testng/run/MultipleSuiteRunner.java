@@ -40,11 +40,11 @@ public class MultipleSuiteRunner<E extends SuiteConfiguration> {
 				Thread thread = new Thread(runnable);
 				thread.setUncaughtExceptionHandler(exceptionLogger);
 
-				logger.info(String.format("Starting TestNG run thread %s - Suite '%s'", thread.getId(), suite));
+				logger.info(String.format("Starting TestNG run in thread %s for suite file '%s'", thread.getId(), suite.getFile()));
 
 				thread.start();
 			} else {
-				logger.info(String.format("Starting TestNG sequential run - Suite '%s'", suite));
+				logger.info(String.format("Starting TestNG sequential run for suite file '%s'", suite.getFile()));
 
 				runnable.run();
 			}
