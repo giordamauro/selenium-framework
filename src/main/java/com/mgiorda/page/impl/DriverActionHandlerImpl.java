@@ -18,12 +18,11 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Predicate;
-import com.mgiorda.page.AbstractPage;
 import com.mgiorda.page.DriverActionHandler;
 
 public class DriverActionHandlerImpl implements DriverActionHandler {
 
-	private static final Log logger = LogFactory.getLog(AbstractPage.class);
+	private static final Log logger = LogFactory.getLog(DriverActionHandlerImpl.class);
 
 	private final WebDriver driver;
 	private final WebDriverWait driverWait;
@@ -62,7 +61,7 @@ public class DriverActionHandlerImpl implements DriverActionHandler {
 
 	public void goToUrl(String url) {
 
-		logger.info(String.format("Browsing to url '%s' - Driver: '%s'", url, driver));
+		logger.debug(String.format("Browsing to url '%s' - Driver: '%s'", url, driver));
 
 		driver.navigate().to(url);
 

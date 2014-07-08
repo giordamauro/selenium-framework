@@ -59,6 +59,7 @@ public class AbstractPage implements TestSubscriber {
 			throw new IllegalStateException("Cannot instantiate Page whitout String url constructor parameter or @PageURL class annotation");
 		}
 
+		logger.info(String.format("Browsing to url '%s'", pageUrl));
 		actionHandler.goToUrl(pageUrl);
 
 		ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
@@ -83,6 +84,8 @@ public class AbstractPage implements TestSubscriber {
 
 		String currentUrl = actionHandler.getCurrentUrl();
 		if (pageUrl != null && !pageUrl.equals(currentUrl)) {
+
+			logger.info(String.format("Browsing to url '%s'", pageUrl));
 			actionHandler.goToUrl(pageUrl);
 		} else {
 			actionHandler.waitForPageToLoad();

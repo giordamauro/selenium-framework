@@ -20,7 +20,7 @@ public final class SuiteContexts {
 
 	public static synchronized void registerSuiteContext(XmlSuite suite, ApplicationContext context) {
 
-		logger.info(String.format("Registering '%s' suite context '%s'", suite, context));
+		logger.debug(String.format("Registering '%s' suite context '%s'", suite, context));
 
 		suiteContexts.put(suite, context);
 	}
