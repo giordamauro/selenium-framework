@@ -14,7 +14,7 @@ public abstract class AbstractTest {
 	@BeforeClass
 	public void $beforeClassRegisterAndLog() {
 
-		logger.info(">>-- Initiating test Class");
+		logger.info(">>-- Starting test Class");
 
 		CurrentTestRun.registerTestInstance(this);
 
