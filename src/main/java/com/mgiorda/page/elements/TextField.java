@@ -4,10 +4,6 @@ import com.mgiorda.page.AbstractElement;
 
 public class TextField extends AbstractElement {
 
-	protected void afterPropertiesSet() {
-		verifyTagName("input");
-	}
-
 	public void sendKeys(CharSequence... keysToSend) {
 
 		String keys = "";
