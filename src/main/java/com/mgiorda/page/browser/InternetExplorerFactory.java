@@ -15,6 +15,8 @@ public class InternetExplorerFactory extends AbstractBrowserFactory {
 
 	private static final Log logger = LogFactory.getLog(InternetExplorerFactory.class);
 
+	private boolean deleteCookiesAtStart = false;
+
 	public InternetExplorerFactory(String driverProperty) {
 
 		File resourceFile = SpringUtil.getCreateClasspathFile(driverProperty);
@@ -23,17 +25,33 @@ public class InternetExplorerFactory extends AbstractBrowserFactory {
 
 	@Override
 	public WebDriver newDriver() {
+
 		DesiredCapabilities ieCapabilities = DesiredCapabilities.internetExplorer();
+		ieCapabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+		ieCapabilities.setCapability(InternetExplorerDriver.ENABLE_PERSISTENT_HOVERING, false);
+		ieCapabilities.setCapability(InternetExplorerDriver.NATIVE_EVENTS, false);
+		ieCapabilities.setCapability(InternetExplorerDriver.IE_ENSURE_CLEAN_SESSION, true);
+
 		WebDriver driver = new InternetExplorerDriver(ieCapabilities);
 
-		try {
-			Runtime.getRuntime().exec("RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 255");
+		if (deleteCookiesAtStart) {
+			try {
+				Runtime.getRuntime().exec("RunDll32.exe InetCpl.cpl,ClearMyTracksByProcess 255");
 
-		} catch (IOException e) {
-			logger.warn(e);
+			} catch (IOException e) {
+				logger.warn(e);
+			}
 		}
 
 		return driver;
+	}
+
+	public boolean isDeleteCookiesAtStart() {
+		return deleteCookiesAtStart;
+	}
+
+	public void setDeleteCookiesAtStart(boolean deleteCookiesAtStart) {
+		this.deleteCookiesAtStart = deleteCookiesAtStart;
 	}
 
 }

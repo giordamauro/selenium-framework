@@ -1,4 +1,4 @@
-package com.mgiorda.page.element;
+package com.mgiorda.page.elements.table;
 
 import java.util.ArrayList;
 import java.util.Collections;

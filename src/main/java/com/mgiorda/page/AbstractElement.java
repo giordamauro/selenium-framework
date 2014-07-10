@@ -35,6 +35,17 @@ public abstract class AbstractElement {
 		pageElement.hover(afterTimeMillis);
 	}
 
+	public boolean isVisible() {
+
+		boolean visible = pageElement.isDisplayed();
+
+		return visible;
+	}
+
+	public void waitUntilVisible() {
+		pageElement.waitUntilVisible();
+	}
+
 	void setAbstractElement(AbstractElementHandler elementHandler, ElementInjector elementInjector, PageElement pageElement) {
 
 		this.elementHandler = elementHandler;
@@ -66,4 +77,32 @@ public abstract class AbstractElement {
 		return message;
 	}
 
+	protected void verifyTagName(String expectedTagName) {
+
+		String tagName = pageElement.getTagName();
+
+		if (!tagName.equalsIgnoreCase(expectedTagName)) {
+			throw new IllegalStateException(String.format("Element tag name exception - Expected '%s' but found '%s'", expectedTagName, tagName));
+		}
+	}
+
+	protected String verifyAttributePresence(String expectedAttribute, boolean presenceValue) {
+
+		String attributeValue = pageElement.getAttribute(expectedAttribute);
+
+		if ((attributeValue == null && presenceValue) || (attributeValue != null && !presenceValue)) {
+			throw new IllegalStateException(String.format("Element attribute presence exception - Expected '%s' present '%s'", expectedAttribute, presenceValue));
+		}
+
+		return attributeValue;
+	}
+
+	protected void verifyAttributeValue(String expectedAttribute, String expectedValue) {
+
+		String attributeValue = verifyAttributePresence(expectedAttribute, true);
+
+		if (!attributeValue.equalsIgnoreCase(expectedValue)) {
+			throw new IllegalStateException(String.format("Element attribute value exception - Expected '%s' but found '%s'", expectedAttribute, expectedValue));
+		}
+	}
 }

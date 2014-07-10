@@ -1,4 +1,4 @@
-package com.mgiorda.page.element;
+package com.mgiorda.page.elements;
 
 import com.mgiorda.page.AbstractElement;
 

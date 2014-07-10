@@ -5,7 +5,7 @@ import java.util.List;
 import com.mgiorda.page.AbstractElement;
 import com.mgiorda.page.annotations.By;
 import com.mgiorda.page.annotations.Locate;
-import com.mgiorda.page.element.Link;
+import com.mgiorda.page.elements.Link;
 
 public class FooterBar extends AbstractElement {
 

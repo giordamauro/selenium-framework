@@ -1,8 +1,12 @@
-package com.mgiorda.page.element;
+package com.mgiorda.page.elements;
 
 import com.mgiorda.page.AbstractElement;
 
 public class Button extends AbstractElement {
+
+	protected void afterPropertiesSet() {
+		verifyTagName("input");
+	}
 
 	public void click() {
 

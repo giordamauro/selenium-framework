@@ -39,6 +39,7 @@ public class DriverActionHandlerImpl implements DriverActionHandler {
 		driver.manage().timeouts().pageLoadTimeout(timeOutInSeconds, TimeUnit.SECONDS);
 		driver.manage().timeouts().setScriptTimeout(timeOutInSeconds, TimeUnit.SECONDS);
 
+		driver.manage().deleteAllCookies();
 		driver.manage().window().maximize();
 	}
 
@@ -115,7 +116,7 @@ public class DriverActionHandlerImpl implements DriverActionHandler {
 			File screenShot = screenShotDriver.getScreenshotAs(OutputType.FILE);
 
 			try {
-				logger.info(String.format("Saving screenshot to file '%s'", filePath));
+				logger.debug(String.format("Saving screenshot to file '%s'", filePath));
 
 				FileUtils.copyFile(screenShot, new File(filePath));
 			} catch (IOException e) {

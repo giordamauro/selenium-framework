@@ -11,7 +11,7 @@ import com.mgiorda.page.ElementInjector;
 import com.mgiorda.page.ElementTimeoutException;
 import com.mgiorda.page.Locator;
 import com.mgiorda.page.PageElement;
-import com.mgiorda.page.element.Label;
+import com.mgiorda.page.elements.Label;
 import com.mgiorda.page.injector.PageElementValueRetriever;
 import com.mgiorda.page.injector.ValueRetriever;
 

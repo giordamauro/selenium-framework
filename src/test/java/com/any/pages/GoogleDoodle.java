@@ -3,7 +3,7 @@ package com.any.pages;
 import com.mgiorda.page.AbstractElement;
 import com.mgiorda.page.annotations.By;
 import com.mgiorda.page.annotations.Locate;
-import com.mgiorda.page.element.Link;
+import com.mgiorda.page.elements.Link;
 
 public class GoogleDoodle extends AbstractElement {
 

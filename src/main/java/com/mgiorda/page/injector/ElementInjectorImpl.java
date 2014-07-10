@@ -13,7 +13,7 @@ import com.mgiorda.page.ElementInjector;
 import com.mgiorda.page.Locator;
 import com.mgiorda.page.annotations.By;
 import com.mgiorda.page.annotations.Locate;
-import com.mgiorda.page.element.Label;
+import com.mgiorda.page.elements.Label;
 
 public class ElementInjectorImpl implements ElementInjector {
 
@@ -22,6 +22,14 @@ public class ElementInjectorImpl implements ElementInjector {
 	public void autowireLocators(ValueRetriever valueRetriever, Object target) {
 
 		Class<?> objClass = target.getClass();
+
+		while (objClass != null) {
+			autowireLocators(valueRetriever, target, objClass);
+			objClass = objClass.getSuperclass();
+		}
+	}
+
+	private void autowireLocators(ValueRetriever valueRetriever, Object target, Class<?> objClass) {
 
 		Field[] declaredFields = objClass.getDeclaredFields();
 		for (Field field : declaredFields) {

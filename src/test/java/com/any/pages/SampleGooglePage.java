@@ -7,7 +7,7 @@ import com.mgiorda.page.AbstractPage;
 import com.mgiorda.page.annotations.By;
 import com.mgiorda.page.annotations.Locate;
 import com.mgiorda.page.annotations.PageURL;
-import com.mgiorda.page.element.TextField;
+import com.mgiorda.page.elements.TextField;
 
 @Properties("page-properties/page.properties")
 @PageURL("${dev.host}/")

@@ -7,7 +7,7 @@ import java.util.List;
 import com.mgiorda.page.AbstractElement;
 import com.mgiorda.page.AbstractElementHandler;
 import com.mgiorda.page.Locator;
-import com.mgiorda.page.element.Label;
+import com.mgiorda.page.elements.Label;
 
 public class ElementValueRetriever implements ValueRetriever {
 

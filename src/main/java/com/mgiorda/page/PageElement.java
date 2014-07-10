@@ -1,5 +1,9 @@
 package com.mgiorda.page;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.Dimension;
@@ -9,6 +13,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class PageElement {
 
@@ -66,13 +72,19 @@ public class PageElement {
 	public void hover(long afterActionMillis) {
 
 		logger.debug(String.format("Hovering over element '%s'", element));
+		try {
 
-		String code = "var fireOnThis = arguments[0]; var evObj = document.createEvent('MouseEvents'); evObj.initEvent( 'mouseover', true, true ); fireOnThis.dispatchEvent(evObj);";
+			InputStream scriptStream = this.getClass().getResourceAsStream("hover-script.js");
+			String code = IOUtils.toString(scriptStream, "UTF-8");
 
-		JavascriptExecutor js = ((JavascriptExecutor) getDriver());
-		js.executeScript(code, element);
+			JavascriptExecutor js = ((JavascriptExecutor) getDriver());
+			js.executeScript(code, element);
 
-		waitForActionTime(afterActionMillis);
+			waitForActionTime(afterActionMillis);
+
+		} catch (IOException e) {
+			throw new IllegalStateException("Couldn't hover on pageElement", e);
+		}
 	}
 
 	public void hover() {
@@ -133,6 +145,12 @@ public class PageElement {
 
 	public String getCssValue(String propertyName) {
 		return element.getCssValue(propertyName);
+	}
+
+	public void waitUntilVisible() {
+
+		WebDriverWait wait = new WebDriverWait(getDriver(), 30);
+		wait.until(ExpectedConditions.visibilityOf(element));
 	}
 
 	private void waitForActionTime(long afterActionTime) {

@@ -1,4 +1,4 @@
-package com.mgiorda.page.element;
+package com.mgiorda.page.elements.table;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +10,8 @@ import com.mgiorda.page.Locator;
 import com.mgiorda.page.PageElement;
 import com.mgiorda.page.annotations.By;
 import com.mgiorda.page.annotations.Locate;
+import com.mgiorda.page.elements.Link;
+import com.mgiorda.page.elements.TextField;
 
 public class TableRow extends AbstractElement {
 

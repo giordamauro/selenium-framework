@@ -1,8 +1,12 @@
-package com.mgiorda.page.element;
+package com.mgiorda.page.elements;
 
 import com.mgiorda.page.AbstractElement;
 
 public class Link extends AbstractElement {
+
+	protected void afterPropertiesSet() {
+		verifyTagName("a");
+	}
 
 	public void click() {
 
