@@ -10,9 +10,9 @@ import org.testng.xml.XmlSuite;
 
 public final class SuiteContexts {
 
-    private static final Log logger = LogFactory.getLog(SuiteContexts.class);
+    private static final Log LOGGER = LogFactory.getLog(SuiteContexts.class);
 
-    private static final Map<XmlSuite, ApplicationContext> suiteContexts = new IdentityHashMap<>();
+    private static final Map<XmlSuite, ApplicationContext> SUITE_CONTEXTS = new IdentityHashMap<>();
 
     private SuiteContexts() {
 
@@ -20,14 +20,14 @@ public final class SuiteContexts {
 
     public static synchronized void registerSuiteContext(XmlSuite suite, ApplicationContext context) {
 
-        logger.debug(String.format("Registering '%s' suite context '%s'", suite, context));
+        LOGGER.debug(String.format("Registering '%s' suite context '%s'", suite, context));
 
-        suiteContexts.put(suite, context);
+        SUITE_CONTEXTS.put(suite, context);
     }
 
     public static ApplicationContext getContextForSuite(XmlSuite suite) {
 
-        ApplicationContext context = suiteContexts.get(suite);
+        ApplicationContext context = SUITE_CONTEXTS.get(suite);
 
         return context;
     }

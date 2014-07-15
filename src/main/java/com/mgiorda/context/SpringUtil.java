@@ -19,7 +19,7 @@ import org.springframework.core.io.Resource;
 
 public final class SpringUtil {
 
-    private static final Log logger = LogFactory.getLog(SpringUtil.class);
+    private static final Log LOGGER = LogFactory.getLog(SpringUtil.class);
 
     private SpringUtil() {
 
@@ -45,7 +45,8 @@ public final class SpringUtil {
                 FileOutputStream outputStream = new FileOutputStream(classpathFile);
 
                 int read = 0;
-                byte[] bytes = new byte[1024];
+                final int megaByte = 1024;
+                byte[] bytes = new byte[megaByte];
 
                 while ((read = inputStream.read(bytes)) != -1) {
                     outputStream.write(bytes, 0, read);
@@ -85,7 +86,7 @@ public final class SpringUtil {
             beanFactory.initializeBean(bean, bean.getClass().getName());
 
         } catch (Exception ex) {
-            logger.warn(String.format("Exception autowiring '%s'", bean.getClass()), ex);
+            LOGGER.warn(String.format("Exception autowiring '%s'", bean.getClass()), ex);
 
             throw ex;
         }
@@ -95,10 +96,10 @@ public final class SpringUtil {
 
         Properties properties = new Properties();
 
-        propertySource = getPropertyPlaceholder(applicationContext, propertySource);
+        String propertyValue = getPropertyPlaceholder(applicationContext, propertySource);
 
         try {
-            Resource resource = applicationContext.getResource("classpath:/" + propertySource);
+            Resource resource = applicationContext.getResource("classpath:/" + propertyValue);
             properties.load(resource.getInputStream());
 
             addProperties(applicationContext, properties);

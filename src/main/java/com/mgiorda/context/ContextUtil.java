@@ -15,19 +15,21 @@ public final class ContextUtil {
 
     public static void initContext(ApplicationContext applicationContext, Object target) {
 
+        ApplicationContext baseApplicationContext = applicationContext;
+
         String[] locations = ContextUtil.getContextLocations(target.getClass());
         if (locations.length != 0) {
-            applicationContext = new ClassPathXmlApplicationContext(locations, applicationContext);
+            baseApplicationContext = new ClassPathXmlApplicationContext(locations, applicationContext);
         }
 
         Properties defaultProperties = ContextUtil.getDefaultProperties(target.getClass());
         if (defaultProperties != null) {
-            SpringUtil.addProperties(applicationContext, defaultProperties);
+            SpringUtil.addProperties(baseApplicationContext, defaultProperties);
         }
 
-        ContextUtil.addPropertiesFromAnnotation(target.getClass(), applicationContext);
+        ContextUtil.addPropertiesFromAnnotation(target.getClass(), baseApplicationContext);
 
-        SpringUtil.autowireBean(applicationContext, target);
+        SpringUtil.autowireBean(baseApplicationContext, target);
     }
 
     public static String[] getContextLocations(Class<?> targetClass) {
