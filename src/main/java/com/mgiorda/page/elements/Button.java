@@ -21,4 +21,11 @@ public class Button extends AbstractElement {
 
 		pageElement.submit();
 	}
+
+	public void submit(long afterTimeMillis) {
+
+		logger.info("Submitting button element" + getNameInfo());
+
+		pageElement.submit(afterTimeMillis);
+	}
 }

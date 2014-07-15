@@ -130,22 +130,32 @@ public class AbstractElementHandlerImpl implements AbstractElementHandler, Abstr
 	private <T extends AbstractElement> void callAfterPropertiesSet(T element) {
 
 		Class<? extends AbstractElement> elementClass = element.getClass();
+		Method afterProperties = null;
 
-		try {
-			Method afterProperties = elementClass.getDeclaredMethod("afterPropertiesSet");
-			if (afterProperties != null) {
+		while (elementClass != null && afterProperties == null) {
+			try {
+				afterProperties = elementClass.getDeclaredMethod("afterPropertiesSet");
+			} catch (NoSuchMethodException e) {
+
+				@SuppressWarnings("unchecked")
+				Class<? extends AbstractElement> superClass = (Class<? extends AbstractElement>) elementClass.getSuperclass();
+				elementClass = superClass;
+			}
+		}
+		if (afterProperties != null) {
+
+			try {
 				boolean methodAccessible = afterProperties.isAccessible();
 				afterProperties.setAccessible(true);
 
 				afterProperties.invoke(element);
 				afterProperties.setAccessible(methodAccessible);
-			}
-		} catch (NoSuchMethodException e) {
-			// method doesn't exist, nothing to do
 
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
+			} catch (Exception e) {
+				throw new IllegalStateException(e);
+			}
 		}
+
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import com.mgiorda.context.ContextUtil;
 import com.mgiorda.context.SpringUtil;
 import com.mgiorda.context.SuiteContexts;
 import com.mgiorda.page.annotations.PageURL;
+import com.mgiorda.page.injector.PageElementValueRetriever;
 import com.mgiorda.page.injector.PageValueRetriever;
 import com.mgiorda.page.injector.ValueRetriever;
 import com.mgiorda.testng.AbstractTest;
@@ -154,6 +155,12 @@ public class AbstractPage implements TestSubscriber {
 
 	public ElementInjector getElementInjector() {
 		return elementInjector;
+	}
+
+	protected void fetchElement(String fieldName) {
+
+		ValueRetriever elementValueRetriever = new PageElementValueRetriever((AbstractElementHandler) pageHandler);
+		elementInjector.autowireField(elementValueRetriever, this, fieldName);
 	}
 
 	private String getPageUrl(String url) {
