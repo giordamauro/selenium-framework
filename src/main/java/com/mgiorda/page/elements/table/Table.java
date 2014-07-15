@@ -40,7 +40,10 @@ public class Table extends AbstractElement implements Iterable<TableRow> {
 
         for (TableRow row : rows) {
             String value = row.getValue(column);
-            values.add(value);
+
+            if (value != null) {
+                values.add(value);
+            }
         }
 
         return values;

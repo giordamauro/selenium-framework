@@ -4,15 +4,16 @@ import com.mgiorda.page.AbstractElement;
 
 public class TextField extends AbstractElement {
 
-    public void sendKeys(CharSequence... keysToSend) {
+    public void setText(CharSequence... keysToSend) {
 
         String keys = "";
         for (CharSequence seq : keysToSend) {
             keys += seq.toString();
         }
 
-        logger.info(String.format("Sending keys: '%s' to element", keys) + getNameInfo());
+        logger.info(String.format("Setting text: '%s' in element", keys) + getNameInfo());
 
+        pageElement.clear();
         pageElement.sendKeys(keysToSend);
     }
 

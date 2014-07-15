@@ -34,8 +34,12 @@ public class TableRow extends AbstractElement {
 
     public String getValue(int column) {
 
+        String value = null;
+
         PageElement element = getPageElement(column);
-        String value = element.getText();
+        if (element != null) {
+            value = element.getText();
+        }
 
         return value;
     }
@@ -114,7 +118,11 @@ public class TableRow extends AbstractElement {
 
     protected PageElement getPageElement(int column) {
 
-        PageElement element = dataColumns.get(column);
+        PageElement element = null;
+
+        if (dataColumns.size() > column) {
+            element = dataColumns.get(column);
+        }
 
         return element;
     }

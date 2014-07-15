@@ -28,7 +28,7 @@ public class SampleGooglePage extends AbstractPage {
     public void search(String text) {
 
         logger.info("logging host: " + someProperty);
-        searchBox.sendKeys(text);
+        searchBox.setText(text);
     }
 
     // public void clickOnDoodle() {
