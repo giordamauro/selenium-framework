@@ -9,19 +9,19 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface By {
 
-	String id() default "";
+    String id() default "";
 
-	String name() default "";
+    String name() default "";
 
-	String className() default "";
+    String className() default "";
 
-	String css() default "";
+    String css() default "";
 
-	String tagName() default "";
+    String tagName() default "";
 
-	String linkText() default "";
+    String linkText() default "";
 
-	String partialLinkText() default "";
+    String partialLinkText() default "";
 
-	String xpath() default "";
+    String xpath() default "";
 }

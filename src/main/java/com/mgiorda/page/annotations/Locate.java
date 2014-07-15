@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Locate {
 
-	By[] value();
+    By[] value();
 
-	boolean fetchOnInit() default true;
+    boolean fetchOnInit() default true;
 }

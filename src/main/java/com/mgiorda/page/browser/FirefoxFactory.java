@@ -6,11 +6,11 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class FirefoxFactory extends AbstractBrowserFactory {
 
-	@Override
-	public WebDriver newDriver() {
-		DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
-		WebDriver driver = new FirefoxDriver(firefoxCapabilities);
+    @Override
+    public WebDriver newDriver() {
+        DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
+        WebDriver driver = new FirefoxDriver(firefoxCapabilities);
 
-		return driver;
-	}
+        return driver;
+    }
 }

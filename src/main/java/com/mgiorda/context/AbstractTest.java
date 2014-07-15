@@ -10,29 +10,29 @@ import com.mgiorda.testng.CurrentTestRun;
 
 public abstract class AbstractTest extends com.mgiorda.testng.AbstractTest {
 
-	private ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
-	@BeforeClass
-	public void $beforeClassAutowireSpring() {
+    @BeforeClass
+    public void $beforeClassAutowireSpring() {
 
-		XmlSuite xmlSuite = CurrentTestRun.getXmlSuite();
-		applicationContext = SuiteContexts.getContextForSuite(xmlSuite);
+        XmlSuite xmlSuite = CurrentTestRun.getXmlSuite();
+        applicationContext = SuiteContexts.getContextForSuite(xmlSuite);
 
-		if (applicationContext == null) {
+        if (applicationContext == null) {
 
-			String defaultContext = "classpath*:/" + SuiteConfiguration.DEFAULT_CONTEXT_LOCATION;
-			applicationContext = new GenericXmlApplicationContext(defaultContext);
+            String defaultContext = "classpath*:/" + SuiteConfiguration.DEFAULT_CONTEXT_LOCATION;
+            applicationContext = new GenericXmlApplicationContext(defaultContext);
 
-			java.util.Properties defaultProperties = applicationContext.getBean("defaultProperties", java.util.Properties.class);
-			SpringUtil.addProperties(applicationContext, defaultProperties);
+            java.util.Properties defaultProperties = applicationContext.getBean("defaultProperties", java.util.Properties.class);
+            SpringUtil.addProperties(applicationContext, defaultProperties);
 
-			SuiteContexts.registerSuiteContext(xmlSuite, applicationContext);
-		}
+            SuiteContexts.registerSuiteContext(xmlSuite, applicationContext);
+        }
 
-		ContextUtil.initContext(applicationContext, this);
-	}
+        ContextUtil.initContext(applicationContext, this);
+    }
 
-	protected ApplicationContext getApplicationContext() {
-		return applicationContext;
-	}
+    protected ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
 }

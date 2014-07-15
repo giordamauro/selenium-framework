@@ -23,177 +23,177 @@ import com.mgiorda.testng.TestSubscriber;
 
 public class AbstractPage implements TestSubscriber {
 
-	protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Log logger = LogFactory.getLog(this.getClass());
 
-	private ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
-	private final PageHandlerFactory pageHandlerFactory;
-	private final ElementInjector elementInjector;
+    private final PageHandlerFactory pageHandlerFactory;
+    private final ElementInjector elementInjector;
 
-	private final String pageUrl;
+    private final String pageUrl;
 
-	private final DriverActionHandler actionHandler;
-	protected final PageElementHandler pageHandler;
+    private final DriverActionHandler actionHandler;
+    protected final PageElementHandler pageHandler;
 
-	protected AbstractPage(String url) {
+    protected AbstractPage(String url) {
 
-		XmlSuite xmlSuite = CurrentTestRun.getXmlSuite();
-		if (xmlSuite != null) {
-			applicationContext = SuiteContexts.getContextForSuite(xmlSuite);
-		}
-		if (applicationContext == null) {
-			throw new IllegalStateException("Missing applicationContext - Not running under test class?");
-		}
-		ContextUtil.initContext(applicationContext, this);
+        XmlSuite xmlSuite = CurrentTestRun.getXmlSuite();
+        if (xmlSuite != null) {
+            applicationContext = SuiteContexts.getContextForSuite(xmlSuite);
+        }
+        if (applicationContext == null) {
+            throw new IllegalStateException("Missing applicationContext - Not running under test class?");
+        }
+        ContextUtil.initContext(applicationContext, this);
 
-		this.pageHandlerFactory = applicationContext.getBean("pageHandlerFactory", PageHandlerFactory.class);
-		this.elementInjector = applicationContext.getBean("elementInjector", ElementInjector.class);
+        this.pageHandlerFactory = applicationContext.getBean("pageHandlerFactory", PageHandlerFactory.class);
+        this.elementInjector = applicationContext.getBean("elementInjector", ElementInjector.class);
 
-		TestEventDispatcher testEventDispatcher = TestEventDispatcher.getEventDispatcher();
-		testEventDispatcher.subscribe(this);
+        TestEventDispatcher testEventDispatcher = TestEventDispatcher.getEventDispatcher();
+        testEventDispatcher.subscribe(this);
 
-		this.actionHandler = pageHandlerFactory.getActionHandler();
-		this.pageHandler = pageHandlerFactory.getElementHandler(this);
+        this.actionHandler = pageHandlerFactory.getActionHandler();
+        this.pageHandler = pageHandlerFactory.getElementHandler(this);
 
-		this.pageUrl = getPageUrl(url);
-		if (pageUrl == null) {
-			throw new IllegalStateException("Cannot instantiate Page whitout String url constructor parameter or @PageURL class annotation");
-		}
+        this.pageUrl = getPageUrl(url);
+        if (pageUrl == null) {
+            throw new IllegalStateException("Cannot instantiate Page whitout String url constructor parameter or @PageURL class annotation");
+        }
 
-		logger.info(String.format("Browsing to url '%s'", pageUrl));
-		actionHandler.goToUrl(pageUrl);
+        logger.info(String.format("Browsing to url '%s'", pageUrl));
+        actionHandler.goToUrl(pageUrl);
 
-		ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
-		elementInjector.autowireLocators(pageValueRetriever, this);
-	}
+        ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
+        elementInjector.autowireLocators(pageValueRetriever, this);
+    }
 
-	protected AbstractPage() {
-		this((String) null);
-	}
+    protected AbstractPage() {
+        this((String) null);
+    }
 
-	protected AbstractPage(AbstractPage parentPage, String url) {
+    protected AbstractPage(AbstractPage parentPage, String url) {
 
-		this.applicationContext = parentPage.applicationContext;
-		ContextUtil.initContext(applicationContext, this);
+        this.applicationContext = parentPage.applicationContext;
+        ContextUtil.initContext(applicationContext, this);
 
-		this.actionHandler = parentPage.actionHandler;
-		this.pageHandlerFactory = parentPage.pageHandlerFactory;
-		this.elementInjector = parentPage.elementInjector;
+        this.actionHandler = parentPage.actionHandler;
+        this.pageHandlerFactory = parentPage.pageHandlerFactory;
+        this.elementInjector = parentPage.elementInjector;
 
-		this.pageUrl = getPageUrl(url);
-		this.pageHandler = pageHandlerFactory.getElementHandler(this);
+        this.pageUrl = getPageUrl(url);
+        this.pageHandler = pageHandlerFactory.getElementHandler(this);
 
-		String currentUrl = actionHandler.getCurrentUrl();
-		if (pageUrl != null && !pageUrl.equals(currentUrl)) {
+        String currentUrl = actionHandler.getCurrentUrl();
+        if (pageUrl != null && !pageUrl.equals(currentUrl)) {
 
-			logger.info(String.format("Browsing to url '%s'", pageUrl));
-			actionHandler.goToUrl(pageUrl);
-		} else {
-			actionHandler.waitForPageToLoad();
-		}
+            logger.info(String.format("Browsing to url '%s'", pageUrl));
+            actionHandler.goToUrl(pageUrl);
+        } else {
+            actionHandler.waitForPageToLoad();
+        }
 
-		ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
-		elementInjector.autowireLocators(pageValueRetriever, this);
-	}
+        ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
+        elementInjector.autowireLocators(pageValueRetriever, this);
+    }
 
-	protected AbstractPage(AbstractPage parentPage) {
-		this(parentPage, (String) null);
-	}
+    protected AbstractPage(AbstractPage parentPage) {
+        this(parentPage, (String) null);
+    }
 
-	AbstractPage(AbstractPage parentPage, PageElementHandler elementHandler) {
+    AbstractPage(AbstractPage parentPage, PageElementHandler elementHandler) {
 
-		this.actionHandler = parentPage.actionHandler;
-		this.pageHandlerFactory = parentPage.pageHandlerFactory;
-		this.elementInjector = parentPage.elementInjector;
-		this.pageUrl = parentPage.pageUrl;
+        this.actionHandler = parentPage.actionHandler;
+        this.pageHandlerFactory = parentPage.pageHandlerFactory;
+        this.elementInjector = parentPage.elementInjector;
+        this.pageUrl = parentPage.pageUrl;
 
-		this.pageHandler = elementHandler;
+        this.pageHandler = elementHandler;
 
-		this.applicationContext = parentPage.applicationContext;
-		ContextUtil.initContext(applicationContext, this);
+        this.applicationContext = parentPage.applicationContext;
+        ContextUtil.initContext(applicationContext, this);
 
-		ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
-		elementInjector.autowireLocators(pageValueRetriever, this);
-	}
+        ValueRetriever pageValueRetriever = new PageValueRetriever(pageHandler);
+        elementInjector.autowireLocators(pageValueRetriever, this);
+    }
 
-	@Override
-	public void onClassStart(AbstractTest test) {
-	}
+    @Override
+    public void onClassStart(AbstractTest test) {
+    }
 
-	@Override
-	public void onTestStart(ITestResult testResult) {
-	}
+    @Override
+    public void onTestStart(ITestResult testResult) {
+    }
 
-	@Override
-	public void onTestFinish(ITestResult testResult) {
+    @Override
+    public void onTestFinish(ITestResult testResult) {
 
-		if (!testResult.isSuccess()) {
+        if (!testResult.isSuccess()) {
 
-			String testName = testResult.getTestClass().getName() + " - " + testResult.getName();
-			String outputDirectory = testResult.getTestContext().getOutputDirectory();
+            String testName = testResult.getTestClass().getName() + " - " + testResult.getName();
+            String outputDirectory = testResult.getTestContext().getOutputDirectory();
 
-			takeScreenShot(outputDirectory, testName);
-		}
-	}
+            takeScreenShot(outputDirectory, testName);
+        }
+    }
 
-	@Override
-	public void onClassFinish(AbstractTest test) {
-		actionHandler.quit();
-	}
+    @Override
+    public void onClassFinish(AbstractTest test) {
+        actionHandler.quit();
+    }
 
-	public String getTitle() {
-		return actionHandler.getTitle();
-	}
+    public String getTitle() {
+        return actionHandler.getTitle();
+    }
 
-	public String getPageUrl() {
-		return pageUrl;
-	}
+    public String getPageUrl() {
+        return pageUrl;
+    }
 
-	public ApplicationContext getApplicationContext() {
-		return applicationContext;
-	}
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
 
-	public ElementInjector getElementInjector() {
-		return elementInjector;
-	}
+    public ElementInjector getElementInjector() {
+        return elementInjector;
+    }
 
-	protected void fetchElement(String fieldName) {
+    protected void fetchElement(String fieldName) {
 
-		ValueRetriever elementValueRetriever = new PageElementValueRetriever((AbstractElementHandler) pageHandler);
-		elementInjector.autowireField(elementValueRetriever, this, fieldName);
-	}
+        ValueRetriever elementValueRetriever = new PageElementValueRetriever((AbstractElementHandler) pageHandler);
+        elementInjector.autowireField(elementValueRetriever, this, fieldName);
+    }
 
-	private String getPageUrl(String url) {
+    private String getPageUrl(String url) {
 
-		String pageUrl = url;
+        String pageUrl = url;
 
-		if (pageUrl == null) {
+        if (pageUrl == null) {
 
-			Class<?> pageClass = this.getClass();
-			PageURL annotation = pageClass.getAnnotation(PageURL.class);
-			if (annotation != null) {
+            Class<?> pageClass = this.getClass();
+            PageURL annotation = pageClass.getAnnotation(PageURL.class);
+            if (annotation != null) {
 
-				pageUrl = annotation.value();
-			}
-		}
-		if (pageUrl != null) {
-			pageUrl = SpringUtil.getPropertyPlaceholder(applicationContext, pageUrl);
-		}
-		return pageUrl;
-	}
+                pageUrl = annotation.value();
+            }
+        }
+        if (pageUrl != null) {
+            pageUrl = SpringUtil.getPropertyPlaceholder(applicationContext, pageUrl);
+        }
+        return pageUrl;
+    }
 
-	private void takeScreenShot(String outputDirectory, String testName) {
+    private void takeScreenShot(String outputDirectory, String testName) {
 
-		FastDateFormat fastDateFormat = FastDateFormat.getInstance("MM-dd-yyyy HH.mm.ss");
-		String currentDate = null;
-		// So that never would be two photos with same time stamp
-		synchronized (this) {
-			currentDate = fastDateFormat.format(new Date());
-		}
+        FastDateFormat fastDateFormat = FastDateFormat.getInstance("MM-dd-yyyy HH.mm.ss");
+        String currentDate = null;
+        // So that never would be two photos with same time stamp
+        synchronized (this) {
+            currentDate = fastDateFormat.format(new Date());
+        }
 
-		String browserName = actionHandler.getDriverName();
-		String filePath = outputDirectory + "/fail-photos/" + browserName + String.format("/%s - %s.png", currentDate, testName);
+        String browserName = actionHandler.getDriverName();
+        String filePath = outputDirectory + "/fail-photos/" + browserName + String.format("/%s - %s.png", currentDate, testName);
 
-		actionHandler.takeScreenShot(filePath);
-	}
+        actionHandler.takeScreenShot(filePath);
+    }
 }

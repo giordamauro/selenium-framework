@@ -26,263 +26,263 @@ import com.mgiorda.page.PageElement;
 
 public class DriverElementHandler {
 
-	private static final Log staticLogger = LogFactory.getLog(DriverElementHandler.class);
+    private static final Log staticLogger = LogFactory.getLog(DriverElementHandler.class);
 
-	private final WebDriver driver;
-	private final WebDriverWait driverWait;
+    private final WebDriver driver;
+    private final WebDriverWait driverWait;
 
-	private final PageElement rootElement;
+    private final PageElement rootElement;
 
-	private ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
-	public DriverElementHandler(WebDriver driver, WebDriverWait driverWait, ApplicationContext applicationContext) {
+    public DriverElementHandler(WebDriver driver, WebDriverWait driverWait, ApplicationContext applicationContext) {
 
-		if (driver == null) {
-			throw new IllegalArgumentException("Driver cannot be null");
-		}
+        if (driver == null) {
+            throw new IllegalArgumentException("Driver cannot be null");
+        }
 
-		this.driver = driver;
-		this.driverWait = driverWait;
-		this.applicationContext = applicationContext;
+        this.driver = driver;
+        this.driverWait = driverWait;
+        this.applicationContext = applicationContext;
 
-		this.rootElement = null;
-	}
+        this.rootElement = null;
+    }
 
-	public DriverElementHandler(DriverElementHandler elementHandler, PageElement rootElement) {
+    public DriverElementHandler(DriverElementHandler elementHandler, PageElement rootElement) {
 
-		this.driver = elementHandler.driver;
-		this.driverWait = elementHandler.driverWait;
-		this.applicationContext = elementHandler.applicationContext;
+        this.driver = elementHandler.driver;
+        this.driverWait = elementHandler.driverWait;
+        this.applicationContext = elementHandler.applicationContext;
 
-		this.rootElement = rootElement;
-	}
+        this.rootElement = rootElement;
+    }
 
-	public boolean existsElement(Locator... locators) {
+    public boolean existsElement(Locator... locators) {
 
-		boolean exists = true;
+        boolean exists = true;
 
-		try {
-			PageElement parentElement = getParentElement(rootElement, locators);
-			exists = existsElement(parentElement, locators[locators.length - 1]);
+        try {
+            PageElement parentElement = getParentElement(rootElement, locators);
+            exists = existsElement(parentElement, locators[locators.length - 1]);
 
-		} catch (TimeoutException e) {
-			exists = false;
-		}
+        } catch (TimeoutException e) {
+            exists = false;
+        }
 
-		return exists;
-	}
+        return exists;
+    }
 
-	public int getElementCount(Locator... locators) {
+    public int getElementCount(Locator... locators) {
 
-		int count = 0;
+        int count = 0;
 
-		try {
-			PageElement parentElement = getParentElement(rootElement, locators);
-			count = getElementCount(parentElement, locators[locators.length - 1]);
+        try {
+            PageElement parentElement = getParentElement(rootElement, locators);
+            count = getElementCount(parentElement, locators[locators.length - 1]);
 
-		} catch (TimeoutException e) {
-			count = 0;
-		}
+        } catch (TimeoutException e) {
+            count = 0;
+        }
 
-		return count;
-	}
+        return count;
+    }
 
-	public PageElement getElement(Locator... locators) throws ElementTimeoutException {
+    public PageElement getElement(Locator... locators) throws ElementTimeoutException {
 
-		try {
-			PageElement parentElement = getParentElement(rootElement, locators);
-			PageElement element = getElement(parentElement, locators[locators.length - 1]);
+        try {
+            PageElement parentElement = getParentElement(rootElement, locators);
+            PageElement element = getElement(parentElement, locators[locators.length - 1]);
 
-			return element;
+            return element;
 
-		} catch (TimeoutException e) {
-			throw new ElementTimeoutException(String.format("TimeoutException getting element for Locators '%s'", ArrayUtils.toString(locators)), e);
-		}
-	}
+        } catch (TimeoutException e) {
+            throw new ElementTimeoutException(String.format("TimeoutException getting element for Locators '%s'", ArrayUtils.toString(locators)), e);
+        }
+    }
 
-	public List<PageElement> getElements(Locator... locators) throws TimeoutException {
+    public List<PageElement> getElements(Locator... locators) throws TimeoutException {
 
-		try {
-			PageElement parentElement = getParentElement(rootElement, locators);
-			List<PageElement> elements = getElements(parentElement, locators[locators.length - 1]);
+        try {
+            PageElement parentElement = getParentElement(rootElement, locators);
+            List<PageElement> elements = getElements(parentElement, locators[locators.length - 1]);
 
-			return elements;
+            return elements;
 
-		} catch (TimeoutException e) {
-			throw new ElementTimeoutException(String.format("TimeoutException getting elements for Locators '%s'", ArrayUtils.toString(locators)), e);
-		}
-	}
+        } catch (TimeoutException e) {
+            throw new ElementTimeoutException(String.format("TimeoutException getting elements for Locators '%s'", ArrayUtils.toString(locators)), e);
+        }
+    }
 
-	private boolean existsElement(PageElement parentElement, Locator elementLocator) {
+    private boolean existsElement(PageElement parentElement, Locator elementLocator) {
 
-		boolean exists = true;
-		By by = getLocatorByPlaceholder(elementLocator);
+        boolean exists = true;
+        By by = getLocatorByPlaceholder(elementLocator);
 
-		try {
-			if (parentElement != null) {
+        try {
+            if (parentElement != null) {
 
-				WebElement element = parentElement.getWebElement();
-				waitForSubElement(element, by);
-			} else {
-				waitForElement(by);
-			}
-		} catch (TimeoutException e) {
-			exists = false;
-		}
+                WebElement element = parentElement.getWebElement();
+                waitForSubElement(element, by);
+            } else {
+                waitForElement(by);
+            }
+        } catch (TimeoutException e) {
+            exists = false;
+        }
 
-		return exists;
-	}
+        return exists;
+    }
 
-	private int getElementCount(PageElement parentElement, Locator elementLocator) {
+    private int getElementCount(PageElement parentElement, Locator elementLocator) {
 
-		int count = 0;
+        int count = 0;
 
-		By by = getLocatorByPlaceholder(elementLocator);
+        By by = getLocatorByPlaceholder(elementLocator);
 
-		if (existsElement(elementLocator)) {
+        if (existsElement(elementLocator)) {
 
-			List<WebElement> elements = null;
+            List<WebElement> elements = null;
 
-			if (parentElement != null) {
-				WebElement element = parentElement.getWebElement();
-				elements = element.findElements(by);
-			} else {
-				elements = driver.findElements(by);
-			}
-			count = elements.size();
-		}
+            if (parentElement != null) {
+                WebElement element = parentElement.getWebElement();
+                elements = element.findElements(by);
+            } else {
+                elements = driver.findElements(by);
+            }
+            count = elements.size();
+        }
 
-		return count;
-	}
+        return count;
+    }
 
-	private PageElement getElement(PageElement parentElement, Locator elementLocator) {
+    private PageElement getElement(PageElement parentElement, Locator elementLocator) {
 
-		By by = getLocatorByPlaceholder(elementLocator);
-		WebElement element = null;
+        By by = getLocatorByPlaceholder(elementLocator);
+        WebElement element = null;
 
-		if (parentElement != null) {
-			WebElement parent = parentElement.getWebElement();
-			waitForSubElement(parent, by);
-			element = parent.findElement(by);
-		} else {
-			waitForElement(by);
-			element = driver.findElement(by);
-		}
-		PageElement pageElement = new PageElement(element);
+        if (parentElement != null) {
+            WebElement parent = parentElement.getWebElement();
+            waitForSubElement(parent, by);
+            element = parent.findElement(by);
+        } else {
+            waitForElement(by);
+            element = driver.findElement(by);
+        }
+        PageElement pageElement = new PageElement(element);
 
-		return pageElement;
-	}
+        return pageElement;
+    }
 
-	private List<PageElement> getElements(PageElement parentElement, Locator elementLocator) {
+    private List<PageElement> getElements(PageElement parentElement, Locator elementLocator) {
 
-		By by = getLocatorByPlaceholder(elementLocator);
+        By by = getLocatorByPlaceholder(elementLocator);
 
-		List<WebElement> elements = null;
+        List<WebElement> elements = null;
 
-		if (parentElement != null) {
-			WebElement parent = parentElement.getWebElement();
-			waitForSubElement(parent, by);
-			elements = parent.findElements(by);
+        if (parentElement != null) {
+            WebElement parent = parentElement.getWebElement();
+            waitForSubElement(parent, by);
+            elements = parent.findElements(by);
 
-		} else {
-			waitForElement(by);
-			elements = driver.findElements(by);
-		}
+        } else {
+            waitForElement(by);
+            elements = driver.findElements(by);
+        }
 
-		List<PageElement> pageElements = new ArrayList<>();
+        List<PageElement> pageElements = new ArrayList<>();
 
-		for (WebElement element : elements) {
-			PageElement pageElement = new PageElement(element);
+        for (WebElement element : elements) {
+            PageElement pageElement = new PageElement(element);
 
-			pageElements.add(pageElement);
-		}
+            pageElements.add(pageElement);
+        }
 
-		return Collections.unmodifiableList(pageElements);
-	}
+        return Collections.unmodifiableList(pageElements);
+    }
 
-	private PageElement getParentElement(PageElement parentElement, Locator[] locators) throws TimeoutException {
+    private PageElement getParentElement(PageElement parentElement, Locator[] locators) throws TimeoutException {
 
-		if (locators == null || locators.length == 0) {
-			throw new IllegalArgumentException("Locator... cannot be null or empty");
-		}
+        if (locators == null || locators.length == 0) {
+            throw new IllegalArgumentException("Locator... cannot be null or empty");
+        }
 
-		int i = 0;
-		while (i < locators.length - 1) {
-			Locator locator = locators[i];
-			parentElement = getElement(parentElement, locator);
-			i++;
-		}
+        int i = 0;
+        while (i < locators.length - 1) {
+            Locator locator = locators[i];
+            parentElement = getElement(parentElement, locator);
+            i++;
+        }
 
-		return parentElement;
-	}
+        return parentElement;
+    }
 
-	private void waitForElement(By by) throws TimeoutException {
+    private void waitForElement(By by) throws TimeoutException {
 
-		staticLogger.debug(String.format("Waiting for page element '%s'", by));
+        staticLogger.debug(String.format("Waiting for page element '%s'", by));
 
-		long start = new Date().getTime();
+        long start = new Date().getTime();
 
-		if (driverWait != null) {
-			try {
-				driverWait.until(ExpectedConditions.presenceOfElementLocated(by));
-			} catch (UnhandledAlertException e) {
+        if (driverWait != null) {
+            try {
+                driverWait.until(ExpectedConditions.presenceOfElementLocated(by));
+            } catch (UnhandledAlertException e) {
 
-				staticLogger.warn(String.format("Unexpected alert open: '%s'", e.getAlertText()));
-				throw e;
-			}
-		}
+                staticLogger.warn(String.format("Unexpected alert open: '%s'", e.getAlertText()));
+                throw e;
+            }
+        }
 
-		long end = new Date().getTime();
-		long waitTime = end - start;
+        long end = new Date().getTime();
+        long waitTime = end - start;
 
-		staticLogger.debug(String.format("Found page element %s - Waited %s milliseconds", by, waitTime));
-	}
+        staticLogger.debug(String.format("Found page element %s - Waited %s milliseconds", by, waitTime));
+    }
 
-	private void waitForSubElement(final WebElement element, final By by) throws TimeoutException {
+    private void waitForSubElement(final WebElement element, final By by) throws TimeoutException {
 
-		staticLogger.debug(String.format("Waiting for nested page element '%s' under '%s'", by, element));
+        staticLogger.debug(String.format("Waiting for nested page element '%s' under '%s'", by, element));
 
-		long start = new Date().getTime();
+        long start = new Date().getTime();
 
-		if (driverWait != null) {
-			ExpectedCondition<WebElement> presenceOfSubElement = new ExpectedCondition<WebElement>() {
-				@Override
-				public WebElement apply(WebDriver driver) {
-					return element.findElement(by);
-				}
-			};
+        if (driverWait != null) {
+            ExpectedCondition<WebElement> presenceOfSubElement = new ExpectedCondition<WebElement>() {
+                @Override
+                public WebElement apply(WebDriver driver) {
+                    return element.findElement(by);
+                }
+            };
 
-			try {
-				driverWait.until(presenceOfSubElement);
-			} catch (UnhandledAlertException e) {
+            try {
+                driverWait.until(presenceOfSubElement);
+            } catch (UnhandledAlertException e) {
 
-				staticLogger.warn(String.format("Unexpected alert open: '%s'", e.getAlertText()));
-				throw e;
-			}
-		}
+                staticLogger.warn(String.format("Unexpected alert open: '%s'", e.getAlertText()));
+                throw e;
+            }
+        }
 
-		long end = new Date().getTime();
-		long waitTime = end - start;
+        long end = new Date().getTime();
+        long waitTime = end - start;
 
-		staticLogger.debug(String.format("Found nested page element '%s' - Waited %s milliseconds", by, waitTime));
-	}
+        staticLogger.debug(String.format("Found nested page element '%s' - Waited %s milliseconds", by, waitTime));
+    }
 
-	private By getLocatorByPlaceholder(Locator elementLocator) {
+    private By getLocatorByPlaceholder(Locator elementLocator) {
 
-		String value = elementLocator.getValue();
-		if (applicationContext != null) {
-			value = SpringUtil.getPropertyPlaceholder(applicationContext, value);
-		}
+        String value = elementLocator.getValue();
+        if (applicationContext != null) {
+            value = SpringUtil.getPropertyPlaceholder(applicationContext, value);
+        }
 
-		Class<? extends By> byClass = elementLocator.getByClass();
-		try {
-			Constructor<? extends By> constructor = byClass.getConstructor(String.class);
-			By byLocator = constructor.newInstance(value);
+        Class<? extends By> byClass = elementLocator.getByClass();
+        try {
+            Constructor<? extends By> constructor = byClass.getConstructor(String.class);
+            By byLocator = constructor.newInstance(value);
 
-			return byLocator;
+            return byLocator;
 
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
-	}
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

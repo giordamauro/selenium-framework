@@ -11,38 +11,38 @@ import com.mgiorda.page.PageElement;
 
 public class PageElementValueRetriever extends ElementValueRetriever implements ValueRetriever {
 
-	public PageElementValueRetriever(AbstractElementHandler elementHandler) {
-		super(elementHandler);
-	}
+    public PageElementValueRetriever(AbstractElementHandler elementHandler) {
+        super(elementHandler);
+    }
 
-	@Override
-	public Object getValueForLocators(Field field, Locator[] locators) {
+    @Override
+    public Object getValueForLocators(Field field, Locator[] locators) {
 
-		Object value = null;
+        Object value = null;
 
-		Class<?> fieldClass = field.getType();
-		AbstractElementFactory elementFactory = (AbstractElementFactory) elementHandler;
+        Class<?> fieldClass = field.getType();
+        AbstractElementFactory elementFactory = (AbstractElementFactory) elementHandler;
 
-		if (PageElement.class.isAssignableFrom(fieldClass)) {
+        if (PageElement.class.isAssignableFrom(fieldClass)) {
 
-			value = elementFactory.getPageElement(locators);
+            value = elementFactory.getPageElement(locators);
 
-		} else if (List.class.isAssignableFrom(fieldClass)) {
+        } else if (List.class.isAssignableFrom(fieldClass)) {
 
-			ParameterizedType fieldType = (ParameterizedType) field.getGenericType();
-			Class<?> listClass = (Class<?>) fieldType.getActualTypeArguments()[0];
+            ParameterizedType fieldType = (ParameterizedType) field.getGenericType();
+            Class<?> listClass = (Class<?>) fieldType.getActualTypeArguments()[0];
 
-			if (PageElement.class.isAssignableFrom(listClass)) {
+            if (PageElement.class.isAssignableFrom(listClass)) {
 
-				value = elementFactory.getPageElements(locators);
-			}
-		}
+                value = elementFactory.getPageElements(locators);
+            }
+        }
 
-		if (value == null) {
-			value = super.getValueForLocators(field, locators);
-		}
+        if (value == null) {
+            value = super.getValueForLocators(field, locators);
+        }
 
-		return value;
-	}
+        return value;
+    }
 
 }

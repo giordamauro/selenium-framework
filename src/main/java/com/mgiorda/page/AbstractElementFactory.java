@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface AbstractElementFactory {
 
-	<T extends AbstractElement> T adaptPageElementAs(Class<T> elementClass, PageElement pageElement);
+    <T extends AbstractElement> T adaptPageElementAs(Class<T> elementClass, PageElement pageElement);
 
-	PageElement getPageElement(Locator... locators) throws ElementTimeoutException;
+    PageElement getPageElement(Locator... locators) throws ElementTimeoutException;
 
-	List<PageElement> getPageElements(Locator... locators) throws ElementTimeoutException;
+    List<PageElement> getPageElements(Locator... locators) throws ElementTimeoutException;
 
-	AbstractElementFactory newElementFactory(PageElement pageElement);
+    AbstractElementFactory newElementFactory(PageElement pageElement);
 }

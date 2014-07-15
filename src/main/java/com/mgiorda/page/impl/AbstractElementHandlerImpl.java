@@ -17,160 +17,160 @@ import com.mgiorda.page.injector.ValueRetriever;
 
 public class AbstractElementHandlerImpl implements AbstractElementHandler, AbstractElementFactory {
 
-	private final ElementInjector elementInjector;
-	protected final DriverElementHandler driverElementHandler;
+    private final ElementInjector elementInjector;
+    protected final DriverElementHandler driverElementHandler;
 
-	public AbstractElementHandlerImpl(DriverElementHandler basicElementHandler, ElementInjector elementInjector) {
-		this.driverElementHandler = basicElementHandler;
-		this.elementInjector = elementInjector;
-	}
+    public AbstractElementHandlerImpl(DriverElementHandler basicElementHandler, ElementInjector elementInjector) {
+        this.driverElementHandler = basicElementHandler;
+        this.elementInjector = elementInjector;
+    }
 
-	@Override
-	public boolean existsElement(Locator... locators) {
-		return driverElementHandler.existsElement(locators);
-	}
+    @Override
+    public boolean existsElement(Locator... locators) {
+        return driverElementHandler.existsElement(locators);
+    }
 
-	@Override
-	public int getElementCount(Locator... locators) {
-		return driverElementHandler.getElementCount(locators);
-	}
+    @Override
+    public int getElementCount(Locator... locators) {
+        return driverElementHandler.getElementCount(locators);
+    }
 
-	@Override
-	public <T extends AbstractElement> T getElementAs(Class<T> elementClass, Locator... locators) throws ElementTimeoutException {
+    @Override
+    public <T extends AbstractElement> T getElementAs(Class<T> elementClass, Locator... locators) throws ElementTimeoutException {
 
-		PageElement element = driverElementHandler.getElement(locators);
-		T abstractElement = adaptPageElementAs(elementClass, element);
+        PageElement element = driverElementHandler.getElement(locators);
+        T abstractElement = adaptPageElementAs(elementClass, element);
 
-		return abstractElement;
-	}
+        return abstractElement;
+    }
 
-	@Override
-	public <T extends AbstractElement> List<T> getElementsAs(Class<T> elementClass, Locator... locators) throws ElementTimeoutException {
+    @Override
+    public <T extends AbstractElement> List<T> getElementsAs(Class<T> elementClass, Locator... locators) throws ElementTimeoutException {
 
-		List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<T>();
 
-		List<PageElement> elements = driverElementHandler.getElements(locators);
-		for (PageElement pageElement : elements) {
+        List<PageElement> elements = driverElementHandler.getElements(locators);
+        for (PageElement pageElement : elements) {
 
-			T element = adaptPageElementAs(elementClass, pageElement);
-			list.add(element);
-		}
-		return list;
-	}
+            T element = adaptPageElementAs(elementClass, pageElement);
+            list.add(element);
+        }
+        return list;
+    }
 
-	@Override
-	public String getElement(Locator... locators) throws ElementTimeoutException {
+    @Override
+    public String getElement(Locator... locators) throws ElementTimeoutException {
 
-		Label label = getElementAs(Label.class, locators);
-		String text = label.getText();
+        Label label = getElementAs(Label.class, locators);
+        String text = label.getText();
 
-		return text;
-	}
+        return text;
+    }
 
-	@Override
-	public List<String> getElements(Locator... locators) throws ElementTimeoutException {
+    @Override
+    public List<String> getElements(Locator... locators) throws ElementTimeoutException {
 
-		List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<>();
 
-		List<Label> labels = getElementsAs(Label.class, locators);
-		for (Label label : labels) {
-			list.add(label.getText());
-		}
+        List<Label> labels = getElementsAs(Label.class, locators);
+        for (Label label : labels) {
+            list.add(label.getText());
+        }
 
-		return list;
-	}
+        return list;
+    }
 
-	public <T extends AbstractElement> T adaptPageElementAs(Class<T> elementClass, PageElement pageElement) {
+    public <T extends AbstractElement> T adaptPageElementAs(Class<T> elementClass, PageElement pageElement) {
 
-		AbstractElementHandler elementHandler = newElementHandler(pageElement);
-		T abstractElement = newAbstractElement(elementClass, elementHandler, pageElement);
+        AbstractElementHandler elementHandler = newElementHandler(pageElement);
+        T abstractElement = newAbstractElement(elementClass, elementHandler, pageElement);
 
-		return abstractElement;
-	}
+        return abstractElement;
+    }
 
-	public AbstractElementFactory newElementFactory(PageElement pageElement) {
+    public AbstractElementFactory newElementFactory(PageElement pageElement) {
 
-		AbstractElementFactory elementFactory = (AbstractElementFactory) newElementHandler(pageElement);
+        AbstractElementFactory elementFactory = (AbstractElementFactory) newElementHandler(pageElement);
 
-		return elementFactory;
-	}
+        return elementFactory;
+    }
 
-	private AbstractElementHandler newElementHandler(PageElement pageElement) {
+    private AbstractElementHandler newElementHandler(PageElement pageElement) {
 
-		DriverElementHandler basicHandler = new DriverElementHandler(driverElementHandler, pageElement);
-		AbstractElementHandlerImpl elementHandler = new AbstractElementHandlerImpl(basicHandler, elementInjector);
+        DriverElementHandler basicHandler = new DriverElementHandler(driverElementHandler, pageElement);
+        AbstractElementHandlerImpl elementHandler = new AbstractElementHandlerImpl(basicHandler, elementInjector);
 
-		return elementHandler;
-	}
+        return elementHandler;
+    }
 
-	private <T extends AbstractElement> T newAbstractElement(Class<T> elementClass, AbstractElementHandler elementHandler, PageElement pageElement) {
-		try {
-			T newInstance = elementClass.newInstance();
+    private <T extends AbstractElement> T newAbstractElement(Class<T> elementClass, AbstractElementHandler elementHandler, PageElement pageElement) {
+        try {
+            T newInstance = elementClass.newInstance();
 
-			Method method = AbstractElement.class.getDeclaredMethod("setAbstractElement", AbstractElementHandler.class, ElementInjector.class, PageElement.class);
+            Method method = AbstractElement.class.getDeclaredMethod("setAbstractElement", AbstractElementHandler.class, ElementInjector.class, PageElement.class);
 
-			boolean isAccessible = method.isAccessible();
+            boolean isAccessible = method.isAccessible();
 
-			method.setAccessible(true);
-			method.invoke(newInstance, elementHandler, elementInjector, pageElement);
-			method.setAccessible(isAccessible);
+            method.setAccessible(true);
+            method.invoke(newInstance, elementHandler, elementInjector, pageElement);
+            method.setAccessible(isAccessible);
 
-			ValueRetriever elementValueRetriever = new PageElementValueRetriever(elementHandler);
-			elementInjector.autowireLocators(elementValueRetriever, newInstance);
+            ValueRetriever elementValueRetriever = new PageElementValueRetriever(elementHandler);
+            elementInjector.autowireLocators(elementValueRetriever, newInstance);
 
-			callAfterPropertiesSet(newInstance);
+            callAfterPropertiesSet(newInstance);
 
-			return newInstance;
+            return newInstance;
 
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
-	}
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
-	private <T extends AbstractElement> void callAfterPropertiesSet(T element) {
+    private <T extends AbstractElement> void callAfterPropertiesSet(T element) {
 
-		Class<? extends AbstractElement> elementClass = element.getClass();
-		Method afterProperties = null;
+        Class<? extends AbstractElement> elementClass = element.getClass();
+        Method afterProperties = null;
 
-		while (elementClass != null && afterProperties == null) {
-			try {
-				afterProperties = elementClass.getDeclaredMethod("afterPropertiesSet");
-			} catch (NoSuchMethodException e) {
+        while (elementClass != null && afterProperties == null) {
+            try {
+                afterProperties = elementClass.getDeclaredMethod("afterPropertiesSet");
+            } catch (NoSuchMethodException e) {
 
-				@SuppressWarnings("unchecked")
-				Class<? extends AbstractElement> superClass = (Class<? extends AbstractElement>) elementClass.getSuperclass();
-				elementClass = superClass;
-			}
-		}
-		if (afterProperties != null) {
+                @SuppressWarnings("unchecked")
+                Class<? extends AbstractElement> superClass = (Class<? extends AbstractElement>) elementClass.getSuperclass();
+                elementClass = superClass;
+            }
+        }
+        if (afterProperties != null) {
 
-			try {
-				boolean methodAccessible = afterProperties.isAccessible();
-				afterProperties.setAccessible(true);
+            try {
+                boolean methodAccessible = afterProperties.isAccessible();
+                afterProperties.setAccessible(true);
 
-				afterProperties.invoke(element);
-				afterProperties.setAccessible(methodAccessible);
+                afterProperties.invoke(element);
+                afterProperties.setAccessible(methodAccessible);
 
-			} catch (Exception e) {
-				throw new IllegalStateException(e);
-			}
-		}
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
 
-	}
+    }
 
-	@Override
-	public PageElement getPageElement(Locator... locators) throws ElementTimeoutException {
+    @Override
+    public PageElement getPageElement(Locator... locators) throws ElementTimeoutException {
 
-		PageElement element = driverElementHandler.getElement(locators);
+        PageElement element = driverElementHandler.getElement(locators);
 
-		return element;
-	}
+        return element;
+    }
 
-	@Override
-	public List<PageElement> getPageElements(Locator... locators) throws ElementTimeoutException {
+    @Override
+    public List<PageElement> getPageElements(Locator... locators) throws ElementTimeoutException {
 
-		List<PageElement> elements = driverElementHandler.getElements(locators);
+        List<PageElement> elements = driverElementHandler.getElements(locators);
 
-		return elements;
-	}
+        return elements;
+    }
 }

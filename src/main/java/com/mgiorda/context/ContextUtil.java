@@ -9,75 +9,75 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public final class ContextUtil {
 
-	private ContextUtil() {
+    private ContextUtil() {
 
-	}
+    }
 
-	public static void initContext(ApplicationContext applicationContext, Object target) {
+    public static void initContext(ApplicationContext applicationContext, Object target) {
 
-		String[] locations = ContextUtil.getContextLocations(target.getClass());
-		if (locations.length != 0) {
-			applicationContext = new ClassPathXmlApplicationContext(locations, applicationContext);
-		}
+        String[] locations = ContextUtil.getContextLocations(target.getClass());
+        if (locations.length != 0) {
+            applicationContext = new ClassPathXmlApplicationContext(locations, applicationContext);
+        }
 
-		Properties defaultProperties = ContextUtil.getDefaultProperties(target.getClass());
-		if (defaultProperties != null) {
-			SpringUtil.addProperties(applicationContext, defaultProperties);
-		}
+        Properties defaultProperties = ContextUtil.getDefaultProperties(target.getClass());
+        if (defaultProperties != null) {
+            SpringUtil.addProperties(applicationContext, defaultProperties);
+        }
 
-		ContextUtil.addPropertiesFromAnnotation(target.getClass(), applicationContext);
+        ContextUtil.addPropertiesFromAnnotation(target.getClass(), applicationContext);
 
-		SpringUtil.autowireBean(applicationContext, target);
-	}
+        SpringUtil.autowireBean(applicationContext, target);
+    }
 
-	public static String[] getContextLocations(Class<?> targetClass) {
+    public static String[] getContextLocations(Class<?> targetClass) {
 
-		String[] contextLocations = {};
+        String[] contextLocations = {};
 
-		Context annotation = targetClass.getAnnotation(Context.class);
-		if (annotation != null) {
-			contextLocations = annotation.value();
+        Context annotation = targetClass.getAnnotation(Context.class);
+        if (annotation != null) {
+            contextLocations = annotation.value();
 
-			if (contextLocations.length == 0) {
+            if (contextLocations.length == 0) {
 
-				String path = targetClass.getName().replaceAll("\\.", "/");
-				String contextFile = "classpath*:" + path + "-context.xml";
+                String path = targetClass.getName().replaceAll("\\.", "/");
+                String contextFile = "classpath*:" + path + "-context.xml";
 
-				contextLocations = new String[] { contextFile };
-			}
-		}
+                contextLocations = new String[] { contextFile };
+            }
+        }
 
-		return contextLocations;
-	}
+        return contextLocations;
+    }
 
-	public static Properties getDefaultProperties(Class<?> targetClass) {
+    public static Properties getDefaultProperties(Class<?> targetClass) {
 
-		Properties properties = null;
+        Properties properties = null;
 
-		InputStream resource = targetClass.getResourceAsStream(targetClass.getSimpleName() + ".properties");
-		if (resource != null) {
-			properties = new Properties();
-			try {
-				properties.load(resource);
-			} catch (IOException e) {
-				throw new IllegalStateException(e);
-			}
-		}
+        InputStream resource = targetClass.getResourceAsStream(targetClass.getSimpleName() + ".properties");
+        if (resource != null) {
+            properties = new Properties();
+            try {
+                properties.load(resource);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
 
-		return properties;
-	}
+        return properties;
+    }
 
-	public static void addPropertiesFromAnnotation(Class<?> targetClass, ApplicationContext applicationContext) {
+    public static void addPropertiesFromAnnotation(Class<?> targetClass, ApplicationContext applicationContext) {
 
-		com.mgiorda.context.Properties annotation = targetClass.getAnnotation(com.mgiorda.context.Properties.class);
-		if (annotation != null) {
+        com.mgiorda.context.Properties annotation = targetClass.getAnnotation(com.mgiorda.context.Properties.class);
+        if (annotation != null) {
 
-			String[] values = annotation.value();
+            String[] values = annotation.value();
 
-			for (String propertySource : values) {
-				SpringUtil.addPropertiesFile(applicationContext, propertySource);
-			}
-		}
-	}
+            for (String propertySource : values) {
+                SpringUtil.addPropertiesFile(applicationContext, propertySource);
+            }
+        }
+    }
 
 }

@@ -12,30 +12,30 @@ import com.mgiorda.testng.run.FileSuiteRunner;
 
 public class ContextSuiteRunner extends FileSuiteRunner<SuiteConfiguration> {
 
-	@Override
-	public void runSuite(SuiteConfiguration suiteConfig) {
+    @Override
+    public void runSuite(SuiteConfiguration suiteConfig) {
 
-		if (suiteConfig == null) {
-			throw new IllegalStateException("Suite config cannot be null");
-		}
+        if (suiteConfig == null) {
+            throw new IllegalStateException("Suite config cannot be null");
+        }
 
-		String contextFile = suiteConfig.getContext();
-		ApplicationContext appContext = new GenericXmlApplicationContext(contextFile);
+        String contextFile = suiteConfig.getContext();
+        ApplicationContext appContext = new GenericXmlApplicationContext(contextFile);
 
-		Properties properties = suiteConfig.getProperties();
-		if (properties != null) {
-			SpringUtil.addProperties(appContext, properties);
-		}
+        Properties properties = suiteConfig.getProperties();
+        if (properties != null) {
+            SpringUtil.addProperties(appContext, properties);
+        }
 
-		String suiteFile = suiteConfig.getFile();
-		XmlSuite xmlSuite = getXmlSuite(suiteFile);
+        String suiteFile = suiteConfig.getFile();
+        XmlSuite xmlSuite = getXmlSuite(suiteFile);
 
-		String suiteContextName = xmlSuite.getName() + String.format(" (%s)", contextFile.replaceAll("/", " "));
-		xmlSuite.setName(suiteContextName);
+        String suiteContextName = xmlSuite.getName() + String.format(" (%s)", contextFile.replaceAll("/", " "));
+        xmlSuite.setName(suiteContextName);
 
-		SuiteContexts.registerSuiteContext(xmlSuite, appContext);
+        SuiteContexts.registerSuiteContext(xmlSuite, appContext);
 
-		String outputDirectory = suiteConfig.getOutputDirectory();
-		runTestNg(xmlSuite, outputDirectory);
-	}
+        String outputDirectory = suiteConfig.getOutputDirectory();
+        runTestNg(xmlSuite, outputDirectory);
+    }
 }

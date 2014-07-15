@@ -7,10 +7,10 @@ import com.mgiorda.page.elements.Link;
 
 public class GoogleDoodle extends AbstractElement {
 
-	@Locate(@By(xpath = "./a"))
-	private Link link;
+    @Locate(@By(xpath = "./a"))
+    private Link link;
 
-	public void click() {
-		link.click();
-	}
+    public void click() {
+        link.click();
+    }
 }

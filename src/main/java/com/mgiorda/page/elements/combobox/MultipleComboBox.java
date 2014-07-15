@@ -5,68 +5,68 @@ import java.util.List;
 
 public class MultipleComboBox extends AbstractComboBox {
 
-	protected void afterPropertiesSet() {
+    protected void afterPropertiesSet() {
 
-		verifyTagName("select");
-		verifyAttributePresence("multiple", true);
-	}
+        verifyTagName("select");
+        verifyAttributePresence("multiple", true);
+    }
 
-	public List<ComboBoxOption> getSelectedOptions() {
+    public List<ComboBoxOption> getSelectedOptions() {
 
-		List<ComboBoxOption> selected = new ArrayList<>();
+        List<ComboBoxOption> selected = new ArrayList<>();
 
-		for (ComboBoxOption option : options) {
-			if (option.isSelected()) {
-				selected.add(option);
-			}
-		}
-		return selected;
-	}
+        for (ComboBoxOption option : options) {
+            if (option.isSelected()) {
+                selected.add(option);
+            }
+        }
+        return selected;
+    }
 
-	public List<String> getSelectedValues() {
+    public List<String> getSelectedValues() {
 
-		List<String> values = new ArrayList<>();
+        List<String> values = new ArrayList<>();
 
-		List<ComboBoxOption> selectedOptions = getSelectedOptions();
-		for (ComboBoxOption selectedOption : selectedOptions) {
-			String value = selectedOption.getValue();
-			values.add(value);
-		}
+        List<ComboBoxOption> selectedOptions = getSelectedOptions();
+        for (ComboBoxOption selectedOption : selectedOptions) {
+            String value = selectedOption.getValue();
+            values.add(value);
+        }
 
-		return values;
-	}
+        return values;
+    }
 
-	public List<String> getSelectedTexts() {
+    public List<String> getSelectedTexts() {
 
-		List<String> texts = new ArrayList<>();
+        List<String> texts = new ArrayList<>();
 
-		List<ComboBoxOption> selectedOptions = getSelectedOptions();
-		for (ComboBoxOption selectedOption : selectedOptions) {
-			String text = selectedOption.getText();
-			texts.add(text);
-		}
+        List<ComboBoxOption> selectedOptions = getSelectedOptions();
+        for (ComboBoxOption selectedOption : selectedOptions) {
+            String text = selectedOption.getText();
+            texts.add(text);
+        }
 
-		return texts;
-	}
+        return texts;
+    }
 
-	public void deselectValue(String optionValue) {
+    public void deselectValue(String optionValue) {
 
-		ComboBoxOption option = getOptionByValue(optionValue);
-		option.setSelected(false);
-	}
+        ComboBoxOption option = getOptionByValue(optionValue);
+        option.setSelected(false);
+    }
 
-	public void deselectText(String optionText) {
+    public void deselectText(String optionText) {
 
-		ComboBoxOption option = getOptionByText(optionText);
-		option.setSelected(false);
-	}
+        ComboBoxOption option = getOptionByText(optionText);
+        option.setSelected(false);
+    }
 
-	public void deselectAll() {
+    public void deselectAll() {
 
-		List<ComboBoxOption> selectedOptions = getSelectedOptions();
-		for (ComboBoxOption selectedOption : selectedOptions) {
+        List<ComboBoxOption> selectedOptions = getSelectedOptions();
+        for (ComboBoxOption selectedOption : selectedOptions) {
 
-			selectedOption.setSelected(false);
-		}
-	}
+            selectedOption.setSelected(false);
+        }
+    }
 }

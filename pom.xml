@@ -102,4 +102,13 @@
 		</repository>
 	</distributionManagement>
 
+	<profiles>
+		<profile>
+			<id>sonar</id>
+			<properties>
+				<sonar.host.url>http://localhost:8090/sonar</sonar.host.url>
+			</properties>
+		</profile>
+	</profiles>
+
 </project>

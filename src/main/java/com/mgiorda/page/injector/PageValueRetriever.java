@@ -9,42 +9,42 @@ import com.mgiorda.page.PageElementHandler;
 
 public class PageValueRetriever implements ValueRetriever {
 
-	private final PageElementHandler pageHandler;
+    private final PageElementHandler pageHandler;
 
-	public PageValueRetriever(PageElementHandler pageHandler) {
-		this.pageHandler = pageHandler;
-	}
+    public PageValueRetriever(PageElementHandler pageHandler) {
+        this.pageHandler = pageHandler;
+    }
 
-	@Override
-	public Object getValueForLocators(Field field, Locator[] locators) {
+    @Override
+    public Object getValueForLocators(Field field, Locator[] locators) {
 
-		Object value = getPageForField(field, locators);
+        Object value = getPageForField(field, locators);
 
-		if (value == null) {
-			AbstractElementHandler elementHandler = (AbstractElementHandler) pageHandler;
+        if (value == null) {
+            AbstractElementHandler elementHandler = (AbstractElementHandler) pageHandler;
 
-			ValueRetriever elementRetriever = new ElementValueRetriever(elementHandler);
-			value = elementRetriever.getValueForLocators(field, locators);
-		}
+            ValueRetriever elementRetriever = new ElementValueRetriever(elementHandler);
+            value = elementRetriever.getValueForLocators(field, locators);
+        }
 
-		return value;
-	}
+        return value;
+    }
 
-	private AbstractPage getPageForField(Field field, Locator[] locators) {
+    private AbstractPage getPageForField(Field field, Locator[] locators) {
 
-		AbstractPage page = null;
+        AbstractPage page = null;
 
-		Class<?> fieldType = field.getType();
+        Class<?> fieldType = field.getType();
 
-		if (AbstractPage.class.isAssignableFrom(fieldType)) {
+        if (AbstractPage.class.isAssignableFrom(fieldType)) {
 
-			@SuppressWarnings("unchecked")
-			Class<? extends AbstractPage> pageClass = (Class<? extends AbstractPage>) fieldType;
+            @SuppressWarnings("unchecked")
+            Class<? extends AbstractPage> pageClass = (Class<? extends AbstractPage>) fieldType;
 
-			page = pageHandler.getPageAs(pageClass, locators);
-		}
+            page = pageHandler.getPageAs(pageClass, locators);
+        }
 
-		return page;
-	}
+        return page;
+    }
 
 }

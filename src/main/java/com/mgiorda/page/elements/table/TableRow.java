@@ -15,132 +15,132 @@ import com.mgiorda.page.elements.TextField;
 
 public class TableRow extends AbstractElement {
 
-	@Locate(@By(tagName = "td"))
-	private List<PageElement> dataColumns;
+    @Locate(@By(tagName = "td"))
+    private List<PageElement> dataColumns;
 
-	private TableHeaders headers;
+    private TableHeaders headers;
 
-	public List<String> getValues() {
+    public List<String> getValues() {
 
-		List<String> values = new ArrayList<>();
-		for (int i = 0; i < dataColumns.size(); i++) {
+        List<String> values = new ArrayList<>();
+        for (int i = 0; i < dataColumns.size(); i++) {
 
-			String value = getValue(i);
-			values.add(value);
-		}
+            String value = getValue(i);
+            values.add(value);
+        }
 
-		return values;
-	}
+        return values;
+    }
 
-	public String getValue(int column) {
+    public String getValue(int column) {
 
-		PageElement element = getPageElement(column);
-		String value = element.getText();
+        PageElement element = getPageElement(column);
+        String value = element.getText();
 
-		return value;
-	}
+        return value;
+    }
 
-	public String getValue(String columnName) {
+    public String getValue(String columnName) {
 
-		PageElement element = getPageElement(columnName);
-		String value = element.getText();
+        PageElement element = getPageElement(columnName);
+        String value = element.getText();
 
-		return value;
-	}
+        return value;
+    }
 
-	public <T extends AbstractElement> T getValue(int column, Class<T> elementClass) {
+    public <T extends AbstractElement> T getValue(int column, Class<T> elementClass) {
 
-		PageElement element = this.getPageElement(column);
-		AbstractElementFactory elmentFactory = (AbstractElementFactory) elementHandler;
+        PageElement element = this.getPageElement(column);
+        AbstractElementFactory elmentFactory = (AbstractElementFactory) elementHandler;
 
-		T value = elmentFactory.adaptPageElementAs(elementClass, element);
+        T value = elmentFactory.adaptPageElementAs(elementClass, element);
 
-		return value;
-	}
+        return value;
+    }
 
-	public <T extends AbstractElement> T getValue(String columnName, Class<T> elementClass) {
+    public <T extends AbstractElement> T getValue(String columnName, Class<T> elementClass) {
 
-		PageElement element = getPageElement(columnName);
-		AbstractElementFactory elmentFactory = (AbstractElementFactory) elementHandler;
+        PageElement element = getPageElement(columnName);
+        AbstractElementFactory elmentFactory = (AbstractElementFactory) elementHandler;
 
-		T value = elmentFactory.adaptPageElementAs(elementClass, element);
+        T value = elmentFactory.adaptPageElementAs(elementClass, element);
 
-		return value;
-	}
+        return value;
+    }
 
-	public Link getInnerLink(int column) {
+    public Link getInnerLink(int column) {
 
-		PageElement element = this.getPageElement(column);
-		Link link = adaptInnerElement(element, Link.class, Locator.byTagName("a"));
+        PageElement element = this.getPageElement(column);
+        Link link = adaptInnerElement(element, Link.class, Locator.byTagName("a"));
 
-		return link;
-	}
+        return link;
+    }
 
-	public Link getInnerLink(String columnName) {
+    public Link getInnerLink(String columnName) {
 
-		PageElement element = getPageElement(columnName);
-		Link link = adaptInnerElement(element, Link.class, Locator.byTagName("a"));
+        PageElement element = getPageElement(columnName);
+        Link link = adaptInnerElement(element, Link.class, Locator.byTagName("a"));
 
-		return link;
-	}
+        return link;
+    }
 
-	public TextField getInnerTextField(int column) {
+    public TextField getInnerTextField(int column) {
 
-		PageElement element = this.getPageElement(column);
-		TextField textField = adaptInnerElement(element, TextField.class, Locator.byXpath("input[@type = \"text\"]"));
+        PageElement element = this.getPageElement(column);
+        TextField textField = adaptInnerElement(element, TextField.class, Locator.byXpath("input[@type = \"text\"]"));
 
-		return textField;
-	}
+        return textField;
+    }
 
-	public TextField getInnerTextField(String columnName) {
+    public TextField getInnerTextField(String columnName) {
 
-		PageElement element = getPageElement(columnName);
-		TextField textField = adaptInnerElement(element, TextField.class, Locator.byXpath("input[@type = \"text\"]"));
+        PageElement element = getPageElement(columnName);
+        TextField textField = adaptInnerElement(element, TextField.class, Locator.byXpath("input[@type = \"text\"]"));
 
-		return textField;
-	}
+        return textField;
+    }
 
-	public int getColumnsSize() {
-		return dataColumns.size();
-	}
+    public int getColumnsSize() {
+        return dataColumns.size();
+    }
 
-	void setTableHeaders(TableHeaders headers) {
-		this.headers = headers;
-	}
+    void setTableHeaders(TableHeaders headers) {
+        this.headers = headers;
+    }
 
-	protected List<PageElement> getColumns() {
-		return Collections.unmodifiableList(dataColumns);
-	}
+    protected List<PageElement> getColumns() {
+        return Collections.unmodifiableList(dataColumns);
+    }
 
-	protected PageElement getPageElement(int column) {
+    protected PageElement getPageElement(int column) {
 
-		PageElement element = dataColumns.get(column);
+        PageElement element = dataColumns.get(column);
 
-		return element;
-	}
+        return element;
+    }
 
-	protected PageElement getPageElement(String columnName) {
+    protected PageElement getPageElement(String columnName) {
 
-		if (headers == null) {
-			throw new IllegalStateException(String.format("Cannot get value for columnName '%s': table headers are not defined", columnName));
-		}
+        if (headers == null) {
+            throw new IllegalStateException(String.format("Cannot get value for columnName '%s': table headers are not defined", columnName));
+        }
 
-		int column = headers.getIndexNamed(columnName);
+        int column = headers.getIndexNamed(columnName);
 
-		PageElement element = this.getPageElement(column);
+        PageElement element = this.getPageElement(column);
 
-		return element;
-	}
+        return element;
+    }
 
-	private <T extends AbstractElement> T adaptInnerElement(PageElement parentElement, Class<T> elementClass, Locator... locators) {
+    private <T extends AbstractElement> T adaptInnerElement(PageElement parentElement, Class<T> elementClass, Locator... locators) {
 
-		AbstractElementFactory elementFactory = (AbstractElementFactory) elementHandler;
-		AbstractElementFactory subElementFactory = elementFactory.newElementFactory(parentElement);
+        AbstractElementFactory elementFactory = (AbstractElementFactory) elementHandler;
+        AbstractElementFactory subElementFactory = elementFactory.newElementFactory(parentElement);
 
-		PageElement innerElement = subElementFactory.getPageElement(locators);
-		T inner = subElementFactory.adaptPageElementAs(elementClass, innerElement);
+        PageElement innerElement = subElementFactory.getPageElement(locators);
+        T inner = subElementFactory.adaptPageElementAs(elementClass, innerElement);
 
-		return inner;
-	}
+        return inner;
+    }
 
 }

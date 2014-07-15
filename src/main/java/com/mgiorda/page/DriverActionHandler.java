@@ -2,18 +2,18 @@ package com.mgiorda.page;
 
 public interface DriverActionHandler {
 
-	String getTitle();
+    String getTitle();
 
-	String getCurrentUrl();
+    String getCurrentUrl();
 
-	String getDriverName();
+    String getDriverName();
 
-	void quit();
+    void quit();
 
-	void goToUrl(String url);
+    void goToUrl(String url);
 
-	void waitForPageToLoad();
+    void waitForPageToLoad();
 
-	void takeScreenShot(String filePath);
+    void takeScreenShot(String filePath);
 
 }

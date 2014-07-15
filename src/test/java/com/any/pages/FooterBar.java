@@ -9,7 +9,7 @@ import com.mgiorda.page.elements.Link;
 
 public class FooterBar extends AbstractElement {
 
-	@Locate(@By(xpath = "./div/span"))
-	private List<Link> links;
+    @Locate(@By(xpath = "./div/span"))
+    private List<Link> links;
 
 }

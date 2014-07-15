@@ -9,93 +9,93 @@ import org.testng.ITestResult;
 
 public class TestEventDispatcher {
 
-	private static final Map<AbstractTest, TestEventDispatcher> eventDispatchers = new HashMap<>();
+    private static final Map<AbstractTest, TestEventDispatcher> eventDispatchers = new HashMap<>();
 
-	private List<TestSubscriber> instanceSubscribers = new ArrayList<>();
-	private Map<ITestResult, List<TestSubscriber>> resultSubscribers = new HashMap<>();
+    private List<TestSubscriber> instanceSubscribers = new ArrayList<>();
+    private Map<ITestResult, List<TestSubscriber>> resultSubscribers = new HashMap<>();
 
-	public synchronized void subscribe(TestSubscriber subscriber) {
+    public synchronized void subscribe(TestSubscriber subscriber) {
 
-		ITestResult testResult = CurrentTestRun.getTestResult();
-		if (testResult != null) {
+        ITestResult testResult = CurrentTestRun.getTestResult();
+        if (testResult != null) {
 
-			List<TestSubscriber> subscribers = resultSubscribers.get(testResult);
-			if (subscribers == null) {
-				subscribers = new ArrayList<>();
-				resultSubscribers.put(testResult, subscribers);
-			}
-			subscribers.add(subscriber);
-		}
-		instanceSubscribers.add(subscriber);
-	}
+            List<TestSubscriber> subscribers = resultSubscribers.get(testResult);
+            if (subscribers == null) {
+                subscribers = new ArrayList<>();
+                resultSubscribers.put(testResult, subscribers);
+            }
+            subscribers.add(subscriber);
+        }
+        instanceSubscribers.add(subscriber);
+    }
 
-	void onClassStart(AbstractTest test) {
+    void onClassStart(AbstractTest test) {
 
-		for (TestSubscriber subscriber : instanceSubscribers) {
-			subscriber.onClassStart(test);
-		}
-	}
+        for (TestSubscriber subscriber : instanceSubscribers) {
+            subscriber.onClassStart(test);
+        }
+    }
 
-	void onTestStart(ITestResult result) {
+    void onTestStart(ITestResult result) {
 
-		List<TestSubscriber> subscribers = resultSubscribers.get(result);
+        List<TestSubscriber> subscribers = resultSubscribers.get(result);
 
-		if (subscribers != null) {
-			for (TestSubscriber subscriber : subscribers) {
-				subscriber.onTestStart(result);
-			}
-		}
+        if (subscribers != null) {
+            for (TestSubscriber subscriber : subscribers) {
+                subscriber.onTestStart(result);
+            }
+        }
 
-		for (TestSubscriber subscriber : instanceSubscribers) {
-			subscriber.onTestStart(result);
-		}
-	}
+        for (TestSubscriber subscriber : instanceSubscribers) {
+            subscriber.onTestStart(result);
+        }
+    }
 
-	void onTestFinish(ITestResult result) {
+    void onTestFinish(ITestResult result) {
 
-		List<TestSubscriber> subscribers = resultSubscribers.get(result);
+        List<TestSubscriber> subscribers = resultSubscribers.get(result);
 
-		if (subscribers != null) {
-			for (TestSubscriber subscriber : subscribers) {
-				subscriber.onTestFinish(result);
-			}
-		}
+        if (subscribers != null) {
+            for (TestSubscriber subscriber : subscribers) {
+                subscriber.onTestFinish(result);
+            }
+        }
 
-		resultSubscribers.remove(result);
+        resultSubscribers.remove(result);
 
-		for (TestSubscriber subscriber : instanceSubscribers) {
-			subscriber.onTestFinish(result);
-		}
-	}
+        for (TestSubscriber subscriber : instanceSubscribers) {
+            subscriber.onTestFinish(result);
+        }
+    }
 
-	void onClassFinish(AbstractTest test) {
+    void onClassFinish(AbstractTest test) {
 
-		for (TestSubscriber subscriber : instanceSubscribers) {
-			subscriber.onClassFinish(test);
-		}
-	}
+        for (TestSubscriber subscriber : instanceSubscribers) {
+            subscriber.onClassFinish(test);
+        }
+    }
 
-	public static TestEventDispatcher getEventDispatcher() {
+    public static TestEventDispatcher getEventDispatcher() {
 
-		AbstractTest testInstance = CurrentTestRun.getTestInstance();
-		if (testInstance == null) {
-			throw new IllegalStateException("Cannot get TestEventDispatcher - Not running under any AbstractTest instance");
-		}
+        AbstractTest testInstance = CurrentTestRun.getTestInstance();
+        if (testInstance == null) {
+            throw new IllegalStateException("Cannot get TestEventDispatcher - Not running under any AbstractTest instance");
+        }
 
-		TestEventDispatcher testEventDispatcher = getEventDispatcher(testInstance);
+        TestEventDispatcher testEventDispatcher = getEventDispatcher(testInstance);
 
-		return testEventDispatcher;
-	}
+        return testEventDispatcher;
+    }
 
-	public static TestEventDispatcher getEventDispatcher(AbstractTest testInstance) {
+    public static TestEventDispatcher getEventDispatcher(AbstractTest testInstance) {
 
-		TestEventDispatcher testEventDispatcher = eventDispatchers.get(testInstance);
-		if (testEventDispatcher == null) {
+        TestEventDispatcher testEventDispatcher = eventDispatchers.get(testInstance);
+        if (testEventDispatcher == null) {
 
-			testEventDispatcher = new TestEventDispatcher();
-			eventDispatchers.put(testInstance, testEventDispatcher);
-		}
+            testEventDispatcher = new TestEventDispatcher();
+            eventDispatchers.put(testInstance, testEventDispatcher);
+        }
 
-		return testEventDispatcher;
-	}
+        return testEventDispatcher;
+    }
 }

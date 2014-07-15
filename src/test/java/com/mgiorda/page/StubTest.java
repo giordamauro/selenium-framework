@@ -13,19 +13,19 @@ import com.mgiorda.context.Properties;
 @Context
 public class StubTest extends AbstractTest {
 
-	@Value("${${suite.env}.host}")
-	private String host;
+    @Value("${${suite.env}.host}")
+    private String host;
 
-	@Test(invocationCount = 3, threadPoolSize = 2)
-	public void test() {
+    @Test(invocationCount = 3, threadPoolSize = 2)
+    public void test() {
 
-		SampleGooglePage page = new SampleGooglePage();
+        SampleGooglePage page = new SampleGooglePage();
 
-		logger.info("Created Google page");
+        logger.info("Created Google page");
 
-		// page.clickOnDoodle();
-		page.search(host);
+        // page.clickOnDoodle();
+        page.search(host);
 
-		Assert.assertEquals(page.getTitle(), "Google");
-	}
+        Assert.assertEquals(page.getTitle(), "Google");
+    }
 }

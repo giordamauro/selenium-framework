@@ -2,35 +2,35 @@ package com.mgiorda.page.elements.combobox;
 
 public class ComboBox extends AbstractComboBox {
 
-	protected void afterPropertiesSet() {
+    protected void afterPropertiesSet() {
 
-		verifyTagName("select");
-		verifyAttributePresence("multiple", false);
-	}
+        verifyTagName("select");
+        verifyAttributePresence("multiple", false);
+    }
 
-	public ComboBoxOption getSelectedOption() {
+    public ComboBoxOption getSelectedOption() {
 
-		for (ComboBoxOption option : options) {
-			if (option.isSelected()) {
-				return option;
-			}
-		}
-		throw new IllegalStateException("There isn't any option selected");
-	}
+        for (ComboBoxOption option : options) {
+            if (option.isSelected()) {
+                return option;
+            }
+        }
+        throw new IllegalStateException("There isn't any option selected");
+    }
 
-	public String getSelectedValue() {
+    public String getSelectedValue() {
 
-		ComboBoxOption selectedOption = getSelectedOption();
-		String value = selectedOption.getValue();
+        ComboBoxOption selectedOption = getSelectedOption();
+        String value = selectedOption.getValue();
 
-		return value;
-	}
+        return value;
+    }
 
-	public String getSelectedText() {
+    public String getSelectedText() {
 
-		ComboBoxOption selectedOption = getSelectedOption();
-		String value = selectedOption.getText();
+        ComboBoxOption selectedOption = getSelectedOption();
+        String value = selectedOption.getText();
 
-		return value;
-	}
+        return value;
+    }
 }

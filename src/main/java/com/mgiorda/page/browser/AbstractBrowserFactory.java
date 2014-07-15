@@ -5,19 +5,19 @@ import org.springframework.beans.factory.FactoryBean;
 
 public abstract class AbstractBrowserFactory implements BrowserFactory, FactoryBean<WebDriver> {
 
-	@Override
-	public WebDriver getObject() throws Exception {
-		return newDriver();
-	}
+    @Override
+    public WebDriver getObject() throws Exception {
+        return newDriver();
+    }
 
-	@Override
-	public Class<?> getObjectType() {
-		return WebDriver.class;
-	}
+    @Override
+    public Class<?> getObjectType() {
+        return WebDriver.class;
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return false;
-	}
+    @Override
+    public boolean isSingleton() {
+        return false;
+    }
 
 }

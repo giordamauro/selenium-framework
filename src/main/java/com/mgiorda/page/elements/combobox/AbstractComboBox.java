@@ -9,77 +9,77 @@ import com.mgiorda.page.annotations.Locate;
 
 public abstract class AbstractComboBox extends AbstractElement {
 
-	@Locate(@By(tagName = "option"))
-	protected List<ComboBoxOption> options;
+    @Locate(@By(tagName = "option"))
+    protected List<ComboBoxOption> options;
 
-	public List<ComboBoxOption> getOptions() {
+    public List<ComboBoxOption> getOptions() {
 
-		return Collections.unmodifiableList(options);
-	}
+        return Collections.unmodifiableList(options);
+    }
 
-	public boolean existsOptionByValue(String optionValue) {
+    public boolean existsOptionByValue(String optionValue) {
 
-		ComboBoxOption option = getByValue(optionValue);
+        ComboBoxOption option = getByValue(optionValue);
 
-		return option != null;
-	}
+        return option != null;
+    }
 
-	public boolean existsOptionByText(String optionText) {
+    public boolean existsOptionByText(String optionText) {
 
-		ComboBoxOption option = getByText(optionText);
+        ComboBoxOption option = getByText(optionText);
 
-		return option != null;
-	}
+        return option != null;
+    }
 
-	public ComboBoxOption getOptionByValue(String optionValue) {
+    public ComboBoxOption getOptionByValue(String optionValue) {
 
-		ComboBoxOption option = getByValue(optionValue);
-		if (option == null) {
-			throw new IllegalStateException(String.format("Option with value '%s' does not exist in ComboBox", optionValue));
-		}
+        ComboBoxOption option = getByValue(optionValue);
+        if (option == null) {
+            throw new IllegalStateException(String.format("Option with value '%s' does not exist in ComboBox", optionValue));
+        }
 
-		return option;
-	}
+        return option;
+    }
 
-	public ComboBoxOption getOptionByText(String optionText) {
+    public ComboBoxOption getOptionByText(String optionText) {
 
-		ComboBoxOption option = getByText(optionText);
-		if (option == null) {
-			throw new IllegalStateException(String.format("Option with text '%s' does not exist in ComboBox", optionText));
-		}
+        ComboBoxOption option = getByText(optionText);
+        if (option == null) {
+            throw new IllegalStateException(String.format("Option with text '%s' does not exist in ComboBox", optionText));
+        }
 
-		return option;
-	}
+        return option;
+    }
 
-	public void selectValue(String optionValue) {
+    public void selectValue(String optionValue) {
 
-		ComboBoxOption option = getOptionByValue(optionValue);
-		option.setSelected(true);
-	}
+        ComboBoxOption option = getOptionByValue(optionValue);
+        option.setSelected(true);
+    }
 
-	public void selectText(String optionText) {
+    public void selectText(String optionText) {
 
-		ComboBoxOption option = getOptionByText(optionText);
-		option.setSelected(true);
-	}
+        ComboBoxOption option = getOptionByText(optionText);
+        option.setSelected(true);
+    }
 
-	protected ComboBoxOption getByValue(String optionValue) {
+    protected ComboBoxOption getByValue(String optionValue) {
 
-		for (ComboBoxOption option : options) {
-			if (option.getValue().equalsIgnoreCase(optionValue)) {
-				return option;
-			}
-		}
-		return null;
-	}
+        for (ComboBoxOption option : options) {
+            if (option.getValue().equalsIgnoreCase(optionValue)) {
+                return option;
+            }
+        }
+        return null;
+    }
 
-	protected ComboBoxOption getByText(String optionText) {
+    protected ComboBoxOption getByText(String optionText) {
 
-		for (ComboBoxOption option : options) {
-			if (option.getText().equalsIgnoreCase(optionText)) {
-				return option;
-			}
-		}
-		return null;
-	}
+        for (ComboBoxOption option : options) {
+            if (option.getText().equalsIgnoreCase(optionText)) {
+                return option;
+            }
+        }
+        return null;
+    }
 }

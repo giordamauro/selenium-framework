@@ -6,5 +6,5 @@ import com.mgiorda.page.Locator;
 
 public interface ValueRetriever {
 
-	Object getValueForLocators(Field field, Locator[] locators);
+    Object getValueForLocators(Field field, Locator[] locators);
 }

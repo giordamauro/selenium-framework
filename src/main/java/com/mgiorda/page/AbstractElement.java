@@ -8,101 +8,101 @@ import com.mgiorda.page.injector.ValueRetriever;
 
 public abstract class AbstractElement {
 
-	protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Log logger = LogFactory.getLog(this.getClass());
 
-	protected PageElement pageElement;
-	protected AbstractElementHandler elementHandler;
-	private ElementInjector elementInjector;
+    protected PageElement pageElement;
+    protected AbstractElementHandler elementHandler;
+    private ElementInjector elementInjector;
 
-	private Class<?> containerClass;
-	private String elementName;
+    private Class<?> containerClass;
+    private String elementName;
 
-	public AbstractElement() {
+    public AbstractElement() {
 
-	}
+    }
 
-	public void moveToElement() {
+    public void moveToElement() {
 
-		logger.info("Moving to element" + getNameInfo());
+        logger.info("Moving to element" + getNameInfo());
 
-		pageElement.moveToElement();
-	}
+        pageElement.moveToElement();
+    }
 
-	public void hover(long afterTimeMillis) {
+    public void hover(long afterTimeMillis) {
 
-		logger.info("Hovering over element" + getNameInfo());
+        logger.info("Hovering over element" + getNameInfo());
 
-		pageElement.hover(afterTimeMillis);
-	}
+        pageElement.hover(afterTimeMillis);
+    }
 
-	public boolean isVisible() {
+    public boolean isVisible() {
 
-		boolean visible = pageElement.isDisplayed();
+        boolean visible = pageElement.isDisplayed();
 
-		return visible;
-	}
+        return visible;
+    }
 
-	public void waitUntilVisible() {
-		pageElement.waitUntilVisible();
-	}
+    public void waitUntilVisible() {
+        pageElement.waitUntilVisible();
+    }
 
-	void setAbstractElement(AbstractElementHandler elementHandler, ElementInjector elementInjector, PageElement pageElement) {
+    void setAbstractElement(AbstractElementHandler elementHandler, ElementInjector elementInjector, PageElement pageElement) {
 
-		this.elementHandler = elementHandler;
-		this.elementInjector = elementInjector;
-		this.pageElement = pageElement;
-	}
+        this.elementHandler = elementHandler;
+        this.elementInjector = elementInjector;
+        this.pageElement = pageElement;
+    }
 
-	void setFieldName(Class<?> containerClass, String elementName) {
+    void setFieldName(Class<?> containerClass, String elementName) {
 
-		this.containerClass = containerClass;
-		this.elementName = elementName;
-	}
+        this.containerClass = containerClass;
+        this.elementName = elementName;
+    }
 
-	protected void fetchElement(String fieldName) {
+    protected void fetchElement(String fieldName) {
 
-		ValueRetriever elementValueRetriever = new PageElementValueRetriever(elementHandler);
-		elementInjector.autowireField(elementValueRetriever, this, fieldName);
-	}
+        ValueRetriever elementValueRetriever = new PageElementValueRetriever(elementHandler);
+        elementInjector.autowireField(elementValueRetriever, this, fieldName);
+    }
 
-	protected String getNameInfo() {
+    protected String getNameInfo() {
 
-		String message = "";
+        String message = "";
 
-		if (containerClass != null && elementName != null) {
+        if (containerClass != null && elementName != null) {
 
-			message = String.format(" '%s' in %s", elementName, containerClass.getName());
-		}
+            message = String.format(" '%s' in %s", elementName, containerClass.getName());
+        }
 
-		return message;
-	}
+        return message;
+    }
 
-	protected void verifyTagName(String expectedTagName) {
+    protected void verifyTagName(String expectedTagName) {
 
-		String tagName = pageElement.getTagName();
+        String tagName = pageElement.getTagName();
 
-		if (!tagName.equalsIgnoreCase(expectedTagName)) {
-			throw new IllegalStateException(String.format("Element tag name exception - Expected '%s' but found '%s'", expectedTagName, tagName));
-		}
-	}
+        if (!tagName.equalsIgnoreCase(expectedTagName)) {
+            throw new IllegalStateException(String.format("Element tag name exception - Expected '%s' but found '%s'", expectedTagName, tagName));
+        }
+    }
 
-	protected String verifyAttributePresence(String expectedAttribute, boolean presenceValue) {
+    protected String verifyAttributePresence(String expectedAttribute, boolean presenceValue) {
 
-		String attributeValue = pageElement.getAttribute(expectedAttribute);
+        String attributeValue = pageElement.getAttribute(expectedAttribute);
 
-		if ((attributeValue == null && presenceValue) || (attributeValue != null && !presenceValue)) {
-			throw new IllegalStateException(String.format("Element attribute presence exception - Expected '%s' present '%s'", expectedAttribute, presenceValue));
-		}
+        if ((attributeValue == null && presenceValue) || (attributeValue != null && !presenceValue)) {
+            throw new IllegalStateException(String.format("Element attribute presence exception - Expected '%s' present '%s'", expectedAttribute, presenceValue));
+        }
 
-		return attributeValue;
-	}
+        return attributeValue;
+    }
 
-	protected void verifyAttributeValue(String expectedAttribute, String expectedValue) {
+    protected void verifyAttributeValue(String expectedAttribute, String expectedValue) {
 
-		String attributeValue = verifyAttributePresence(expectedAttribute, true);
+        String attributeValue = verifyAttributePresence(expectedAttribute, true);
 
-		if (!attributeValue.equalsIgnoreCase(expectedValue)) {
-			throw new IllegalStateException(String.format("Element attribute value exception - Expected '%s' but found '%s'", expectedAttribute, expectedValue));
-		}
-	}
+        if (!attributeValue.equalsIgnoreCase(expectedValue)) {
+            throw new IllegalStateException(String.format("Element attribute value exception - Expected '%s' but found '%s'", expectedAttribute, expectedValue));
+        }
+    }
 }

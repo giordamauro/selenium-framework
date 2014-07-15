@@ -4,22 +4,22 @@ import com.mgiorda.page.AbstractElement;
 
 public class Checkbox extends AbstractElement {
 
-	protected void afterPropertiesSet() {
-		verifyTagName("input");
-	}
+    protected void afterPropertiesSet() {
+        verifyTagName("input");
+    }
 
-	public void setSelected(boolean value) {
+    public void setSelected(boolean value) {
 
-		logger.info(String.format("Setting selected: '%s' in element", value) + getNameInfo());
+        logger.info(String.format("Setting selected: '%s' in element", value) + getNameInfo());
 
-		if ((value && !isSelected()) || (!value && isSelected())) {
-			pageElement.click();
-		}
-	}
+        if ((value && !isSelected()) || (!value && isSelected())) {
+            pageElement.click();
+        }
+    }
 
-	public boolean isSelected() {
-		boolean selected = pageElement.isSelected();
+    public boolean isSelected() {
+        boolean selected = pageElement.isSelected();
 
-		return selected;
-	}
+        return selected;
+    }
 }

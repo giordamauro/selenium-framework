@@ -4,27 +4,27 @@ import com.mgiorda.page.AbstractElement;
 
 public class Link extends AbstractElement {
 
-	protected void afterPropertiesSet() {
-		verifyTagName("a");
-	}
+    protected void afterPropertiesSet() {
+        verifyTagName("a");
+    }
 
-	public void click() {
+    public void click() {
 
-		logger.info("Clicking on element" + getNameInfo());
+        logger.info("Clicking on element" + getNameInfo());
 
-		pageElement.click();
-	}
+        pageElement.click();
+    }
 
-	public void click(long afterTimeMillis) {
+    public void click(long afterTimeMillis) {
 
-		logger.info("Clicking on element" + getNameInfo());
+        logger.info("Clicking on element" + getNameInfo());
 
-		pageElement.click(afterTimeMillis);
-	}
+        pageElement.click(afterTimeMillis);
+    }
 
-	public String getLinkText() {
-		String text = pageElement.getText();
+    public String getLinkText() {
+        String text = pageElement.getText();
 
-		return text;
-	}
+        return text;
+    }
 }

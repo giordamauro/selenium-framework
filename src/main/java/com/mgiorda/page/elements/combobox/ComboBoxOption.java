@@ -4,37 +4,37 @@ import com.mgiorda.page.AbstractElement;
 
 public class ComboBoxOption extends AbstractElement {
 
-	public void afterPropertiesSet() {
+    public void afterPropertiesSet() {
 
-		verifyTagName("option");
-	}
+        verifyTagName("option");
+    }
 
-	public String getValue() {
+    public String getValue() {
 
-		String value = pageElement.getAttribute("value");
+        String value = pageElement.getAttribute("value");
 
-		return value;
-	}
+        return value;
+    }
 
-	public String getText() {
+    public String getText() {
 
-		String text = pageElement.getText();
+        String text = pageElement.getText();
 
-		return text;
-	}
+        return text;
+    }
 
-	public void setSelected(boolean value) {
+    public void setSelected(boolean value) {
 
-		logger.info(String.format("Setting option value '%s', text '%s' selected: '%s'", getValue(), getText(), value));
+        logger.info(String.format("Setting option value '%s', text '%s' selected: '%s'", getValue(), getText(), value));
 
-		if ((value && !isSelected()) || (!value && isSelected())) {
-			pageElement.click();
-		}
-	}
+        if ((value && !isSelected()) || (!value && isSelected())) {
+            pageElement.click();
+        }
+    }
 
-	public boolean isSelected() {
-		boolean selected = pageElement.isSelected();
+    public boolean isSelected() {
+        boolean selected = pageElement.isSelected();
 
-		return selected;
-	}
+        return selected;
+    }
 }

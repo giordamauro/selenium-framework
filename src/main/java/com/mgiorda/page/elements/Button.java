@@ -4,28 +4,28 @@ import com.mgiorda.page.AbstractElement;
 
 public class Button extends AbstractElement {
 
-	protected void afterPropertiesSet() {
-		verifyTagName("input");
-	}
+    protected void afterPropertiesSet() {
+        verifyTagName("input");
+    }
 
-	public void click() {
+    public void click() {
 
-		logger.info("Clicking on element" + getNameInfo());
+        logger.info("Clicking on element" + getNameInfo());
 
-		pageElement.click();
-	}
+        pageElement.click();
+    }
 
-	public void submit() {
+    public void submit() {
 
-		logger.info("Submitting button element" + getNameInfo());
+        logger.info("Submitting button element" + getNameInfo());
 
-		pageElement.submit();
-	}
+        pageElement.submit();
+    }
 
-	public void submit(long afterTimeMillis) {
+    public void submit(long afterTimeMillis) {
 
-		logger.info("Submitting button element" + getNameInfo());
+        logger.info("Submitting button element" + getNameInfo());
 
-		pageElement.submit(afterTimeMillis);
-	}
+        pageElement.submit(afterTimeMillis);
+    }
 }

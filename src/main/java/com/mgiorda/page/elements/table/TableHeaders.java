@@ -12,69 +12,69 @@ import com.mgiorda.page.annotations.Locate;
 
 public class TableHeaders extends AbstractElement {
 
-	@Locate(@By(tagName = "th"))
-	private List<PageElement> headers;
+    @Locate(@By(tagName = "th"))
+    private List<PageElement> headers;
 
-	public List<String> getColumns() {
+    public List<String> getColumns() {
 
-		List<String> values = new ArrayList<>();
-		for (int i = 0; i < headers.size(); i++) {
+        List<String> values = new ArrayList<>();
+        for (int i = 0; i < headers.size(); i++) {
 
-			String value = getColumn(i);
-			values.add(value);
-		}
+            String value = getColumn(i);
+            values.add(value);
+        }
 
-		return values;
-	}
+        return values;
+    }
 
-	public String getColumn(int column) {
+    public String getColumn(int column) {
 
-		PageElement element = getColumnPageElement(column);
-		String value = element.getText();
+        PageElement element = getColumnPageElement(column);
+        String value = element.getText();
 
-		return value;
-	}
+        return value;
+    }
 
-	public <T extends AbstractElement> T getColumn(int column, Class<T> elementClass) {
+    public <T extends AbstractElement> T getColumn(int column, Class<T> elementClass) {
 
-		PageElement element = getColumnPageElement(column);
-		AbstractElementFactory elementFactory = (AbstractElementFactory) elementHandler;
+        PageElement element = getColumnPageElement(column);
+        AbstractElementFactory elementFactory = (AbstractElementFactory) elementHandler;
 
-		T value = elementFactory.adaptPageElementAs(elementClass, element);
+        T value = elementFactory.adaptPageElementAs(elementClass, element);
 
-		return value;
-	}
+        return value;
+    }
 
-	public int getColumnsSize() {
-		return headers.size();
-	}
+    public int getColumnsSize() {
+        return headers.size();
+    }
 
-	int getIndexNamed(String headerName) {
+    int getIndexNamed(String headerName) {
 
-		int headerColumn = -1;
+        int headerColumn = -1;
 
-		int i = 0;
-		while (i < getColumnsSize() && headerColumn == -1) {
+        int i = 0;
+        while (i < getColumnsSize() && headerColumn == -1) {
 
-			String header = getColumn(i);
-			if (headerName.equalsIgnoreCase(header)) {
-				headerColumn = i;
-			} else {
-				i++;
-			}
-		}
-		if (headerColumn == -1) {
-			throw new IllegalStateException(String.format("Couln't find table header named '%s'", headerName));
-		}
+            String header = getColumn(i);
+            if (headerName.equalsIgnoreCase(header)) {
+                headerColumn = i;
+            } else {
+                i++;
+            }
+        }
+        if (headerColumn == -1) {
+            throw new IllegalStateException(String.format("Couln't find table header named '%s'", headerName));
+        }
 
-		return i;
-	}
+        return i;
+    }
 
-	protected List<PageElement> getHeaders() {
-		return Collections.unmodifiableList(headers);
-	}
+    protected List<PageElement> getHeaders() {
+        return Collections.unmodifiableList(headers);
+    }
 
-	protected PageElement getColumnPageElement(int column) {
-		return headers.get(column);
-	}
+    protected PageElement getColumnPageElement(int column) {
+        return headers.get(column);
+    }
 }

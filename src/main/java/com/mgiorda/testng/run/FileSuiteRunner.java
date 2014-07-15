@@ -17,55 +17,55 @@ import com.mgiorda.context.SpringUtil;
 
 public class FileSuiteRunner<E extends SuiteConfiguration> implements SuiteRunner<E> {
 
-	private static final String DEFAULT_OUTPUT_DIRECTORY = "logs/test-result/{suiteName}/{currentDate}";
+    private static final String DEFAULT_OUTPUT_DIRECTORY = "logs/test-result/{suiteName}/{currentDate}";
 
-	@Override
-	public void runSuite(E suiteConfig) {
+    @Override
+    public void runSuite(E suiteConfig) {
 
-		if (suiteConfig == null) {
-			throw new IllegalStateException("Suite config cannot be null");
-		}
+        if (suiteConfig == null) {
+            throw new IllegalStateException("Suite config cannot be null");
+        }
 
-		String suiteFile = suiteConfig.getFile();
-		XmlSuite xmlSuite = getXmlSuite(suiteFile);
+        String suiteFile = suiteConfig.getFile();
+        XmlSuite xmlSuite = getXmlSuite(suiteFile);
 
-		String outputDirectory = suiteConfig.getOutputDirectory();
-		runTestNg(xmlSuite, outputDirectory);
-	}
+        String outputDirectory = suiteConfig.getOutputDirectory();
+        runTestNg(xmlSuite, outputDirectory);
+    }
 
-	protected XmlSuite getXmlSuite(String suiteFile) {
+    protected XmlSuite getXmlSuite(String suiteFile) {
 
-		Collection<XmlSuite> suites;
-		try {
-			File xmlFile = SpringUtil.getClasspathFile(suiteFile);
+        Collection<XmlSuite> suites;
+        try {
+            File xmlFile = SpringUtil.getClasspathFile(suiteFile);
 
-			InputStream suiteFileInputStream = new FileInputStream(xmlFile);
-			suites = new Parser(suiteFileInputStream).parse();
-		} catch (Exception e) {
-			throw new IllegalStateException(String.format("Exception reading suite file '%s'", suiteFile));
-		}
+            InputStream suiteFileInputStream = new FileInputStream(xmlFile);
+            suites = new Parser(suiteFileInputStream).parse();
+        } catch (Exception e) {
+            throw new IllegalStateException(String.format("Exception reading suite file '%s'", suiteFile));
+        }
 
-		ArrayList<XmlSuite> xmlSuites = new ArrayList<XmlSuite>(suites);
-		if (xmlSuites.size() > 1) {
-			throw new UnsupportedOperationException("Many xmlSuites not supported " + xmlSuites);
-		}
+        ArrayList<XmlSuite> xmlSuites = new ArrayList<XmlSuite>(suites);
+        if (xmlSuites.size() > 1) {
+            throw new UnsupportedOperationException("Many xmlSuites not supported " + xmlSuites);
+        }
 
-		return xmlSuites.get(0);
-	}
+        return xmlSuites.get(0);
+    }
 
-	protected void runTestNg(XmlSuite suite, String outputDirectory) {
+    protected void runTestNg(XmlSuite suite, String outputDirectory) {
 
-		TestNG testng = new TestNG();
-		testng.setXmlSuites(Collections.singletonList(suite));
+        TestNG testng = new TestNG();
+        testng.setXmlSuites(Collections.singletonList(suite));
 
-		if (outputDirectory == null) {
-			FastDateFormat fastDateFormat = FastDateFormat.getInstance("MM-dd-yyyy HH.mm.ss");
-			String currentDate = fastDateFormat.format(new Date());
+        if (outputDirectory == null) {
+            FastDateFormat fastDateFormat = FastDateFormat.getInstance("MM-dd-yyyy HH.mm.ss");
+            String currentDate = fastDateFormat.format(new Date());
 
-			outputDirectory = DEFAULT_OUTPUT_DIRECTORY.replace("{suiteName}", suite.getName()).replace("{currentDate}", currentDate);
-		}
+            outputDirectory = DEFAULT_OUTPUT_DIRECTORY.replace("{suiteName}", suite.getName()).replace("{currentDate}", currentDate);
+        }
 
-		testng.setOutputDirectory(outputDirectory);
-		testng.run();
-	}
+        testng.setOutputDirectory(outputDirectory);
+        testng.run();
+    }
 }

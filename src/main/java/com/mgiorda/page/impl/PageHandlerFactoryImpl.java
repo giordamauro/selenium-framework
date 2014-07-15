@@ -11,38 +11,38 @@ import com.mgiorda.page.PageHandlerFactory;
 
 public class PageHandlerFactoryImpl implements PageHandlerFactory {
 
-	private final WebDriver driver;
-	private final WebDriverWait driverWait;
-	private final long timeOutInSeconds;
+    private final WebDriver driver;
+    private final WebDriverWait driverWait;
+    private final long timeOutInSeconds;
 
-	public PageHandlerFactoryImpl(WebDriver driver, long timeOutInSeconds) {
-		this.driver = driver;
-		this.timeOutInSeconds = timeOutInSeconds;
+    public PageHandlerFactoryImpl(WebDriver driver, long timeOutInSeconds) {
+        this.driver = driver;
+        this.timeOutInSeconds = timeOutInSeconds;
 
-		if (timeOutInSeconds != 0L) {
-			this.driverWait = new WebDriverWait(driver, timeOutInSeconds);
-		} else {
-			this.driverWait = null;
-		}
-	}
+        if (timeOutInSeconds != 0L) {
+            this.driverWait = new WebDriverWait(driver, timeOutInSeconds);
+        } else {
+            this.driverWait = null;
+        }
+    }
 
-	@Override
-	public PageElementHandler getElementHandler(AbstractPage page) {
+    @Override
+    public PageElementHandler getElementHandler(AbstractPage page) {
 
-		ApplicationContext applicationContext = page.getApplicationContext();
+        ApplicationContext applicationContext = page.getApplicationContext();
 
-		DriverElementHandler driverElementHandler = new DriverElementHandler(driver, driverWait, applicationContext);
-		PageElementHandler pageElementHandler = new PageElementHandlerImpl(driverElementHandler, page);
+        DriverElementHandler driverElementHandler = new DriverElementHandler(driver, driverWait, applicationContext);
+        PageElementHandler pageElementHandler = new PageElementHandlerImpl(driverElementHandler, page);
 
-		return pageElementHandler;
-	}
+        return pageElementHandler;
+    }
 
-	@Override
-	public DriverActionHandler getActionHandler() {
+    @Override
+    public DriverActionHandler getActionHandler() {
 
-		DriverActionHandler actionHandler = new DriverActionHandlerImpl(driver, driverWait, timeOutInSeconds);
+        DriverActionHandler actionHandler = new DriverActionHandlerImpl(driver, driverWait, timeOutInSeconds);
 
-		return actionHandler;
-	}
+        return actionHandler;
+    }
 
 }

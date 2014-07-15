@@ -22,124 +22,124 @@ import com.mgiorda.page.DriverActionHandler;
 
 public class DriverActionHandlerImpl implements DriverActionHandler {
 
-	private static final Log logger = LogFactory.getLog(DriverActionHandlerImpl.class);
+    private static final Log logger = LogFactory.getLog(DriverActionHandlerImpl.class);
 
-	private final WebDriver driver;
-	private final WebDriverWait driverWait;
+    private final WebDriver driver;
+    private final WebDriverWait driverWait;
 
-	public DriverActionHandlerImpl(WebDriver driver, WebDriverWait driverWait, long timeOutInSeconds) {
+    public DriverActionHandlerImpl(WebDriver driver, WebDriverWait driverWait, long timeOutInSeconds) {
 
-		if (driver == null) {
-			throw new IllegalArgumentException("Driver cannot be null");
-		}
+        if (driver == null) {
+            throw new IllegalArgumentException("Driver cannot be null");
+        }
 
-		this.driver = driver;
-		this.driverWait = driverWait;
+        this.driver = driver;
+        this.driverWait = driverWait;
 
-		driver.manage().timeouts().pageLoadTimeout(timeOutInSeconds, TimeUnit.SECONDS);
-		driver.manage().timeouts().setScriptTimeout(timeOutInSeconds, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(timeOutInSeconds, TimeUnit.SECONDS);
+        driver.manage().timeouts().setScriptTimeout(timeOutInSeconds, TimeUnit.SECONDS);
 
-		driver.manage().deleteAllCookies();
-		driver.manage().window().maximize();
-	}
+        driver.manage().deleteAllCookies();
+        driver.manage().window().maximize();
+    }
 
-	public String getTitle() {
-		return driver.getTitle();
-	}
+    public String getTitle() {
+        return driver.getTitle();
+    }
 
-	public String getCurrentUrl() {
-		return driver.getCurrentUrl();
-	}
+    public String getCurrentUrl() {
+        return driver.getCurrentUrl();
+    }
 
-	public void quit() {
+    public void quit() {
 
-		if (!driver.toString().contains("(null)")) {
+        if (!driver.toString().contains("(null)")) {
 
-			logger.debug(String.format("Quitting driver '%s'", driver));
-			driver.quit();
-		}
-	}
+            logger.debug(String.format("Quitting driver '%s'", driver));
+            driver.quit();
+        }
+    }
 
-	public void goToUrl(String url) {
+    public void goToUrl(String url) {
 
-		logger.debug(String.format("Browsing to url '%s' - Driver: '%s'", url, driver));
+        logger.debug(String.format("Browsing to url '%s' - Driver: '%s'", url, driver));
 
-		driver.navigate().to(url);
+        driver.navigate().to(url);
 
-		if (driverWait != null) {
-			waitForPageToLoad();
-		}
-	}
+        if (driverWait != null) {
+            waitForPageToLoad();
+        }
+    }
 
-	public void waitForPageToLoad() throws TimeoutException {
+    public void waitForPageToLoad() throws TimeoutException {
 
-		long start = new Date().getTime();
+        long start = new Date().getTime();
 
-		Predicate<WebDriver> stateReady = new Predicate<WebDriver>() {
+        Predicate<WebDriver> stateReady = new Predicate<WebDriver>() {
 
-			@Override
-			public boolean apply(WebDriver driver) {
+            @Override
+            public boolean apply(WebDriver driver) {
 
-				boolean apply = false;
+                boolean apply = false;
 
-				JavascriptExecutor js = (JavascriptExecutor) driver;
-				Object obj = js.executeScript("return document.readyState");
+                JavascriptExecutor js = (JavascriptExecutor) driver;
+                Object obj = js.executeScript("return document.readyState");
 
-				if (obj != null) {
-					String value = String.valueOf(obj);
+                if (obj != null) {
+                    String value = String.valueOf(obj);
 
-					apply = (value.equals("complete"));
-				}
+                    apply = (value.equals("complete"));
+                }
 
-				return apply;
-			}
-		};
+                return apply;
+            }
+        };
 
-		driverWait.until(stateReady);
+        driverWait.until(stateReady);
 
-		long end = new Date().getTime();
-		long waitTime = end - start;
+        long end = new Date().getTime();
+        long waitTime = end - start;
 
-		logger.debug(String.format("Load page after %s milliseconds", waitTime));
-	}
+        logger.debug(String.format("Load page after %s milliseconds", waitTime));
+    }
 
-	public void takeScreenShot(String filePath) {
+    public void takeScreenShot(String filePath) {
 
-		TakesScreenshot screenShotDriver = null;
-		try {
-			screenShotDriver = (TakesScreenshot) driver;
-		} catch (Exception e) {
-			logger.warn(String.format("Driver '%s' cannot take screenshots", driver));
-		}
+        TakesScreenshot screenShotDriver = null;
+        try {
+            screenShotDriver = (TakesScreenshot) driver;
+        } catch (Exception e) {
+            logger.warn(String.format("Driver '%s' cannot take screenshots", driver));
+        }
 
-		if (screenShotDriver != null) {
-			File screenShot = screenShotDriver.getScreenshotAs(OutputType.FILE);
+        if (screenShotDriver != null) {
+            File screenShot = screenShotDriver.getScreenshotAs(OutputType.FILE);
 
-			try {
-				logger.debug(String.format("Saving screenshot to file '%s'", filePath));
+            try {
+                logger.debug(String.format("Saving screenshot to file '%s'", filePath));
 
-				FileUtils.copyFile(screenShot, new File(filePath));
-			} catch (IOException e) {
+                FileUtils.copyFile(screenShot, new File(filePath));
+            } catch (IOException e) {
 
-				throw new IllegalStateException(String.format("Exception trying to save screenshot to file '%s'", filePath), e);
-			}
-		}
-	}
+                throw new IllegalStateException(String.format("Exception trying to save screenshot to file '%s'", filePath), e);
+            }
+        }
+    }
 
-	WebDriver getDriver() {
-		return driver;
-	}
+    WebDriver getDriver() {
+        return driver;
+    }
 
-	WebDriverWait getDriverWait() {
-		return driverWait;
-	}
+    WebDriverWait getDriverWait() {
+        return driverWait;
+    }
 
-	@Override
-	public String getDriverName() {
+    @Override
+    public String getDriverName() {
 
-		Capabilities capabilities = ((RemoteWebDriver) driver).getCapabilities();
-		String driverName = capabilities.getBrowserName();
+        Capabilities capabilities = ((RemoteWebDriver) driver).getCapabilities();
+        String driverName = capabilities.getBrowserName();
 
-		return driverName;
-	}
+        return driverName;
+    }
 }
