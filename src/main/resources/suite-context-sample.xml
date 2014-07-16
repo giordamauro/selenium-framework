@@ -22,14 +22,25 @@
 		<constructor-arg value="false"/>
 	</bean>
 
-	<bean id="multipleSuiteRunner" class="com.mgiorda.testng.run.MultipleSuiteRunner">
-		<constructor-arg type="com.mgiorda.testng.run.SuiteRunner">
-			<bean id="contextSuiteRunner" class="com.mgiorda.context.run.ContextSuiteRunner" />
-		</constructor-arg>	
-	</bean>
+	<bean id="manyMultipleSuiteRunner" class="com.mgiorda.testng.run.MultipleSuiteRunner">
+        <constructor-arg type="com.mgiorda.testng.run.SuiteRunner" ref="manyContextsSuiteRunner" />
+    </bean>
+
+    <bean id="manyContextsSuiteRunner" class="com.mgiorda.context.run.ManyContextsSuiteRunner">
+        <constructor-arg type="com.mgiorda.testng.run.SuiteRunner">
+            <bean id="contextSuiteRunner" class="com.mgiorda.context.run.ContextSuiteRunner" />
+        </constructor-arg>
+        <property name="runInParallel" value="false"/>
+    </bean>
+
+<!--    <bean id="multipleSuiteRunner" class="com.mgiorda.testng.run.MultipleSuiteRunner"> -->
+<!--        <constructor-arg type="com.mgiorda.testng.run.SuiteRunner"> -->
+<!--            <bean id="contextSuiteRunner" class="com.mgiorda.context.run.ContextSuiteRunner" /> -->
+<!--        </constructor-arg>   -->
+<!--    </bean> -->
 
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetObject" ref="multipleSuiteRunner"/>
+		<property name="targetObject" ref="manyMultipleSuiteRunner"/>
 		<property name="targetMethod" value="run" />
 		<property name="arguments">
 			<list>

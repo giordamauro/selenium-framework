@@ -50,7 +50,17 @@ public final class CurrentTestRun {
             context = testResult.getTestContext();
         } else {
             Thread thread = Thread.currentThread();
-            context = testContexts.get(thread);
+            ThreadGroup group = thread.getThreadGroup();
+
+            Thread[] threads = new Thread[group.activeCount()];
+            group.enumerate(threads);
+
+            int i = 0;
+            while (context == null && i < threads.length) {
+                thread = threads[i];
+                context = testContexts.get(thread);
+                i++;
+            }
         }
 
         return context;
@@ -65,7 +75,17 @@ public final class CurrentTestRun {
             testInstance = testResult.getInstance();
         } else {
             Thread thread = Thread.currentThread();
-            testInstance = testInstances.get(thread);
+            ThreadGroup group = thread.getThreadGroup();
+
+            Thread[] threads = new Thread[group.activeCount()];
+            group.enumerate(threads);
+
+            int i = 0;
+            while (testInstance == null && i < threads.length) {
+                thread = threads[i];
+                testInstance = testInstances.get(thread);
+                i++;
+            }
         }
 
         @SuppressWarnings("unchecked")

@@ -114,7 +114,6 @@ public final class SpringUtil {
         ConfigurableEnvironment env = (ConfigurableEnvironment) applicationContext.getEnvironment();
         MutablePropertySources sources = env.getPropertySources();
         sources.addLast(new PropertiesPropertySource("test-property-" + sources.size(), properties));
-
     }
 
     public static String[] getContextLocations(Class<?> targetClass) {
