@@ -42,7 +42,7 @@ public class FileSuiteRunner<E extends SuiteConfiguration> implements SuiteRunne
             InputStream suiteFileInputStream = new FileInputStream(xmlFile);
             suites = new Parser(suiteFileInputStream).parse();
         } catch (Exception e) {
-            throw new IllegalStateException(String.format("Exception reading suite file '%s'", suiteFile));
+            throw new IllegalStateException(String.format("Exception reading suite file '%s': %s", suiteFile, e.getMessage()), e);
         }
 
         ArrayList<XmlSuite> xmlSuites = new ArrayList<XmlSuite>(suites);

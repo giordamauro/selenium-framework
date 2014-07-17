@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>mgiorda</groupId>
 	<artifactId>selenium-framework</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 
 	<properties>
 		<log4j.version>1.2.17</log4j.version>
@@ -98,7 +98,7 @@
 		<repository>
 			<id>selenium-framework-releases</id>
 			<name>Releases internal repository</name>
-			<url>http://localhost:8090/nexus/content/repositories/releases</url>
+			<url>http://ap-server:8081/nexus/content/repositories/releases</url>
 		</repository>
 	</distributionManagement>
 
