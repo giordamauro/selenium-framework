@@ -37,7 +37,7 @@ public class FileSuiteRunner<E extends SuiteConfiguration> implements SuiteRunne
 
         Collection<XmlSuite> suites;
         try {
-            File xmlFile = SpringUtil.getClasspathFile(suiteFile);
+            File xmlFile = SpringUtil.getCreateClasspathFile(suiteFile);
 
             InputStream suiteFileInputStream = new FileInputStream(xmlFile);
             suites = new Parser(suiteFileInputStream).parse();

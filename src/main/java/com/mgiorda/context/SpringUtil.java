@@ -66,7 +66,7 @@ public final class SpringUtil {
 
         @SuppressWarnings("resource")
         ApplicationContext appContext = new ClassPathXmlApplicationContext();
-        Resource resource = appContext.getResource("classpath:" + fileProperty);
+        Resource resource = appContext.getResource("classpath*:" + fileProperty);
 
         try {
             File file = resource.getFile();
