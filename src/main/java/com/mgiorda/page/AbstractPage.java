@@ -60,6 +60,7 @@ public class AbstractPage implements TestSubscriber {
             throw new IllegalStateException("Cannot instantiate Page whitout String url constructor parameter or @PageURL class annotation");
         }
 
+        logger.info(String.format("Opening '%s' driver", actionHandler.getDriverName()));
         logger.info(String.format("Browsing to url '%s'", pageUrl));
         actionHandler.goToUrl(pageUrl);
 
@@ -138,6 +139,8 @@ public class AbstractPage implements TestSubscriber {
 
     @Override
     public void onClassFinish(AbstractTest test) {
+
+        logger.info(String.format("Quitting '%s' driver", actionHandler.getDriverName()));
         actionHandler.quit();
     }
 
