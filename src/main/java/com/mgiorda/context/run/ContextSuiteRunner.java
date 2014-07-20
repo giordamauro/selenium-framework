@@ -12,30 +12,35 @@ import com.mgiorda.testng.run.FileSuiteRunner;
 
 public class ContextSuiteRunner extends FileSuiteRunner<SuiteConfiguration> {
 
-    @Override
-    public void runSuite(SuiteConfiguration suiteConfig) {
+	@Override
+	public void runSuite(SuiteConfiguration suiteConfig) {
 
-        if (suiteConfig == null) {
-            throw new IllegalStateException("Suite config cannot be null");
-        }
+		if (suiteConfig == null) {
+			throw new IllegalStateException("Suite config cannot be null");
+		}
 
-        String contextFile = suiteConfig.getContext();
-        ApplicationContext appContext = new GenericXmlApplicationContext(contextFile);
+		String contextFile = suiteConfig.getContext();
+		ApplicationContext appContext = new GenericXmlApplicationContext(contextFile);
 
-        Properties properties = suiteConfig.getProperties();
-        if (properties != null) {
-            SpringUtil.addProperties(appContext, properties);
-        }
+		Properties properties = suiteConfig.getProperties();
+		if (properties != null) {
+			SpringUtil.addProperties(appContext, properties);
+		}
 
-        String suiteFile = suiteConfig.getFile();
-        XmlSuite xmlSuite = getXmlSuite(suiteFile);
+		String suiteFile = suiteConfig.getFile();
+		XmlSuite xmlSuite = getXmlSuite(suiteFile);
 
-        String suiteContextName = xmlSuite.getName() + String.format(" (%s)", contextFile.replaceAll("/", " "));
-        xmlSuite.setName(suiteContextName);
+		String nameSuffix = "";
+		if (suiteConfig.getNameSuffix() != null) {
+			nameSuffix = " - " + suiteConfig.getNameSuffix();
+		}
 
-        SuiteContexts.registerSuiteContext(xmlSuite, appContext);
+		String suiteContextName = xmlSuite.getName() + String.format(" (%s)%s", contextFile.replaceAll("/", " "), nameSuffix);
+		xmlSuite.setName(suiteContextName);
 
-        String outputDirectory = suiteConfig.getOutputDirectory();
-        runTestNg(xmlSuite, outputDirectory);
-    }
+		SuiteContexts.registerSuiteContext(xmlSuite, appContext);
+
+		String outputDirectory = suiteConfig.getOutputDirectory();
+		runTestNg(xmlSuite, outputDirectory);
+	}
 }

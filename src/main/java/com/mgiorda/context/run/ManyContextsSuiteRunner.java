@@ -8,49 +8,50 @@ import com.mgiorda.testng.run.SuiteRunner;
 
 public class ManyContextsSuiteRunner implements SuiteRunner<ContextsSuiteConfiguration> {
 
-    private final SuiteRunner<SuiteConfiguration> suiteRunner;
-    private final MultipleSuiteRunner<SuiteConfiguration> multipleSuiteRunner;
+	private final SuiteRunner<SuiteConfiguration> suiteRunner;
+	private final MultipleSuiteRunner<SuiteConfiguration> multipleSuiteRunner;
 
-    private boolean runInParallel = false;
+	private boolean runInParallel = false;
 
-    public ManyContextsSuiteRunner(SuiteRunner<SuiteConfiguration> suiteRunner) {
+	public ManyContextsSuiteRunner(SuiteRunner<SuiteConfiguration> suiteRunner) {
 
-        this.suiteRunner = suiteRunner;
-        this.multipleSuiteRunner = new MultipleSuiteRunner<>(suiteRunner);
-    }
+		this.suiteRunner = suiteRunner;
+		this.multipleSuiteRunner = new MultipleSuiteRunner<>(suiteRunner);
+	}
 
-    public boolean isRunInParallel() {
-        return runInParallel;
-    }
+	public boolean isRunInParallel() {
+		return runInParallel;
+	}
 
-    public void setRunInParallel(boolean runInParallel) {
-        this.runInParallel = runInParallel;
-    }
+	public void setRunInParallel(boolean runInParallel) {
+		this.runInParallel = runInParallel;
+	}
 
-    @Override
-    public void runSuite(ContextsSuiteConfiguration suiteConfiguration) {
+	@Override
+	public void runSuite(ContextsSuiteConfiguration suiteConfiguration) {
 
-        if (suiteConfiguration == null) {
-            throw new IllegalStateException("Suite config cannot be null");
-        }
+		if (suiteConfiguration == null) {
+			throw new IllegalStateException("Suite config cannot be null");
+		}
 
-        List<SuiteConfiguration> suites = new ArrayList<>();
+		List<SuiteConfiguration> suites = new ArrayList<>();
 
-        String[] contextFiles = suiteConfiguration.getContexts();
-        for (String context : contextFiles) {
+		String[] contextFiles = suiteConfiguration.getContexts();
+		for (String context : contextFiles) {
 
-            SuiteConfiguration suiteConfig = new SuiteConfiguration(suiteConfiguration.getFile());
-            suiteConfig.setContext(context);
-            suiteConfig.setProperties(suiteConfiguration.getProperties());
-            suiteConfig.setOutputDirectory(suiteConfiguration.getOutputDirectory());
+			SuiteConfiguration suiteConfig = new SuiteConfiguration(suiteConfiguration.getFile());
+			suiteConfig.setContext(context);
+			suiteConfig.setProperties(suiteConfiguration.getProperties());
+			suiteConfig.setNameSuffix(suiteConfiguration.getNameSuffix());
+			suiteConfig.setOutputDirectory(suiteConfiguration.getOutputDirectory());
 
-            suites.add(suiteConfig);
-        }
+			suites.add(suiteConfig);
+		}
 
-        if (suites.size() == 1) {
-            suiteRunner.runSuite(suites.get(0));
-        } else {
-            multipleSuiteRunner.run(suites, runInParallel);
-        }
-    }
+		if (suites.size() == 1) {
+			suiteRunner.runSuite(suites.get(0));
+		} else {
+			multipleSuiteRunner.run(suites, runInParallel);
+		}
+	}
 }

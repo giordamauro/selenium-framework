@@ -4,30 +4,39 @@ import java.util.Properties;
 
 public class SuiteConfiguration extends com.mgiorda.testng.run.SuiteConfiguration {
 
-    public static final String DEFAULT_CONTEXT_LOCATION = "contexts/default-context.xml";
+	public static final String DEFAULT_CONTEXT_LOCATION = "contexts/default-context.xml";
 
-    private String context = DEFAULT_CONTEXT_LOCATION;
+	private String context = DEFAULT_CONTEXT_LOCATION;
 
-    private Properties properties;
+	private Properties properties;
 
-    public SuiteConfiguration(String file) {
-        super(file);
-    }
+	private String nameSuffix = null;
 
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
+	public SuiteConfiguration(String file) {
+		super(file);
+	}
 
-    public String getContext() {
-        return context;
-    }
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
 
-    public void setContext(String context) {
-        this.context = context;
-    }
+	public String getContext() {
+		return context;
+	}
 
-    public Properties getProperties() {
-        return properties;
-    }
+	public void setContext(String context) {
+		this.context = context;
+	}
 
+	public Properties getProperties() {
+		return properties;
+	}
+
+	public String getNameSuffix() {
+		return nameSuffix;
+	}
+
+	public void setNameSuffix(String nameSuffix) {
+		this.nameSuffix = nameSuffix;
+	}
 }
