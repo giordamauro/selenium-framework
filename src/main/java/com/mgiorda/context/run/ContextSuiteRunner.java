@@ -35,7 +35,7 @@ public class ContextSuiteRunner extends FileSuiteRunner<SuiteConfiguration> {
 			nameSuffix = " - " + suiteConfig.getNameSuffix();
 		}
 
-		String suiteContextName = xmlSuite.getName() + String.format(" (%s)%s", contextFile.replaceAll("/", " "), nameSuffix);
+		String suiteContextName = xmlSuite.getName() + String.format("%s (%s)", nameSuffix, contextFile.replaceAll("/", " "));
 		xmlSuite.setName(suiteContextName);
 
 		SuiteContexts.registerSuiteContext(xmlSuite, appContext);
