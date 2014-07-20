@@ -1,170 +1,45 @@
 package com.mgiorda.page;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.internal.WrapsDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class PageElement {
+public interface PageElement {
 
-    private static final Log logger = LogFactory.getLog(PageElement.class);
-    private static final long DEFAULT_AFTER_ACTION_MILLIS = 500;
+	void click(long afterActionMillis);
 
-    private final WebElement element;
+	void click();
 
-    public PageElement(WebElement element) {
-        this.element = element;
-    }
+	void submit(long afterActionMillis);
 
-    public WebElement getWebElement() {
-        return element;
-    }
+	void submit();
 
-    public void click(long afterActionMillis) {
+	void sendKeys(CharSequence... keysToSend);
 
-        logger.debug(String.format("Clicking element '%s'", element));
+	void hover(long afterActionMillis);
 
-        element.click();
-        waitForActionTime(afterActionMillis);
-    }
+	void hover();
 
-    public void click() {
-        click(DEFAULT_AFTER_ACTION_MILLIS);
-    }
+	void moveToElement(long afterActionMillis);
 
-    public void submit(long afterActionMillis) {
+	void moveToElement();
 
-        logger.debug(String.format("Submitting element '%s'", element));
+	void clear();
 
-        element.submit();
-        waitForActionTime(afterActionMillis);
+	String getTagName();
 
-    }
+	String getAttribute(String name);
 
-    public void submit() {
-        submit(DEFAULT_AFTER_ACTION_MILLIS);
-    }
+	boolean isSelected();
 
-    public void sendKeys(CharSequence... keysToSend) {
+	boolean isEnabled();
 
-        if (logger.isDebugEnabled()) {
-            String keys = "";
-            for (CharSequence seq : keysToSend) {
-                keys += seq.toString();
-            }
-            logger.debug(String.format("Sending keys '%s' to element '%s'", keys, element));
-        }
+	String getText();
 
-        element.sendKeys(keysToSend);
-    }
+	boolean isDisplayed();
 
-    public void hover(long afterActionMillis) {
+	Point getLocation();
 
-        logger.debug(String.format("Hovering over element '%s'", element));
-        try {
+	Dimension getSize();
 
-            InputStream scriptStream = this.getClass().getResourceAsStream("hover-script.js");
-            String code = IOUtils.toString(scriptStream, "UTF-8");
-
-            JavascriptExecutor js = ((JavascriptExecutor) getDriver());
-            js.executeScript(code, element);
-
-            waitForActionTime(afterActionMillis);
-
-        } catch (IOException e) {
-            throw new IllegalStateException("Couldn't hover on pageElement", e);
-        }
-    }
-
-    public void hover() {
-        hover(0L);
-    }
-
-    public void moveToElement(long afterActionMillis) {
-
-        logger.debug(String.format("Moving to element '%s'", element));
-
-        Actions action = new Actions(getDriver());
-        action.moveToElement(element).build().perform();
-
-        waitForActionTime(afterActionMillis);
-    }
-
-    public void moveToElement() {
-        moveToElement(0L);
-    }
-
-    public void clear() {
-        logger.debug(String.format("Clearing element '%s'", element));
-
-        element.clear();
-    }
-
-    public String getTagName() {
-        return element.getTagName();
-    }
-
-    public String getAttribute(String name) {
-        return element.getAttribute(name);
-    }
-
-    public boolean isSelected() {
-        return element.isSelected();
-    }
-
-    public boolean isEnabled() {
-        return element.isEnabled();
-    }
-
-    public String getText() {
-        return element.getText();
-    }
-
-    public boolean isDisplayed() {
-        return element.isDisplayed();
-    }
-
-    public Point getLocation() {
-        return element.getLocation();
-    }
-
-    public Dimension getSize() {
-        return element.getSize();
-    }
-
-    public String getCssValue(String propertyName) {
-        return element.getCssValue(propertyName);
-    }
-
-    public void waitUntilVisible() {
-
-        WebDriverWait wait = new WebDriverWait(getDriver(), 30);
-        wait.until(ExpectedConditions.visibilityOf(element));
-    }
-
-    private void waitForActionTime(long afterActionTime) {
-        try {
-            Thread.sleep(afterActionTime);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private WebDriver getDriver() {
-        WrapsDriver driverWrapper = (WrapsDriver) element;
-        WebDriver driver = driverWrapper.getWrappedDriver();
-
-        return driver;
-    }
+	String getCssValue(String propertyName);
 }

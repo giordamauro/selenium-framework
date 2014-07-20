@@ -1,65 +1,63 @@
 package com.mgiorda.page;
 
-import org.openqa.selenium.By;
+public class Locator {
 
-public final class Locator {
+	private final String value;
+	private final ByType byType;
 
-    private final Class<? extends By> byClass;
+	private Locator(ByType byType, String value) {
 
-    private final String value;
+		if (byType == null || value == null) {
+			throw new IllegalArgumentException("Locator by and value cannot be null");
+		}
 
-    private Locator(Class<? extends By> byClass, String value) {
+		this.byType = byType;
+		this.value = value;
+	}
 
-        if (value == null) {
-            throw new IllegalArgumentException("Locator value cannot be null");
-        }
-        this.byClass = byClass;
-        this.value = value;
-    }
+	public ByType getBy() {
+		return byType;
+	}
 
-    public Class<? extends By> getByClass() {
-        return byClass;
-    }
+	public String getValue() {
+		return value;
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public String toString() {
+		String toString = String.format("Locator by %s: '%s'", byType, value);
 
-    public String toString() {
-        String toString = String.format("Locator '%s'", value);
+		return toString;
+	}
 
-        return toString;
-    }
+	public static Locator byId(String id) {
+		return new Locator(ByType.ID, id);
+	}
 
-    public static Locator byId(String id) {
-        return new Locator(By.ById.class, id);
-    }
+	public static Locator byLinkText(String linkText) {
+		return new Locator(ByType.LINK_TEXT, linkText);
+	}
 
-    public static Locator byLinkText(String linkText) {
-        return new Locator(By.ByLinkText.class, linkText);
-    }
+	public static Locator byPartialLinkText(String partialLinkText) {
+		return new Locator(ByType.PARTIAL_LINK_TEXT, partialLinkText);
+	}
 
-    public static Locator byPartialLinkText(String partialLinkText) {
-        return new Locator(By.ByPartialLinkText.class, partialLinkText);
-    }
+	public static Locator byName(String name) {
+		return new Locator(ByType.NAME, name);
+	}
 
-    public static Locator byName(String name) {
-        return new Locator(By.ByName.class, name);
-    }
+	public static Locator byTagName(String tagName) {
+		return new Locator(ByType.TAG_NAME, tagName);
+	}
 
-    public static Locator byTagName(String tagName) {
-        return new Locator(By.ByTagName.class, tagName);
-    }
+	public static Locator byXpath(String xpath) {
+		return new Locator(ByType.XPATH, xpath);
+	}
 
-    public static Locator byXpath(String xpath) {
-        return new Locator(By.ByXPath.class, xpath);
-    }
+	public static Locator byClass(String className) {
+		return new Locator(ByType.CLASS_NAME, className);
+	}
 
-    public static Locator byClass(String className) {
-        return new Locator(By.ByClassName.class, className);
-    }
-
-    public static Locator byCssSelector(String cssSelector) {
-        return new Locator(By.ByCssSelector.class, cssSelector);
-    }
+	public static Locator byCssSelector(String cssSelector) {
+		return new Locator(ByType.CSS_SELECTOR, cssSelector);
+	}
 }
