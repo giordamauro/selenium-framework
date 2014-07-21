@@ -23,4 +23,11 @@ public class TextField extends AbstractElement {
 
         pageElement.submit();
     }
+
+    public String getText() {
+
+        String text = pageElement.getText();
+
+        return text;
+    }
 }
